@@ -2,6 +2,6 @@
 
 exports[`Bracket.component.vue matches snapshot 1`] = `
 <div>
-    Bracket
+    <h1>Bracket</h1>
 </div>
 `;
