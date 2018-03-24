@@ -1,21 +1,22 @@
-import Vue from "vue";
-import Router from "vue-router";
-import Home from "./views/Home.vue";
-import About from "./views/About.vue";
+import Vue from "vue"
+import Router from "vue-router"
 
-Vue.use(Router);
+import Brackets from "./views/Brackets.view.vue"
+import Home from "./views/Home.view.vue"
+
+Vue.use(Router)
 
 export default new Router({
   routes: [
     {
       path: "/",
       name: "home",
-      component: Home
+      component: Home,
     },
     {
-      path: "/about",
-      name: "about",
-      component: About
-    }
-  ]
-});
+      path: "/brackets",
+      name: "brackets",
+      component: Brackets,
+    },
+  ],
+})

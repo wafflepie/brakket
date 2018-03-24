@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Bracket.component.vue matches snapshot 1`] = `
+<div>
+    Bracket
+</div>
+`;
