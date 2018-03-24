@@ -1,5 +1,5 @@
 <template>
   <div>
-    Bracket
+    <h1>Bracket</h1>
   </div>
 </template>
