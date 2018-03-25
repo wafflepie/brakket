@@ -14,7 +14,8 @@
 import Vue from "vue"
 import Component from "vue-class-component"
 
-import { types } from "../store"
+import { actionTypes } from "../store"
+import { getParticipantsFromInputs } from "../utils"
 
 @Component({
   created() {
@@ -37,12 +38,8 @@ export default class ParticipantForm extends Vue {
   }
 
   submit() {
-    this.$store.dispatch(
-      types.STORE_PARTICIPANTS,
-      this.inputs.map(input => input.value).filter(value => value),
-    )
-
-    this.$router.push("/brackets")
+    const participants = getParticipantsFromInputs(this.inputs)
+    this.$store.dispatch(actionTypes.GENERATE_NEW_BRACKET, participants)
   }
 }
 </script>

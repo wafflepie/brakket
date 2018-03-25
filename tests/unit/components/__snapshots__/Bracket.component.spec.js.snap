@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Bracket.component.vue matches snapshot 1`] = `
-<div>
-    <h1>Bracket</h1>
-</div>
-`;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Brackets</h1>
+    <h1>Bracket</h1>
     <div v-for="participant of participants" :key="participant.id">
       {{ participant.name }}
     </div>
@@ -14,8 +14,14 @@
 import Vue from "vue"
 import Component from "vue-class-component"
 
-@Component
-export default class Brackets extends Vue {
+import { actionTypes } from "../store"
+
+@Component({
+  created() {
+    this.$store.dispatch(actionTypes.LOAD_BRACKET_BY_KEY, this.$route.params.id)
+  },
+})
+export default class Bracket extends Vue {
   get participants() {
     return this.$store.state.participants
   }
