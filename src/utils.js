@@ -14,11 +14,15 @@ export const shuffle = array => {
   return array
 }
 
-export const getRoundCountByParticipants = R.compose(
+export const getRoundCountBySeed = R.compose(
+  R.add(1),
   Math.ceil,
   Math.log2,
   R.prop("length")
 )
+
+export const getMatchCountByRoundIndex = (roundIndex, roundCount) =>
+  Math.pow(2, roundCount - roundIndex - 1)
 
 export const generateSeedFromIdentifiers = R.compose(
   R.map(([home, away]) => ({ home, away })),
@@ -31,3 +35,22 @@ export const getParticipantsFromInputs = R.compose(
   R.filter(R.identity),
   R.map(R.prop("value"))
 )
+
+export const generateResultStructureFromSeed = seed => {
+  const results = []
+  const roundCount = getRoundCountBySeed(seed)
+
+  for (let i = 0; i < roundCount; i++) {
+    results.push([])
+    const matchCount = getMatchCountByRoundIndex(i, roundCount)
+
+    for (let j = 0; j < matchCount; j++) {
+      results[i].push({
+        home: { score: 0, previousMatch: i ? results[i - 1][j * 2] : null },
+        away: { score: 0, previousMatch: i ? results[i - 1][j * 2 + 1] : null },
+      })
+    }
+  }
+
+  return results
+}

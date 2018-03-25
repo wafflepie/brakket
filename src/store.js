@@ -3,7 +3,11 @@ import Vuex from "vuex"
 import localforage from "localforage"
 import shortid from "shortid"
 
-import { generateSeedFromIdentifiers } from "./utils"
+import {
+  generateSeedFromIdentifiers,
+  generateResultStructureFromSeed,
+} from "./utils"
+
 import router from "./router"
 
 Vue.use(Vuex)
@@ -25,17 +29,18 @@ export default new Vuex.Store({
   mutations: {
     [mutationTypes.INITIALIZE_BRACKET_STATE](state, newState) {
       this.state.participants = newState.participants
+      this.state.results = newState.results
       this.state.seed = newState.seed
     },
   },
   actions: {
     [actionTypes.GENERATE_NEW_BRACKET]({ commit }, participants) {
-      const state = {
-        participants,
-        seed: generateSeedFromIdentifiers(
-          participants.map(participant => participant.id)
-        ),
-      }
+      const seed = generateSeedFromIdentifiers(
+        participants.map(participant => participant.id)
+      )
+
+      const results = generateResultStructureFromSeed(seed)
+      const state = { participants, results, seed }
 
       commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
 

@@ -28,9 +28,7 @@ export default class ParticipantForm extends Vue {
   inputs = []
 
   addInput() {
-    this.inputs.push({
-      value: "",
-    })
+    this.inputs = [...this.inputs, { value: "" }]
   }
 
   removeInput(input) {
