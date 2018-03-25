@@ -40,17 +40,60 @@ export const generateResultStructureFromSeed = seed => {
   const results = []
   const roundCount = getRoundCountBySeed(seed)
 
-  for (let i = 0; i < roundCount; i++) {
+  for (let roundIndex = 0; roundIndex < roundCount; roundIndex++) {
     results.push([])
-    const matchCount = getMatchCountByRoundIndex(i, roundCount)
+    const matchCount = getMatchCountByRoundIndex(roundIndex, roundCount)
 
-    for (let j = 0; j < matchCount; j++) {
-      results[i].push({
-        home: { score: 0, previousMatch: i ? results[i - 1][j * 2] : null },
-        away: { score: 0, previousMatch: i ? results[i - 1][j * 2 + 1] : null },
+    for (let matchIndex = 0; matchIndex < matchCount; matchIndex++) {
+      results[roundIndex].push({
+        home: { score: 0 },
+        away: { score: 0 },
+        roundIndex,
+        matchIndex,
       })
     }
   }
 
   return results
 }
+
+export const getWinnerOfMatch = match => {
+  if (match.home.score > match.away.score) return "home"
+  if (match.away.score > match.home.score) return "away"
+  return null
+}
+
+export const getPreviousMatchBySide = (results, match, side) =>
+  match.roundIndex
+    ? results[match.roundIndex - 1][
+        match.matchIndex * 2 + side === "away" ? 1 : 0
+      ]
+    : null
+
+export const getRootMatchBySide = (results, match, side) => {
+  const previousMatch = getPreviousMatchBySide(results, match, side)
+  if (!previousMatch) return match
+
+  const previousMatchWinner = getWinnerOfMatch(previousMatch)
+  if (!previousMatchWinner) return null
+
+  return getRootMatchBySide(results, previousMatch, previousMatchWinner)
+}
+
+export const getNameOfMatchSide = (state, match, side) => {
+  const rootMatch = getRootMatchBySide(state.results, match, side)
+
+  if (!rootMatch) return null
+
+  const rootMatchIndex = state.results[0].indexOf(rootMatch)
+  const participantIndex = state.seed[rootMatchIndex][side]
+
+  return R.path([participantIndex, "name"], state.participants) || null
+}
+
+export const assocParticipantNamesToMatchSides = R.curry((state, match) =>
+  R.compose(
+    R.assocPath(["home", "name"], getNameOfMatchSide(state, match, "home")),
+    R.assocPath(["away", "name"], getNameOfMatchSide(state, match, "away"))
+  )(match)
+)

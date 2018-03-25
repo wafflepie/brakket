@@ -24,6 +24,7 @@ export const mutationTypes = {
 export default new Vuex.Store({
   state: {
     participants: [],
+    results: [],
     seed: [],
   },
   mutations: {
