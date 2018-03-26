@@ -34,8 +34,8 @@ export const getRoundCountBySeed = R.compose(
 /**
  * Returns the number of matches in a specified round.
  *
- * @param {Number} roundIndex index of the round, starting with 0
- * @param {Number} roundCount total number of rounds
+ * @param {number} roundIndex index of the round, starting with 0
+ * @param {number} roundCount total number of rounds
  */
 export const getMatchCountByRoundIndex = (roundIndex, roundCount) =>
   Math.pow(2, roundCount - roundIndex - 1)
@@ -109,7 +109,7 @@ export const getWinnerOfMatch = match => {
  *
  * @param {Array} results results of all matches
  * @param {Object} match a single match
- * @param {String} side side to find the previous match for
+ * @param {string} side side to find the previous match for
  */
 export const getPreviousMatchBySide = (results, match, side) =>
   match.roundIndex
@@ -123,36 +123,32 @@ export const getPreviousMatchBySide = (results, match, side) =>
  *
  * @param {Array} results results of all matches
  * @param {Object} match a single match
- * @param {String} side side to find the root match for
+ * @param {string} side side to find the first match for
  */
-export const getRootMatchBySide = (results, match, side) => {
+export const getFirstMatchOfSide = (results, match, side) => {
   const previousMatch = getPreviousMatchBySide(results, match, side)
   if (!previousMatch) return match
 
   const previousMatchWinner = getWinnerOfMatch(previousMatch)
   if (!previousMatchWinner) return null
 
-  return getRootMatchBySide(results, previousMatch, previousMatchWinner)
+  return getFirstMatchOfSide(results, previousMatch, previousMatchWinner)
 }
 
 /**
  * Returns the participant name of the specified side of a match.
  *
- * @param {*} state object wrapping the participants, results and seed params
- * @param {*} match a single match
- * @param {*} side side to find the name of
+ * @param {Object} state object wrapping the participants, results and seed params
+ * @param {Object} match a single match
+ * @param {string} side side to find the name of
  */
-export const getNameOfMatchSide = (
-  { participants, results, seed },
-  match,
-  side
-) => {
-  const rootMatch = getRootMatchBySide(results, match, side)
+export const getNameOfSide = ({ participants, results, seed }, match, side) => {
+  const firstMatch = getFirstMatchOfSide(results, match, side)
 
-  if (!rootMatch) return null
+  if (!firstMatch) return null
 
-  const rootMatchIndex = results[0].indexOf(rootMatch)
-  const participantId = seed[rootMatchIndex][side]
+  const firstMatchIndex = results[0].indexOf(firstMatch)
+  const participantId = seed[firstMatchIndex][side]
   const participant = R.find(R.propEq("id", participantId), participants)
 
   return R.prop("name", participant) || null
@@ -161,12 +157,12 @@ export const getNameOfMatchSide = (
 /**
  * Returns the match with two additional properties: home.name and away.name.
  *
- * @param {*} state object wrapping the participants, results and seed params
- * @param {*} match a single match
+ * @param {Object} state object wrapping the participants, results and seed params
+ * @param {Object} match a single match
  */
-export const assocParticipantNamesToMatchSides = R.curry((state, match) =>
+export const assocNamesToSides = R.curry((state, match) =>
   R.compose(
-    R.assocPath(["home", "name"], getNameOfMatchSide(state, match, "home")),
-    R.assocPath(["away", "name"], getNameOfMatchSide(state, match, "away"))
+    R.assocPath(["home", "name"], getNameOfSide(state, match, "home")),
+    R.assocPath(["away", "name"], getNameOfSide(state, match, "away"))
   )(match)
 )

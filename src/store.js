@@ -21,11 +21,19 @@ export const mutationTypes = {
   INITIALIZE_BRACKET_STATE: "INITIALIZE_BRACKET_STATE",
 }
 
+// type Participant = { name: string, id: number }
+// type Participants = Array<Participant>
+// type Seed = Array<[number, number]>
+// type Side = { score: number }
+// type Match = { home: Side, away: Side, roundIndex: number, matchIndex: number }
+// type Round = Array<Match>
+// type Results = Array<Round>
+
 export default new Vuex.Store({
   state: {
-    participants: [],
-    results: [],
-    seed: [],
+    participants: [], // Participants
+    results: [], // Results
+    seed: [], // Seed
   },
   mutations: {
     [mutationTypes.INITIALIZE_BRACKET_STATE](state, newState) {

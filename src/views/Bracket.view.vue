@@ -16,7 +16,7 @@ import Component from "vue-class-component"
 import * as R from "ramda"
 
 import { actionTypes } from "../store"
-import { assocParticipantNamesToMatchSides } from "../utils"
+import { assocNamesToSides } from "../utils"
 
 @Component({
   created() {
@@ -25,11 +25,9 @@ import { assocParticipantNamesToMatchSides } from "../utils"
 })
 export default class Bracket extends Vue {
   get matches() {
-    const results = this.$store.state.results
-
     return R.map(
-      R.map(assocParticipantNamesToMatchSides(this.$store.state)),
-      results
+      R.map(assocNamesToSides(this.$store.state)),
+      this.$store.state.results
     )
   }
 
