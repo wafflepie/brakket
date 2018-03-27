@@ -58,10 +58,9 @@ export const generateSeedFromIdentifiers = R.compose(
  *
  * @param {Array} inputs objects with value props
  */
-export const createParticipantsFromInputs = R.compose(
+export const createParticipantsFromValues = R.compose(
   mapIndexed((name, id) => ({ name, id })),
-  R.filter(R.identity),
-  R.map(R.prop("value"))
+  R.filter(R.identity)
 )
 
 /**
