@@ -15,7 +15,7 @@ import Vue from "vue"
 import Component from "vue-class-component"
 
 import { actionTypes } from "../store"
-import { getParticipantsFromInputs } from "../utils"
+import { createParticipantsFromInputs } from "../utils"
 
 @Component({
   created() {
@@ -36,7 +36,7 @@ export default class ParticipantForm extends Vue {
   }
 
   submit() {
-    const participants = getParticipantsFromInputs(this.inputs)
+    const participants = createParticipantsFromInputs(this.inputs)
     this.$store.dispatch(actionTypes.GENERATE_NEW_BRACKET, participants)
   }
 }

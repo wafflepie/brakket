@@ -18,12 +18,13 @@ export const actionTypes = {
 }
 
 export const mutationTypes = {
+  CHANGE_SIDE_SCORE: "CHANGE_SIDE_SCORE",
   INITIALIZE_BRACKET_STATE: "INITIALIZE_BRACKET_STATE",
 }
 
 // type Participant = { name: string, id: number }
 // type Participants = Array<Participant>
-// type Seed = Array<[number, number]>
+// type Seed = Array<{ home: number, away: number }>
 // type Side = { score: number }
 // type Match = { home: Side, away: Side, roundIndex: number, matchIndex: number }
 // type Round = Array<Match>
@@ -32,14 +33,21 @@ export const mutationTypes = {
 export default new Vuex.Store({
   state: {
     participants: [], // Participants
-    results: [], // Results
     seed: [], // Seed
+    results: [], // Results
   },
   mutations: {
-    [mutationTypes.INITIALIZE_BRACKET_STATE](state, newState) {
-      this.state.participants = newState.participants
-      this.state.results = newState.results
-      this.state.seed = newState.seed
+    [mutationTypes.CHANGE_SIDE_SCORE](state, payload) {
+      const { roundIndex, matchIndex, side, score } = payload
+
+      state.results[roundIndex][matchIndex][side].score = score
+    },
+    [mutationTypes.INITIALIZE_BRACKET_STATE](state, payload) {
+      const { participants, results, seed } = payload
+
+      state.participants = participants
+      state.results = results
+      state.seed = seed
     },
   },
   actions: {
