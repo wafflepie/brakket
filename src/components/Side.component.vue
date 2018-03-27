@@ -13,7 +13,8 @@
     type="number"
     :disabled="isDisabled(match, side)"
     :value="isDisabled(match, side) ? '' : match[side].score"
-    @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)" />
+    @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
+    @blur="$emit('input-blur')" />
 </div>
 </template>
 

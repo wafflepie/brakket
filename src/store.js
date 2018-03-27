@@ -15,6 +15,7 @@ Vue.use(Vuex)
 export const actionTypes = {
   GENERATE_NEW_BRACKET: "GENERATE_NEW_BRACKET",
   LOAD_BRACKET_BY_KEY: "LOAD_BRACKET_BY_URL",
+  STORE_CURRENT_STATE: "STORE_CURRENT_STATE",
 }
 
 export const mutationTypes = {
@@ -32,6 +33,7 @@ export const mutationTypes = {
 
 export default new Vuex.Store({
   state: {
+    bracketId: null,
     participants: [], // Participants
     seed: [], // Seed
     results: [], // Results
@@ -43,35 +45,35 @@ export default new Vuex.Store({
       state.results[roundIndex][matchIndex][side].score = score
     },
     [mutationTypes.INITIALIZE_BRACKET_STATE](state, payload) {
-      const { participants, results, seed } = payload
-
-      state.participants = participants
-      state.results = results
-      state.seed = seed
+      Object.entries(payload).forEach(([key, value]) => {
+        state[key] = value
+      })
     },
   },
   actions: {
-    [actionTypes.GENERATE_NEW_BRACKET]({ commit }, participants) {
+    [actionTypes.GENERATE_NEW_BRACKET]({ commit, dispatch }, participants) {
       const seed = generateSeedFromIdentifiers(
         participants.map(participant => participant.id)
       )
 
       const results = generateResultStructureFromSeed(seed)
-      const state = { participants, results, seed }
-
-      commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
 
       const bracketId = shortid.generate()
+      const state = { participants, results, seed, bracketId }
 
-      localforage
-        .setItem(bracketId, JSON.stringify(state))
-        .then(() => router.push(`/bracket/${bracketId}`))
+      commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
+      dispatch(actionTypes.STORE_CURRENT_STATE)
     },
     [actionTypes.LOAD_BRACKET_BY_KEY]({ commit }, key) {
       localforage.getItem(key).then(value => {
         const state = JSON.parse(value)
         commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
       })
+    },
+    [actionTypes.STORE_CURRENT_STATE]({ state }) {
+      localforage
+        .setItem(state.bracketId, JSON.stringify(state))
+        .then(() => router.push(`/bracket/${state.bracketId}`))
     },
   },
 })

@@ -10,7 +10,8 @@
           :match="match"
           :round-index="roundIndex"
           :match-index="matchIndex"
-          @score-change="handleScoreChange"/>
+          @score-change="handleScoreChange"
+          @input-blur="handleInputBlur" />
         <div class="versus">
           vs.
         </div>
@@ -19,7 +20,8 @@
           :match="match"
           :round-index="roundIndex"
           :match-index="matchIndex"
-          @score-change="handleScoreChange"/>
+          @score-change="handleScoreChange"
+          @input-blur="handleInputBlur" />
       </div>
     </div>
   </div>
@@ -60,6 +62,10 @@ export default class Bracket extends Vue {
       side,
       score,
     })
+  }
+
+  handleInputBlur() {
+    this.$store.dispatch(actionTypes.STORE_CURRENT_STATE)
   }
 }
 </script>
