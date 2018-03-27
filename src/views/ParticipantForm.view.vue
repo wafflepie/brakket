@@ -36,7 +36,10 @@ export default class ParticipantForm extends Vue {
   }
 
   submit() {
-    const participants = createParticipantsFromInputs(this.inputs)
+    const participants = createParticipantsFromInputs(
+      this.inputs.filter(input => input.value)
+    )
+
     this.$store.dispatch(actionTypes.GENERATE_NEW_BRACKET, participants)
   }
 }

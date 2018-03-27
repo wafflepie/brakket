@@ -75,15 +75,23 @@ export const createParticipantsFromInputs = R.compose(
 export const generateResultStructureFromSeed = seed => {
   const results = []
   const roundCount = getRoundCountBySeed(seed)
+  const sideCount =
+    seed.length &&
+    seed.length * 2 - (seed[seed.length - 1].away === undefined ? 1 : 0)
 
   for (let roundIndex = 0; roundIndex < roundCount; roundIndex++) {
     results[roundIndex] = []
     const matchCount = getMatchCountByRoundIndex(roundIndex, roundCount)
 
     for (let matchIndex = 0; matchIndex < matchCount; matchIndex++) {
+      const doesHomeExist =
+        Math.ceil(sideCount / Math.pow(2, roundIndex + 1)) > matchIndex
+      const doesAwayExist =
+        Math.ceil(sideCount / Math.pow(2, roundIndex + 1) - 0.5) > matchIndex
+
       results[roundIndex][matchIndex] = {
-        home: { score: 0 },
-        away: { score: 0 },
+        home: { score: doesHomeExist ? 0 : null },
+        away: { score: doesAwayExist ? 0 : null },
         roundIndex,
         matchIndex,
       }
@@ -94,16 +102,55 @@ export const generateResultStructureFromSeed = seed => {
 }
 
 /**
+ * Returns whether home side of the match is just a placeholder.
+ */
+export const isHomePlaceholder = match => match.home.score === null
+
+/**
+ * Returns whether away side of the match is just a placeholder.
+ */
+export const isAwayPlaceholder = match => match.away.score === null
+
+/**
+ * Returns whether home side exists but just has not been decided.
+ */
+export const isHomeToBeDecided = match =>
+  match.home.score !== null && match.home.name === null
+
+/**
+ * Returns whether away side exists but just has not been decided.
+ */
+export const isAwayToBeDecided = match =>
+  match.away.score !== null && match.away.name === null
+
+/**
+ * Returns whether the input for home side should be disabled.
+ */
+export const isHomeDisabled = match =>
+  isAwayToBeDecided(match) ||
+  isAwayPlaceholder(match) ||
+  match.home.name === null
+
+/**
+ * Returns whether the input for away side should be disabled.
+ */
+export const isAwayDisabled = match =>
+  isHomeToBeDecided(match) ||
+  isHomePlaceholder(match) ||
+  match.away.name === null
+
+/**
  * Returns a string representing the winner of the passed match.
  *
  * @param {Object} match a single match
  */
 export const getWinnerOfMatch = match => {
-  const homeScore = parseInt(match.home.score)
-  const awayScore = parseInt(match.away.score)
-
-  if (homeScore > awayScore) return "home"
-  if (awayScore > homeScore) return "away"
+  if (isHomeToBeDecided(match) || isAwayToBeDecided(match)) return null
+  if (isHomePlaceholder(match) && isAwayPlaceholder(match)) return null
+  if (isHomePlaceholder(match)) return "away"
+  if (isAwayPlaceholder(match)) return "home"
+  if (Number(match.home.score) > Number(match.away.score)) return "home"
+  if (Number(match.home.score) < Number(match.away.score)) return "away"
 
   return null
 }
@@ -154,6 +201,8 @@ export const getFirstMatchOfSide = (results, match, side) => {
  * @param {string} side side to find the name of
  */
 export const getNameOfSide = (participants, results, seed, match, side) => {
+  if (match[side].score === null) return null
+
   const [firstMatch, firstMatchSide] = getFirstMatchOfSide(results, match, side)
 
   if (!firstMatch) return null
@@ -198,3 +247,16 @@ export const extendMatchSidesWithNames = R.curry(
  */
 export const extendMatchWithWinnerSide = match =>
   R.assoc("winner", getWinnerOfMatch(match), match)
+
+/**
+ * Returns a function which adds additional computed properties to the passed match.
+ *
+ * @param {Array} participants list of all participants
+ * @param {Array} results results of all matches
+ * @param {Array} seed an array of matches in the first tournament round
+ */
+export const createExtendMatch = (participants, results, seed) =>
+  R.compose(
+    extendMatchWithWinnerSide,
+    extendMatchSidesWithNames(participants, results, seed)
+  )
