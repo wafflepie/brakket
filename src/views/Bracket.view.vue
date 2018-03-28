@@ -1,7 +1,7 @@
 <template>
 <div>
-  <h1>Bracket</h1>
-  <h2 v-if="winner">Winner: {{ winner.name }}, score: {{ winner.score }}.</h2>
+  <h1 v-if="!winner">Enter the scores</h1>
+  <h1 v-if="winner">{{ winner.name }} is the winner of this bracket!</h1>
   <div class="bracket">
     <div v-for="(round, roundIndex) of results" :key="roundIndex" class="round">
       <div v-for="(match, matchIndex) of round" :key="matchIndex" class="match">
@@ -12,9 +12,6 @@
           :match-index="matchIndex"
           @score-change="handleScoreChange"
           @input-blur="handleInputBlur" />
-        <div class="versus">
-          vs.
-        </div>
         <side
           side="away"
           :match="match"
@@ -73,18 +70,23 @@ export default class Bracket extends Vue {
 <style scoped>
 .bracket {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  position: relative;
 }
 
 .round {
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
+  margin: 0 2rem;
 }
 
 .match {
+  align-items: center;
+  border: 1px solid #eee;
   display: flex;
   flex-direction: column;
-  align-items: center;
   margin-bottom: 2rem;
+  min-width: 12rem;
 }
 </style>

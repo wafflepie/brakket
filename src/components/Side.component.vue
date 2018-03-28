@@ -6,7 +6,7 @@
   <div class="side-name to-be-decided" v-else-if="isSideToBeDecided(match, side)">
     TBD
   </div>
-  <div class="side-name exists" v-else>
+  <div class="side-name" v-else>
     {{ match[side].name }}
   </div>
   <input
@@ -35,16 +35,36 @@ export default class Side extends Vue {
 </script>
 
 <style scoped>
-.winner {
-  color: red;
-}
-
 .side {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  width: 100%;
 }
 
-.side.away .side-name {
-  order: 1;
+.winner {
+  background-color: lightgreen;
+  font-weight: bold;
+}
+
+.side-name {
+  flex-grow: 1;
+  padding: 0.3em;
+  text-align: left;
+}
+
+.placeholder {
+  color: lightgray;
+}
+
+input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  text-align: right;
+  width: 4em;
+}
+
+input:not(:disabled) {
+  border-bottom: 1px solid black;
 }
 </style>

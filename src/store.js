@@ -51,7 +51,7 @@ export default new Vuex.Store({
     [mutationTypes.CHANGE_SIDE_SCORE](state, payload) {
       const { roundIndex, matchIndex, side, score } = payload
 
-      state.results[roundIndex][matchIndex][side].score = score
+      state.results[roundIndex][matchIndex][side].score = parseInt(score) || 0
     },
     [mutationTypes.INITIALIZE_BRACKET_STATE](state, payload) {
       Object.entries(payload).forEach(([key, value]) => {
