@@ -1,7 +1,7 @@
 <template>
 <div>
-  <h1 v-if="!winner">Enter the scores</h1>
-  <h1 v-if="winner">{{ winner.name }} is the winner of this bracket!</h1>
+  <h2 v-if="!winner">Enter the scores</h2>
+  <h2 v-if="winner">{{ winner.name }} is the winner of this bracket!</h2>
   <div class="bracket">
     <div v-for="(round, roundIndex) of results" :key="roundIndex" class="round">
       <div v-for="(match, matchIndex) of round" :key="matchIndex" class="match">

@@ -1,13 +1,17 @@
 <template>
-<div>
-  <h1>Enter the names!</h1>
-  <div v-for="(input, index) of inputs" :key="index">
-    <input v-model="input.value" />
-    <button @click="removeInput(input)">X</button>
-  </div>
-  <button @click="addInput()">Add another field</button>
-  <button @click="submit()" type="submit">Submit</button>
-</div>
+<main>
+  <section class="title-section">
+    <h1>Enter the names of participants</h1>
+  </section>
+  <section class="form-section">
+    <div v-for="(input, index) of inputs" :key="index">
+      <input v-model="input.value" />
+      <button @click="removeInput(input)">X</button>
+    </div>
+    <button @click="addInput()">Add another field</button>
+    <button @click="submit()" type="submit">Submit</button>
+  </section>
+</main>
 </template>
 
 <script>
@@ -44,3 +48,26 @@ export default class ParticipantForm extends Vue {
   }
 }
 </script>
+
+<style scoped>
+main {
+  box-shadow: 0px 0px 20px -10px gray;
+  display: flex;
+  margin: 3rem auto 0 auto;
+  max-width: 992px;
+}
+
+section {
+  flex-basis: 0;
+  flex-grow: 1;
+  padding: 3rem;
+}
+
+.title-section {
+  background: lightgreen;
+}
+
+.form-section {
+  background: white;
+}
+</style>

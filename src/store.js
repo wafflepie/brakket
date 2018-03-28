@@ -21,6 +21,7 @@ export const mutationTypes = {
 export const actionTypes = {
   GENERATE_NEW_BRACKET: "GENERATE_NEW_BRACKET",
   LOAD_BRACKET_BY_KEY: "LOAD_BRACKET_BY_URL",
+  SHUFFLE: "SHUFFLE",
   STORE_CURRENT_STATE: "STORE_CURRENT_STATE",
   VALIDATE_RESULTS: "VALIDATE_RESULTS",
 }
@@ -77,6 +78,16 @@ export default new Vuex.Store({
         const state = JSON.parse(value)
         commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
       })
+    },
+    [actionTypes.SHUFFLE]({ commit, dispatch, state }) {
+      const seed = generateSeedFromIdentifiers(Object.keys(state.participants))
+
+      commit(mutationTypes.INITIALIZE_BRACKET_STATE, {
+        ...state,
+        seed,
+      })
+
+      dispatch(actionTypes.STORE_CURRENT_STATE)
     },
     [actionTypes.STORE_CURRENT_STATE]({ state }) {
       localforage

@@ -8,7 +8,7 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    { path: "/", component: ParticipantForm },
-    { path: "/bracket/:id", component: Bracket },
+    { name: "form", path: "/", component: ParticipantForm },
+    { name: "bracket", path: "/bracket/:id", component: Bracket },
   ],
 })

@@ -59,12 +59,19 @@ export default class Side extends Vue {
 input {
   background-color: transparent;
   border: none;
+  font-size: 1em;
+  left: 1px;
   outline: none;
+  position: relative;
   text-align: right;
   width: 4em;
 }
 
 input:not(:disabled) {
-  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.winner input {
+  font-weight: bold;
 }
 </style>
