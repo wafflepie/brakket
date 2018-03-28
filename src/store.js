@@ -6,21 +6,23 @@ import shortid from "shortid"
 import {
   generateSeedFromIdentifiers,
   generateResultStructureFromSeed,
+  validateResults,
 } from "./utils"
 
 import router from "./router"
 
 Vue.use(Vuex)
 
+export const mutationTypes = {
+  CHANGE_SIDE_SCORE: "CHANGE_SIDE_SCORE",
+  INITIALIZE_BRACKET_STATE: "INITIALIZE_BRACKET_STATE",
+}
+
 export const actionTypes = {
   GENERATE_NEW_BRACKET: "GENERATE_NEW_BRACKET",
   LOAD_BRACKET_BY_KEY: "LOAD_BRACKET_BY_URL",
   STORE_CURRENT_STATE: "STORE_CURRENT_STATE",
-}
-
-export const mutationTypes = {
-  CHANGE_SIDE_SCORE: "CHANGE_SIDE_SCORE",
-  INITIALIZE_BRACKET_STATE: "INITIALIZE_BRACKET_STATE",
+  VALIDATE_RESULTS: "VALIDATE_RESULTS",
 }
 
 // type Participant = { name: string }
@@ -80,6 +82,12 @@ export default new Vuex.Store({
       localforage
         .setItem(state.bracketId, JSON.stringify(state))
         .then(() => router.push(`/bracket/${state.bracketId}`))
+    },
+    [actionTypes.VALIDATE_RESULTS]({ commit, state }) {
+      commit(mutationTypes.INITIALIZE_BRACKET_STATE, {
+        ...state,
+        results: validateResults(state.participants, state.results, state.seed),
+      })
     },
   },
 })

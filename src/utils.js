@@ -105,21 +105,35 @@ export const generateResultStructureFromSeed = seed => {
   return results
 }
 
+/**
+ * Returns the other side of the match.
+ *
+ * @param {string} side string representation of a side
+ */
 export const getOtherSide = side => (side === "home" ? "away" : "home")
 
 /**
  * Returns whether specified side of the match is just a placeholder.
+ *
+ * @param {Object} match a single match
+ * @param {string} side string representation of a side
  */
 export const isSidePlaceholder = (match, side) => match[side].score === null
 
 /**
  * Returns whether specified side exists but just has not been decided.
+ *
+ * @param {Object} match a single match
+ * @param {string} side string representation of a side
  */
 export const isSideToBeDecided = (match, side) =>
   match[side].score !== null && match[side].name === null
 
 /**
  * Returns whether the input for specified side should be disabled.
+ *
+ * @param {Object} match a single match
+ * @param {string} side string representation of a side
  */
 export const isSideDisabled = (match, side) =>
   isSideToBeDecided(match, getOtherSide(side)) ||
@@ -217,7 +231,7 @@ export const getNameOfSide = (participants, results, seed, match, side) => {
  */
 export const extendMatchSidesWithNames = R.curry(
   (participants, results, seed, match) =>
-    R.o(
+    R.compose(
       ...SIDES.map(side =>
         R.assocPath(
           [side, "name"],
@@ -247,3 +261,40 @@ export const createExtendMatch = (participants, results, seed) =>
     extendMatchWithWinnerSide,
     extendMatchSidesWithNames(participants, results, seed)
   )
+
+/**
+ * Resets the scores of a match if they have a value but shouldn't.
+ *
+ * @param {Array} participants list of all participants
+ * @param {Array} results results of all matches
+ * @param {Array} seed an array of matches in the first tournament round
+ * @param {Object} match a single match
+ */
+export const validateMatch = R.curry((participants, results, seed, match) =>
+  R.compose(
+    ...SIDES.map(side => {
+      const sideName = getNameOfSide(participants, results, seed, match, side)
+
+      return R.when(
+        R.both(
+          R.complement(R.pathEq([side, "score"], null)),
+          R.always(sideName === null)
+        ),
+        R.compose(
+          R.assocPath([side, "score"], 0),
+          R.assocPath([getOtherSide(side), "score"], 0)
+        )
+      )
+    })
+  )(match)
+)
+
+/**
+ * Resets the scores of all matches if they have a value but shouldn't.
+ *
+ * @param {Array} participants list of all participants
+ * @param {Array} results results of all matches
+ * @param {Array} seed an array of matches in the first tournament round
+ */
+export const validateResults = (participants, results, seed) =>
+  R.map(R.map(validateMatch(participants, results, seed)), results)

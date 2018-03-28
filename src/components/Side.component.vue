@@ -14,7 +14,7 @@
     :disabled="isSideDisabled(match, side)"
     :value="isSideDisabled(match, side) ? '' : match[side].score"
     @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
-    @blur="$emit('input-blur')" />
+    @blur="$emit('score-blur')" />
 </div>
 </template>
 
