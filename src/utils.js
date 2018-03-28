@@ -1,23 +1,7 @@
 import * as R from "ramda"
+import shuffle from "lodash.shuffle"
 
 const SIDES = ["home", "away"]
-
-/**
- * Returns a new, shuffled array.
- *
- * @param {Array} array array to shuffle
- */
-export const shuffle = array => {
-  let counter = array.length
-
-  while (counter > 0) {
-    const index = Math.floor(Math.random() * counter)
-    counter--
-    ;[array[counter], array[index]] = [array[index], array[counter]]
-  }
-
-  return array
-}
 
 /**
  * Returns the number of rounds by passed seed.
@@ -30,6 +14,15 @@ export const getRoundCountBySeed = R.compose(
   Math.log2,
   R.prop("length")
 )
+
+/**
+ * Returns the number of participants by seed.
+ *
+ * @param {Array} seed an array of matches in the first tournament round
+ */
+export const getSideCountBySeed = seed =>
+  seed.length &&
+  seed.length * 2 - Number(seed[seed.length - 1].away === undefined)
 
 /**
  * Returns the number of matches in a specified round.
@@ -53,17 +46,6 @@ export const generateSeedFromIdentifiers = R.compose(
 )
 
 /**
- * Generates participant objects from input value wrappers. Their IDs are the corresponding
- * array indices.
- *
- * @param {Array} inputs objects with value props
- */
-export const createParticipantsFromValues = R.compose(
-  R.map(name => ({ name })),
-  R.filter(R.identity)
-)
-
-/**
  * Generates the initial result structure based on the seed.
  *
  * The result structure is a 2D array, where the first index represents the round and the second
@@ -77,10 +59,7 @@ export const createParticipantsFromValues = R.compose(
 export const generateResultStructureFromSeed = seed => {
   const results = []
   const roundCount = getRoundCountBySeed(seed)
-
-  const sideCount =
-    seed.length &&
-    seed.length * 2 - (seed[seed.length - 1].away === undefined ? 1 : 0)
+  const sideCount = getSideCountBySeed(seed)
 
   for (let roundIndex = 0; roundIndex < roundCount; roundIndex++) {
     results[roundIndex] = []
@@ -110,7 +89,7 @@ export const generateResultStructureFromSeed = seed => {
  *
  * @param {string} side string representation of a side
  */
-export const getOtherSide = side => (side === "home" ? "away" : "home")
+export const getOtherSide = side => R.last(R.without([side], SIDES))
 
 /**
  * Returns whether specified side of the match is just a placeholder.
@@ -127,7 +106,7 @@ export const isSidePlaceholder = (match, side) => match[side].score === null
  * @param {string} side string representation of a side
  */
 export const isSideToBeDecided = (match, side) =>
-  match[side].score !== null && match[side].name === null
+  !isSidePlaceholder(match, side) && match[side].name === null
 
 /**
  * Returns whether the input for specified side should be disabled.
@@ -136,9 +115,10 @@ export const isSideToBeDecided = (match, side) =>
  * @param {string} side string representation of a side
  */
 export const isSideDisabled = (match, side) =>
+  isSideToBeDecided(match, side) ||
   isSideToBeDecided(match, getOtherSide(side)) ||
-  isSidePlaceholder(match, getOtherSide(side)) ||
-  match[side].name === null
+  isSidePlaceholder(match, side) ||
+  isSidePlaceholder(match, getOtherSide(side))
 
 /**
  * Returns a string representing the winner of the passed match.
@@ -169,11 +149,13 @@ export const getWinnerOfMatch = match => {
  * @param {string} side side to find the previous match for
  */
 export const getPreviousMatchBySide = (results, match, side) =>
-  match.roundIndex
-    ? results[match.roundIndex - 1][
-        match.matchIndex * 2 + (side === "away" ? 1 : 0)
-      ]
-    : null
+  R.defaultTo(
+    null,
+    R.path(
+      [match.roundIndex - 1, match.matchIndex * 2 + Number(side === "away")],
+      results
+    )
+  )
 
 /**
  * Returns a tuple.
@@ -204,11 +186,11 @@ export const getFirstMatchOfSide = (results, match, side) => {
  * @param {string} side side to find the name of
  */
 export const getNameOfSide = (participants, results, seed, match, side) => {
-  if (match[side].score === null) return null
+  if (isSidePlaceholder(match, side)) return null
 
   const [firstMatch, firstMatchSide] = getFirstMatchOfSide(results, match, side)
 
-  if (!firstMatch) return null
+  if (!firstMatch || !firstMatchSide) return null
 
   const firstMatchIndex = R.findIndex(
     R.whereEq({ matchIndex: firstMatch.matchIndex }),
@@ -218,7 +200,7 @@ export const getNameOfSide = (participants, results, seed, match, side) => {
   const participantId = R.path([firstMatchIndex, firstMatchSide], seed)
   const participant = R.prop(participantId, participants)
 
-  return R.prop("name", participant) || null
+  return participant || null
 }
 
 /**
@@ -274,16 +256,12 @@ export const validateMatch = R.curry((participants, results, seed, match) =>
   R.compose(
     ...SIDES.map(side => {
       const sideName = getNameOfSide(participants, results, seed, match, side)
+      const xforms = { score: R.always(0) }
 
       return R.when(
-        R.both(
-          R.complement(R.pathEq([side, "score"], null)),
-          R.always(sideName === null)
-        ),
-        R.compose(
-          R.assocPath([side, "score"], 0),
-          R.assocPath([getOtherSide(side), "score"], 0)
-        )
+        // if it is an existing side but no name was found for it
+        match => !isSidePlaceholder(match, side) && sideName === null,
+        R.evolve({ [side]: xforms, [getOtherSide(side)]: xforms })
       )
     })
   )(match)

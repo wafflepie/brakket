@@ -19,7 +19,6 @@ import Vue from "vue"
 import Component from "vue-class-component"
 
 import { actionTypes } from "../store"
-import { createParticipantsFromValues } from "../utils"
 
 @Component({
   created() {
@@ -40,9 +39,9 @@ export default class ParticipantForm extends Vue {
   }
 
   submit() {
-    const participants = createParticipantsFromValues(
-      this.inputs.map(input => input.value)
-    )
+    const participants = this.inputs
+      .map(input => input.value)
+      .filter(value => value)
 
     this.$store.dispatch(actionTypes.GENERATE_NEW_BRACKET, participants)
   }

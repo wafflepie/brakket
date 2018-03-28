@@ -26,15 +26,22 @@ export const actionTypes = {
   VALIDATE_RESULTS: "VALIDATE_RESULTS",
 }
 
-// type Participant = { name: string }
-// type Participants = Array<Participant>
+// type Participants = Array<string>
 // type Seed = Array<{ home: number, away: number }>
 // type Side = { score: ?number }
-// type Match = { home: Side, away: Side, roundIndex: number, matchIndex: number }
+
+// type Match = {
+//   home: Side,
+//   away: Side,
+//   roundIndex: number,
+//   matchIndex: number
+// }
+
 // type Round = Array<Match>
 // type Results = Array<Round>
 
-// type ExtendedSide = Participant & Side
+// type ExtendedSide = Side & { name: ?string }
+
 // type ExtendedMatch = {
 //   home: ExtendedSide,
 //   away: ExtendedSide,
