@@ -1,9 +1,9 @@
 <template>
 <div :class="[{ winner: match.winner === side }, 'side', side]">
-  <div class="side-name placeholder" v-if="isPlaceholder(match, side)">
+  <div class="side-name placeholder" v-if="isSidePlaceholder(match, side)">
     Placeholder
   </div>
-  <div class="side-name to-be-decided" v-else-if="isToBeDecided(match, side)">
+  <div class="side-name to-be-decided" v-else-if="isSideToBeDecided(match, side)">
     TBD
   </div>
   <div class="side-name exists" v-else>
@@ -11,8 +11,8 @@
   </div>
   <input
     type="number"
-    :disabled="isDisabled(match, side)"
-    :value="isDisabled(match, side) ? '' : match[side].score"
+    :disabled="isSideDisabled(match, side)"
+    :value="isSideDisabled(match, side) ? '' : match[side].score"
     @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
     @blur="$emit('input-blur')" />
 </div>
@@ -28,23 +28,9 @@ import * as utils from "../utils"
   props: ["match", "side", "roundIndex", "matchIndex"],
 })
 export default class Side extends Vue {
-  isDisabled(match, side) {
-    return side === "home"
-      ? utils.isHomeDisabled(match)
-      : utils.isAwayDisabled(match)
-  }
-
-  isPlaceholder(match, side) {
-    return side === "home"
-      ? utils.isHomePlaceholder(match)
-      : utils.isAwayPlaceholder(match)
-  }
-
-  isToBeDecided(match, side) {
-    return side === "home"
-      ? utils.isHomeToBeDecided(match)
-      : utils.isAwayToBeDecided(match)
-  }
+  isSideDisabled = utils.isSideDisabled
+  isSidePlaceholder = utils.isSidePlaceholder
+  isSideToBeDecided = utils.isSideToBeDecided
 }
 </script>
 

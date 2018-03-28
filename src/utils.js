@@ -1,6 +1,7 @@
 import * as R from "ramda"
 
 const mapIndexed = R.addIndex(R.map)
+const SIDES = ["home", "away"]
 
 /**
  * Returns a new, shuffled array.
@@ -69,11 +70,15 @@ export const createParticipantsFromValues = R.compose(
  * The result structure is a 2D array, where the first index represents the round and the second
  * index represents a single match. Every match has two sides: home and away.
  *
+ * Every side has a default score of 0. If the score is null, it means that it is a placeholder
+ * side which does not participate in the tournament.
+ *
  * @param {Array} seed an array of matches in the first tournament round
  */
 export const generateResultStructureFromSeed = seed => {
   const results = []
   const roundCount = getRoundCountBySeed(seed)
+
   const sideCount =
     seed.length &&
     seed.length * 2 - (seed[seed.length - 1].away === undefined ? 1 : 0)
@@ -85,6 +90,7 @@ export const generateResultStructureFromSeed = seed => {
     for (let matchIndex = 0; matchIndex < matchCount; matchIndex++) {
       const doesHomeExist =
         Math.ceil(sideCount / Math.pow(2, roundIndex + 1)) > matchIndex
+
       const doesAwayExist =
         Math.ceil(sideCount / Math.pow(2, roundIndex + 1) - 0.5) > matchIndex
 
@@ -100,43 +106,26 @@ export const generateResultStructureFromSeed = seed => {
   return results
 }
 
-/**
- * Returns whether home side of the match is just a placeholder.
- */
-export const isHomePlaceholder = match => match.home.score === null
+export const getOtherSide = side => (side === "home" ? "away" : "home")
 
 /**
- * Returns whether away side of the match is just a placeholder.
+ * Returns whether specified side of the match is just a placeholder.
  */
-export const isAwayPlaceholder = match => match.away.score === null
+export const isSidePlaceholder = (match, side) => match[side].score === null
 
 /**
- * Returns whether home side exists but just has not been decided.
+ * Returns whether specified side exists but just has not been decided.
  */
-export const isHomeToBeDecided = match =>
-  match.home.score !== null && match.home.name === null
+export const isSideToBeDecided = (match, side) =>
+  match[side].score !== null && match[side].name === null
 
 /**
- * Returns whether away side exists but just has not been decided.
+ * Returns whether the input for specified side should be disabled.
  */
-export const isAwayToBeDecided = match =>
-  match.away.score !== null && match.away.name === null
-
-/**
- * Returns whether the input for home side should be disabled.
- */
-export const isHomeDisabled = match =>
-  isAwayToBeDecided(match) ||
-  isAwayPlaceholder(match) ||
-  match.home.name === null
-
-/**
- * Returns whether the input for away side should be disabled.
- */
-export const isAwayDisabled = match =>
-  isHomeToBeDecided(match) ||
-  isHomePlaceholder(match) ||
-  match.away.name === null
+export const isSideDisabled = (match, side) =>
+  isSideToBeDecided(match, getOtherSide(side)) ||
+  isSidePlaceholder(match, getOtherSide(side)) ||
+  match[side].name === null
 
 /**
  * Returns a string representing the winner of the passed match.
@@ -144,12 +133,17 @@ export const isAwayDisabled = match =>
  * @param {Object} match a single match
  */
 export const getWinnerOfMatch = match => {
-  if (isHomeToBeDecided(match) || isAwayToBeDecided(match)) return null
-  if (isHomePlaceholder(match) && isAwayPlaceholder(match)) return null
-  if (isHomePlaceholder(match)) return "away"
-  if (isAwayPlaceholder(match)) return "home"
-  if (Number(match.home.score) > Number(match.away.score)) return "home"
-  if (Number(match.home.score) < Number(match.away.score)) return "away"
+  for (const side of SIDES) if (isSideToBeDecided(match, side)) return null
+
+  if (isSidePlaceholder(match, "home") && isSidePlaceholder(match, "away"))
+    return null
+
+  for (const side of SIDES)
+    if (isSidePlaceholder(match, side)) return getOtherSide(side)
+
+  for (const side of SIDES)
+    if (Number(match[side].score) > Number(match[getOtherSide(side)].score))
+      return side
 
   return null
 }
@@ -228,13 +222,11 @@ export const getNameOfSide = (participants, results, seed, match, side) => {
 export const extendMatchSidesWithNames = R.curry(
   (participants, results, seed, match) =>
     R.o(
-      R.assocPath(
-        ["home", "name"],
-        getNameOfSide(participants, results, seed, match, "home")
-      ),
-      R.assocPath(
-        ["away", "name"],
-        getNameOfSide(participants, results, seed, match, "away")
+      ...SIDES.map(side =>
+        R.assocPath(
+          [side, "name"],
+          getNameOfSide(participants, results, seed, match, side)
+        )
       )
     )(match)
 )
