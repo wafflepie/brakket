@@ -1,6 +1,5 @@
 import * as R from "ramda"
 
-const mapIndexed = R.addIndex(R.map)
 const SIDES = ["home", "away"]
 
 /**
@@ -60,7 +59,7 @@ export const generateSeedFromIdentifiers = R.compose(
  * @param {Array} inputs objects with value props
  */
 export const createParticipantsFromValues = R.compose(
-  mapIndexed((name, id) => ({ name, id })),
+  R.map(name => ({ name })),
   R.filter(R.identity)
 )
 
@@ -203,7 +202,7 @@ export const getNameOfSide = (participants, results, seed, match, side) => {
   )
 
   const participantId = R.path([firstMatchIndex, firstMatchSide], seed)
-  const participant = R.find(R.propEq("id", participantId), participants)
+  const participant = R.prop(participantId, participants)
 
   return R.prop("name", participant) || null
 }

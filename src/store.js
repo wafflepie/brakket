@@ -23,13 +23,22 @@ export const mutationTypes = {
   INITIALIZE_BRACKET_STATE: "INITIALIZE_BRACKET_STATE",
 }
 
-// type Participant = { name: string, id: number }
+// type Participant = { name: string }
 // type Participants = Array<Participant>
 // type Seed = Array<{ home: number, away: number }>
 // type Side = { score: ?number }
 // type Match = { home: Side, away: Side, roundIndex: number, matchIndex: number }
 // type Round = Array<Match>
 // type Results = Array<Round>
+
+// type ExtendedSide = Participant & Side
+// type ExtendedMatch = {
+//   home: ExtendedSide,
+//   away: ExtendedSide,
+//   roundIndex: number,
+//   matchIndex: number,
+//   winner: 'home' | 'away'
+// }
 
 export default new Vuex.Store({
   state: {
@@ -52,10 +61,7 @@ export default new Vuex.Store({
   },
   actions: {
     [actionTypes.GENERATE_NEW_BRACKET]({ commit, dispatch }, participants) {
-      const seed = generateSeedFromIdentifiers(
-        participants.map(participant => participant.id)
-      )
-
+      const seed = generateSeedFromIdentifiers(Object.keys(participants))
       const results = generateResultStructureFromSeed(seed)
 
       const bracketId = shortid.generate()
