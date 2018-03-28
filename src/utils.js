@@ -178,10 +178,7 @@ export const getFirstMatchOfSide = (results, match, side) => {
   const previousMatchWinner = getWinnerOfMatch(previousMatch)
   if (!previousMatchWinner) return [null, null]
 
-  return [
-    getFirstMatchOfSide(results, previousMatch, previousMatchWinner)[0],
-    previousMatchWinner,
-  ]
+  return getFirstMatchOfSide(results, previousMatch, previousMatchWinner)
 }
 
 /**
