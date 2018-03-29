@@ -84,6 +84,7 @@ export default class Bracket extends Vue {
 
 .match {
   align-items: center;
+  background-color: white;
   border: 1px solid #eee;
   display: flex;
   flex-direction: column;
