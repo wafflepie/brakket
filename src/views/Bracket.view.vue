@@ -1,5 +1,6 @@
 <template>
 <div>
+  <h1>{{ bracketName || 'Unnamed bracket' }}</h1>
   <h2 v-if="!winner">Enter the scores</h2>
   <h2 v-if="winner">{{ winner.name }} is the winner of this bracket!</h2>
   <div class="bracket">
@@ -50,6 +51,10 @@ export default class Bracket extends Vue {
   get winner() {
     const finalMatch = R.last(R.defaultTo([], R.last(this.results)))
     return R.path([R.prop("winner", finalMatch)], finalMatch)
+  }
+
+  get bracketName() {
+    return this.$store.state.bracket.name
   }
 
   handleScoreChange(roundIndex, matchIndex, side, score) {
