@@ -10,36 +10,18 @@
 </template>
 
 <script>
-import { Component, Vue, Watch } from "vue-property-decorator"
+import { Component, Vue } from "vue-property-decorator"
 
 import BracketNameForm from "./BracketNameForm.view.vue"
-import { mutationTypes, initialState } from "../store"
 
-@Component({
-  components: { BracketNameForm },
-  created() {
-    this.resetName()
-  },
-})
+@Component({ components: { BracketNameForm } })
 export default class Home extends Vue {
   get isParticipantsForm() {
-    return (
-      this.$route.name === "named-participants" ||
-      this.$route.name === "numbered-participants"
-    )
+    return /participants-form/.test(this.$route.name)
   }
 
   get isBracketNameSet() {
     return !!this.$store.state.bracket.name
-  }
-
-  @Watch("$route")
-  resetName() {
-    !this.isParticipantsForm &&
-      this.$store.commit(
-        mutationTypes.SET_BRACKET_NAME,
-        initialState.bracket.name
-      )
   }
 }
 </script>

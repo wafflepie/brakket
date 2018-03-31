@@ -41,7 +41,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator"
 import * as R from "ramda"
 
-import { actionTypes, mutationTypes } from "../store"
+import { actionTypes, mutationTypes, initialState } from "../store"
 import { createExtendMatch } from "../utils"
 import Side from "../components/Side.component.vue"
 
@@ -49,6 +49,9 @@ import Side from "../components/Side.component.vue"
   components: { Side },
   created() {
     this.loadBracket()
+  },
+  destroyed() {
+    this.resetBracket()
   },
 })
 export default class Bracket extends Vue {
@@ -74,6 +77,13 @@ export default class Bracket extends Vue {
   @Watch("$route")
   loadBracket() {
     this.$store.dispatch(actionTypes.LOAD_BRACKET_BY_KEY, this.$route.params.id)
+  }
+
+  resetBracket() {
+    this.$store.commit(
+      mutationTypes.INITIALIZE_BRACKET_STATE,
+      initialState.bracket
+    )
   }
 
   handleScoreChange(roundIndex, matchIndex, side, score) {

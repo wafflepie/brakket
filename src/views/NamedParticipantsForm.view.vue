@@ -21,9 +21,10 @@
 import { Component, Vue } from "vue-property-decorator"
 import * as R from "ramda"
 
+import ResetNameMixin from "../mixins/ResetName.mixin"
 import { actionTypes } from "../store"
 
-@Component
+@Component({ mixins: [ResetNameMixin] })
 export default class NamedParticipantsForm extends Vue {
   inputs = R.times(this.createEmptyInput, 4)
 
