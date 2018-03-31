@@ -3,18 +3,17 @@
     <div 
       v-for="(input, index) of inputs" 
       :key="index">
-      <input v-model="input.value" >
+      <input v-model="input.value">
       <button 
         type="button"
         @click="removeInput(input)">X</button>
     </div>
     <button 
       type="button"
-      @click="addInput()" >Add another field</button>
+      @click="addInput()">Add another field</button>
     <button 
       type="submit"
-      @click.prevent="submit()" 
-    >Submit</button>
+      @click.prevent="submit()">Submit</button>
   </form>
 </template>
 

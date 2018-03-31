@@ -1,7 +1,7 @@
 <template>
   <form>
     Set bracket name
-    <input v-model="value" >
+    <input v-model="value">
     <button 
       type="submit"
       @click.prevent="submit()">Submit</button>
