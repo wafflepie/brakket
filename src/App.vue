@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>
-      <router-link :to="{ name: 'home-navigation' }">
+      <router-link :to="{ name: 'home' }">
         Brakket
       </router-link>
     </h1>

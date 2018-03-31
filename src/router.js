@@ -19,30 +19,30 @@ export default new Router({
       component: Home,
       children: [
         {
-          name: "home-navigation",
+          name: "home",
           path: "/",
           component: HomeNavigation,
         },
         {
-          name: "named-participants",
-          path: "/named-participants",
+          name: "named-participants-form",
+          path: "/participants-form/named",
           component: NamedParticipantsForm,
         },
         {
-          name: "numbered-participants",
-          path: "/numbered-participants",
+          name: "numbered-participants-form",
+          path: "/participants-form/numbered",
           component: NumberedParticipantsForm,
         },
         {
-          name: "stored-brackets",
-          path: "/stored-brackets",
+          name: "local-brackets",
+          path: "/bracket/local",
           component: StoredBracketList,
         },
       ],
     },
     {
-      name: "bracket",
-      path: "/bracket/:id",
+      name: "bracket-detail",
+      path: "/bracket/local/:id",
       component: Bracket,
     },
     {

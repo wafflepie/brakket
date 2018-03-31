@@ -6,7 +6,7 @@
         v-if="index < limit"
         :key="bracket.id">
         <!-- The indentation is shitty because HTML is shitty. -->
-        <router-link :to="{ name: 'bracket', params: { id: bracket.id } }">
+        <router-link :to="{ name: 'bracket-detail', params: { id: bracket.id } }">
         {{ bracket.name || 'Unnamed bracket' }}</router-link>,
         last modified {{ distanceInWordsToNow(bracket.lastModified) }} ago
         <button @click="removeBracket(bracket.id)">X</button>
