@@ -8,20 +8,26 @@
       <h3 v-if="!winner">Enter the scores</h3>
       <h3 v-if="winner">{{ winner.name }} is the winner of this bracket!</h3>
       <div class="bracket">
-        <div v-for="(round, roundIndex) of results" :key="roundIndex" class="round">
-          <div v-for="(match, matchIndex) of round" :key="matchIndex" class="match">
+        <div 
+          v-for="(round, roundIndex) of results" 
+          :key="roundIndex" 
+          class="round">
+          <div 
+            v-for="(match, matchIndex) of round" 
+            :key="matchIndex" 
+            class="match">
             <Side
-              side="home"
               :match="match"
               :round-index="roundIndex"
               :match-index="matchIndex"
+              side="home"
               @score-change="handleScoreChange"
               @score-blur="handleScoreBlur" />
             <Side
-              side="away"
               :match="match"
               :round-index="roundIndex"
               :match-index="matchIndex"
+              side="away"
               @score-change="handleScoreChange"
               @score-blur="handleScoreBlur" />
           </div>
@@ -32,8 +38,7 @@
 </template>
 
 <script>
-import Vue from "vue"
-import { Component, Watch } from "vue-property-decorator"
+import { Component, Vue, Watch } from "vue-property-decorator"
 import * as R from "ramda"
 
 import { actionTypes, mutationTypes } from "../store"

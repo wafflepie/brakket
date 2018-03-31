@@ -1,21 +1,26 @@
 <template>
-    <div>
+  <div>
     <ul>
-      <li v-for="(bracket, index) of brackets" :key="bracket.id" v-if="index < limit">
+      <li 
+        v-for="(bracket, index) of brackets" 
+        v-if="index < limit"
+        :key="bracket.id">
         <!-- The indentation is shitty because HTML is shitty. -->
         <router-link :to="{ name: 'bracket', params: { id: bracket.id } }">
-          {{ bracket.name || 'Unnamed bracket' }}</router-link>,
-          last modified {{ distanceInWordsToNow(bracket.lastModified)}} ago
+        {{ bracket.name || 'Unnamed bracket' }}</router-link>,
+        last modified {{ distanceInWordsToNow(bracket.lastModified) }} ago
         <button @click="removeBracket(bracket.id)">X</button>
       </li>
     </ul>
-    <button @click="showMore()" type="button" v-if="brackets.length > limit">Show more</button>
+    <button 
+      v-if="brackets.length > limit"
+      type="button" 
+      @click="showMore()">Show more</button>
   </div>
 </template>
 
 <script>
-import Vue from "vue"
-import { Component } from "vue-property-decorator"
+import { Component, Vue } from "vue-property-decorator"
 import localforage from "localforage"
 import * as R from "ramda"
 import { distanceInWordsToNow } from "date-fns"

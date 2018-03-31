@@ -1,40 +1,45 @@
 <template>
   <main>
     <transition name="slide">
-      <section v-if="isHomeRoot">
-        <ul>
-          <li>
-            <router-link :to="{ name: 'named-participants' }">
-              I want to enter the names of participants
-            </router-link>
-          </li>
-          <li>
-            <router-link :to="{ name: 'numbered-participants' }">
-              I don't need to enter the names, just keep them numbered
-            </router-link>
-          </li>
-          <li>
-            <router-link :to="{ name: 'stored-brackets' }">
-              Show me the brackets that I've created previously
-            </router-link>
-          </li>
-        </ul>
-      </section>
-      <section v-if="!isHomeRoot" class="home-section">
-        <router-view />
+      <section>
+        <router-view v-if="!isParticipantsForm || isBracketNameSet" />
+        <BracketNameForm v-else />
       </section>
     </transition>
   </main>
 </template>
 
 <script>
-import Vue from "vue"
-import { Component } from "vue-property-decorator"
+import { Component, Vue, Watch } from "vue-property-decorator"
 
-@Component
+import BracketNameForm from "./BracketNameForm.view.vue"
+import { mutationTypes, initialState } from "../store"
+
+@Component({
+  components: { BracketNameForm },
+  created() {
+    this.resetName()
+  },
+})
 export default class Home extends Vue {
-  get isHomeRoot() {
-    return this.$route.name === "home"
+  get isParticipantsForm() {
+    return (
+      this.$route.name === "named-participants" ||
+      this.$route.name === "numbered-participants"
+    )
+  }
+
+  get isBracketNameSet() {
+    return !!this.$store.state.bracket.name
+  }
+
+  @Watch("$route")
+  resetName() {
+    !this.isParticipantsForm &&
+      this.$store.commit(
+        mutationTypes.SET_BRACKET_NAME,
+        initialState.bracket.name
+      )
   }
 }
 </script>

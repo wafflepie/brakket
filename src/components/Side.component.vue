@@ -1,26 +1,31 @@
 <template>
   <div :class="[{ winner: match.winner === side }, 'side', side]">
-    <div class="side-name placeholder" v-if="isSidePlaceholder(match, side)">
+    <div
+      v-if="isSidePlaceholder(match, side)"
+      class="side-name placeholder">
       Placeholder
     </div>
-    <div class="side-name to-be-decided" v-else-if="isSideToBeDecided(match, side)">
+    <div 
+      v-else-if="isSideToBeDecided(match, side)"
+      class="side-name to-be-decided">
       TBD
     </div>
-    <div class="side-name" v-else>
+    <div
+      v-else
+      class="side-name">
       {{ match[side].name }}
     </div>
-    <input
-      type="number"
+    <input      
       :disabled="isSideDisabled(match, side)"
       :value="isSideDisabled(match, side) ? '' : match[side].score"
+      type="number"
       @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
-      @blur="$emit('score-blur')" />
+      @blur="$emit('score-blur')" >
   </div>
 </template>
 
 <script>
-import Vue from "vue"
-import { Component, Prop } from "vue-property-decorator"
+import { Component, Prop, Vue } from "vue-property-decorator"
 
 import * as utils from "../utils"
 

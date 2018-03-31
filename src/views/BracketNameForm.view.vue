@@ -1,14 +1,15 @@
 <template>
   <form>
     Set bracket name
-    <input v-model="value" />
-    <button @click.prevent="submit()" type="submit">Submit</button>
+    <input v-model="value" >
+    <button 
+      type="submit"
+      @click.prevent="submit()">Submit</button>
   </form>
 </template>
 
 <script>
-import Vue from "vue"
-import { Component } from "vue-property-decorator"
+import { Component, Vue } from "vue-property-decorator"
 
 import { mutationTypes } from "../store"
 

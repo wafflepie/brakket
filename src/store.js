@@ -52,7 +52,7 @@ export const actionTypes = {
 //   winner: 'home' | 'away'
 // }
 
-const initialState = {
+export const initialState = {
   bracket: {
     created: null,
     id: null,
@@ -74,7 +74,7 @@ export default new Vuex.Store({
         parseInt(score) || 0
     },
     [mutationTypes.INITIALIZE_BRACKET_STATE](state, payload) {
-      this.state.bracket = payload || R.clone(initialState.bracket)
+      state.bracket = payload || R.clone(initialState.bracket)
     },
     [mutationTypes.SET_BRACKET_NAME](state, payload) {
       state.bracket.name = payload
@@ -118,11 +118,10 @@ export default new Vuex.Store({
       dispatch(actionTypes.STORE_CURRENT_STATE)
     },
     [actionTypes.STORE_CURRENT_STATE]({ state }) {
+      const newState = { ...state.bracket, lastModified: +new Date() }
+
       localforage
-        .setItem(
-          state.bracket.id,
-          JSON.stringify({ ...state.bracket, lastModified: +new Date() })
-        )
+        .setItem(state.bracket.id, JSON.stringify(newState))
         .then(() => router.push(`/bracket/${state.bracket.id}`))
     },
     [actionTypes.VALIDATE_RESULTS]({ commit, dispatch, state }) {

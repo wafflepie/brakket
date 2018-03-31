@@ -1,28 +1,23 @@
 <template>
-  <div>
-    <BracketNameForm v-if="!isBracketNameSet" />
-    <form v-if="isBracketNameSet">
-      <input v-model="value" type="number" />
-      <button @click.prevent="submit()" type="submit">Submit</button>
-    </form>
-  </div>
+  <form>
+    <input 
+      v-model="value" 
+      type="number">
+    <button 
+      type="submit"
+      @click.prevent="submit()">Submit</button>
+  </form>
 </template>
 
 <script>
-import Vue from "vue"
-import { Component } from "vue-property-decorator"
+import { Component, Vue } from "vue-property-decorator"
 import * as R from "ramda"
 
-import BracketNameForm from "./BracketNameForm.view.vue"
 import { actionTypes } from "../store"
 
-@Component({ components: { BracketNameForm } })
+@Component
 export default class NumberedParticipantsForm extends Vue {
   value = ""
-
-  get isBracketNameSet() {
-    return !!this.$store.state.bracket.name
-  }
 
   submit() {
     this.$store.dispatch(
