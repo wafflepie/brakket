@@ -5,14 +5,14 @@
   <div class="bracket">
     <div v-for="(round, roundIndex) of results" :key="roundIndex" class="round">
       <div v-for="(match, matchIndex) of round" :key="matchIndex" class="match">
-        <side
+        <Side
           side="home"
           :match="match"
           :round-index="roundIndex"
           :match-index="matchIndex"
           @score-change="handleScoreChange"
           @score-blur="handleScoreBlur" />
-        <side
+        <Side
           side="away"
           :match="match"
           :round-index="roundIndex"
@@ -27,7 +27,7 @@
 
 <script>
 import Vue from "vue"
-import Component from "vue-class-component"
+import { Component } from "vue-property-decorator"
 import * as R from "ramda"
 
 import { actionTypes, mutationTypes } from "../store"
@@ -35,14 +35,14 @@ import { createExtendMatch } from "../utils"
 import Side from "../components/Side.component.vue"
 
 @Component({
+  components: { Side },
   created() {
     this.$store.dispatch(actionTypes.LOAD_BRACKET_BY_KEY, this.$route.params.id)
   },
-  components: { side: Side },
 })
 export default class Bracket extends Vue {
   get results() {
-    const { participants, results, seed } = this.$store.state
+    const { participants, results, seed } = this.$store.state.bracket
     const extendMatch = createExtendMatch(participants, results, seed)
     return R.map(R.map(extendMatch), results)
   }
@@ -63,7 +63,6 @@ export default class Bracket extends Vue {
 
   handleScoreBlur() {
     this.$store.dispatch(actionTypes.VALIDATE_RESULTS)
-    this.$store.dispatch(actionTypes.STORE_CURRENT_STATE)
   }
 }
 </script>

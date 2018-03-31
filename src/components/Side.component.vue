@@ -1,33 +1,36 @@
 <template>
-<div :class="[{ winner: match.winner === side }, 'side', side]">
-  <div class="side-name placeholder" v-if="isSidePlaceholder(match, side)">
-    Placeholder
+  <div :class="[{ winner: match.winner === side }, 'side', side]">
+    <div class="side-name placeholder" v-if="isSidePlaceholder(match, side)">
+      Placeholder
+    </div>
+    <div class="side-name to-be-decided" v-else-if="isSideToBeDecided(match, side)">
+      TBD
+    </div>
+    <div class="side-name" v-else>
+      {{ match[side].name }}
+    </div>
+    <input
+      type="number"
+      :disabled="isSideDisabled(match, side)"
+      :value="isSideDisabled(match, side) ? '' : match[side].score"
+      @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
+      @blur="$emit('score-blur')" />
   </div>
-  <div class="side-name to-be-decided" v-else-if="isSideToBeDecided(match, side)">
-    TBD
-  </div>
-  <div class="side-name" v-else>
-    {{ match[side].name }}
-  </div>
-  <input
-    type="number"
-    :disabled="isSideDisabled(match, side)"
-    :value="isSideDisabled(match, side) ? '' : match[side].score"
-    @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
-    @blur="$emit('score-blur')" />
-</div>
 </template>
 
 <script>
 import Vue from "vue"
-import Component from "vue-class-component"
+import { Component, Prop } from "vue-property-decorator"
 
 import * as utils from "../utils"
 
-@Component({
-  props: ["match", "side", "roundIndex", "matchIndex"],
-})
+@Component
 export default class Side extends Vue {
+  @Prop(Object) match
+  @Prop(String) side
+  @Prop(Number) roundIndex
+  @Prop(Number) matchIndex
+
   isSideDisabled = utils.isSideDisabled
   isSidePlaceholder = utils.isSidePlaceholder
   isSideToBeDecided = utils.isSideToBeDecided

@@ -16,6 +16,7 @@ Vue.use(Vuex)
 export const mutationTypes = {
   CHANGE_SIDE_SCORE: "CHANGE_SIDE_SCORE",
   INITIALIZE_BRACKET_STATE: "INITIALIZE_BRACKET_STATE",
+  SET_BRACKET_NAME: "SET_BRACKET_NAME",
 }
 
 export const actionTypes = {
@@ -52,21 +53,30 @@ export const actionTypes = {
 
 export default new Vuex.Store({
   state: {
-    bracketId: null,
-    participants: [], // Participants
-    seed: [], // Seed
-    results: [], // Results
+    bracket: {
+      created: null,
+      id: null,
+      lastModified: null,
+      name: null,
+      participants: [], // Participants
+      seed: [], // Seed
+      results: [], // Results
+    },
   },
   mutations: {
     [mutationTypes.CHANGE_SIDE_SCORE](state, payload) {
       const { roundIndex, matchIndex, side, score } = payload
 
-      state.results[roundIndex][matchIndex][side].score = parseInt(score) || 0
+      state.bracket.results[roundIndex][matchIndex][side].score =
+        parseInt(score) || 0
     },
     [mutationTypes.INITIALIZE_BRACKET_STATE](state, payload) {
       Object.entries(payload).forEach(([key, value]) => {
-        state[key] = value
+        state.bracket[key] = value
       })
+    },
+    [mutationTypes.SET_BRACKET_NAME](state, payload) {
+      state.bracket.name = payload
     },
   },
   actions: {
@@ -74,8 +84,16 @@ export default new Vuex.Store({
       const seed = generateSeedFromIdentifiers(Object.keys(participants))
       const results = generateResultStructureFromSeed(seed)
 
-      const bracketId = shortid.generate()
-      const state = { participants, results, seed, bracketId }
+      const id = shortid.generate()
+
+      const state = {
+        created: +new Date(),
+        id,
+        lastModified: +new Date(),
+        participants,
+        results,
+        seed,
+      }
 
       commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
       dispatch(actionTypes.STORE_CURRENT_STATE)
@@ -87,10 +105,12 @@ export default new Vuex.Store({
       })
     },
     [actionTypes.SHUFFLE]({ commit, dispatch, state }) {
-      const seed = generateSeedFromIdentifiers(Object.keys(state.participants))
+      const seed = generateSeedFromIdentifiers(
+        Object.keys(state.bracket.participants)
+      )
 
       commit(mutationTypes.INITIALIZE_BRACKET_STATE, {
-        ...state,
+        ...state.bracket,
         seed,
       })
 
@@ -98,14 +118,25 @@ export default new Vuex.Store({
     },
     [actionTypes.STORE_CURRENT_STATE]({ state }) {
       localforage
-        .setItem(state.bracketId, JSON.stringify(state))
-        .then(() => router.push(`/bracket/${state.bracketId}`))
+        .setItem(
+          state.bracket.id,
+          JSON.stringify({ ...state.bracket, lastModified: +new Date() })
+        )
+        .then(() => router.push(`/bracket/${state.bracket.id}`))
     },
-    [actionTypes.VALIDATE_RESULTS]({ commit, state }) {
+    [actionTypes.VALIDATE_RESULTS]({ commit, dispatch, state }) {
+      const { bracket } = state
+
       commit(mutationTypes.INITIALIZE_BRACKET_STATE, {
-        ...state,
-        results: validateResults(state.participants, state.results, state.seed),
+        ...bracket,
+        results: validateResults(
+          bracket.participants,
+          bracket.results,
+          bracket.seed
+        ),
       })
+
+      dispatch(actionTypes.STORE_CURRENT_STATE)
     },
   },
 })
