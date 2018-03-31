@@ -2,6 +2,7 @@ import Vue from "vue"
 import Vuex from "vuex"
 import localforage from "localforage"
 import shortid from "shortid"
+import * as R from "ramda"
 
 import {
   generateSeedFromIdentifiers,
@@ -51,18 +52,20 @@ export const actionTypes = {
 //   winner: 'home' | 'away'
 // }
 
-export default new Vuex.Store({
-  state: {
-    bracket: {
-      created: null,
-      id: null,
-      lastModified: null,
-      name: null,
-      participants: [], // Participants
-      seed: [], // Seed
-      results: [], // Results
-    },
+const initialState = {
+  bracket: {
+    created: null,
+    id: null,
+    lastModified: null,
+    name: null,
+    participants: [], // Participants
+    seed: [], // Seed
+    results: [], // Results
   },
+}
+
+export default new Vuex.Store({
+  state: R.clone(initialState),
   mutations: {
     [mutationTypes.CHANGE_SIDE_SCORE](state, payload) {
       const { roundIndex, matchIndex, side, score } = payload
@@ -71,9 +74,7 @@ export default new Vuex.Store({
         parseInt(score) || 0
     },
     [mutationTypes.INITIALIZE_BRACKET_STATE](state, payload) {
-      Object.entries(payload).forEach(([key, value]) => {
-        state.bracket[key] = value
-      })
+      this.state.bracket = payload || R.clone(initialState.bracket)
     },
     [mutationTypes.SET_BRACKET_NAME](state, payload) {
       state.bracket.name = payload

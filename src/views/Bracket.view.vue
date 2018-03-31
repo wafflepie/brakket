@@ -1,34 +1,39 @@
 <template>
-<div>
-  <h1>{{ bracketName || 'Unnamed bracket' }}</h1>
-  <h2 v-if="!winner">Enter the scores</h2>
-  <h2 v-if="winner">{{ winner.name }} is the winner of this bracket!</h2>
-  <div class="bracket">
-    <div v-for="(round, roundIndex) of results" :key="roundIndex" class="round">
-      <div v-for="(match, matchIndex) of round" :key="matchIndex" class="match">
-        <Side
-          side="home"
-          :match="match"
-          :round-index="roundIndex"
-          :match-index="matchIndex"
-          @score-change="handleScoreChange"
-          @score-blur="handleScoreBlur" />
-        <Side
-          side="away"
-          :match="match"
-          :round-index="roundIndex"
-          :match-index="matchIndex"
-          @score-change="handleScoreChange"
-          @score-blur="handleScoreBlur" />
+  <div>
+    <div v-if="!bracketId">
+      <h2>This bracket does not exist :(</h2>
+    </div>
+    <div v-if="bracketId">
+      <h2>{{ bracketName || 'Unnamed bracket' }}</h2>
+      <h3 v-if="!winner">Enter the scores</h3>
+      <h3 v-if="winner">{{ winner.name }} is the winner of this bracket!</h3>
+      <div class="bracket">
+        <div v-for="(round, roundIndex) of results" :key="roundIndex" class="round">
+          <div v-for="(match, matchIndex) of round" :key="matchIndex" class="match">
+            <Side
+              side="home"
+              :match="match"
+              :round-index="roundIndex"
+              :match-index="matchIndex"
+              @score-change="handleScoreChange"
+              @score-blur="handleScoreBlur" />
+            <Side
+              side="away"
+              :match="match"
+              :round-index="roundIndex"
+              :match-index="matchIndex"
+              @score-change="handleScoreChange"
+              @score-blur="handleScoreBlur" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
 import Vue from "vue"
-import { Component } from "vue-property-decorator"
+import { Component, Watch } from "vue-property-decorator"
 import * as R from "ramda"
 
 import { actionTypes, mutationTypes } from "../store"
@@ -38,7 +43,7 @@ import Side from "../components/Side.component.vue"
 @Component({
   components: { Side },
   created() {
-    this.$store.dispatch(actionTypes.LOAD_BRACKET_BY_KEY, this.$route.params.id)
+    this.loadBracket()
   },
 })
 export default class Bracket extends Vue {
@@ -55,6 +60,15 @@ export default class Bracket extends Vue {
 
   get bracketName() {
     return this.$store.state.bracket.name
+  }
+
+  get bracketId() {
+    return this.$store.state.bracket.id
+  }
+
+  @Watch("$route")
+  loadBracket() {
+    this.$store.dispatch(actionTypes.LOAD_BRACKET_BY_KEY, this.$route.params.id)
   }
 
   handleScoreChange(roundIndex, matchIndex, side, score) {

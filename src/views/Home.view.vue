@@ -1,6 +1,5 @@
 <template>
   <main>
-    <h1>Brakket</h1>
     <transition name="slide">
       <section v-if="isHomeRoot">
         <ul>
@@ -11,7 +10,7 @@
           </li>
           <li>
             <router-link :to="{ name: 'numbered-participants' }">
-              I don't need to enter their names, just keep them numbered
+              I don't need to enter the names, just keep them numbered
             </router-link>
           </li>
           <li>
