@@ -3,6 +3,7 @@ import Router from "vue-router"
 
 import Bracket from "./views/Bracket.view.vue"
 import Home from "./views/Home.view.vue"
+import NotFound from "./views/NotFound.view.vue"
 
 import NamedParticipantsForm from "./views/NamedParticipantsForm.view.vue"
 import NumberedParticipantsForm from "./views/NumberedParticipantsForm.view.vue"
@@ -38,6 +39,11 @@ export default new Router({
       name: "bracket",
       path: "/bracket/:id",
       component: Bracket,
+    },
+    {
+      name: "not-found",
+      path: "*",
+      component: NotFound,
     },
   ],
 })
