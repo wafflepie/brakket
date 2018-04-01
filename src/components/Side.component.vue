@@ -47,19 +47,16 @@ export default class Side extends Vue {
   background-color: $side-background-color;
   display: flex;
   flex-direction: row;
+  padding: $side-padding;
   width: 100%;
 
   input {
     background: none;
     border: none;
-    color: $font-color;
-    font-size: 1em;
-    left: 1px;
-    outline: none;
+    font-size: 100%;
     padding: initial;
-    position: relative;
     text-align: right;
-    width: 4em;
+    width: $score-input-width;
   }
 }
 
@@ -74,7 +71,6 @@ export default class Side extends Vue {
 
 .side-name {
   flex-grow: 1;
-  padding: 0.3em;
 }
 
 .placeholder {

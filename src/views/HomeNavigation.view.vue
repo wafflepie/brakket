@@ -30,7 +30,7 @@
 <style lang="scss" scoped>
 h2 {
   text-align: center;
-  margin: 2.5rem auto;
+  margin: $section-margin auto;
 }
 
 ul {
@@ -38,7 +38,7 @@ ul {
 }
 
 li {
-  margin: 1.25rem;
+  margin: $list-item-margin 0;
 
   a {
     display: inline-block;

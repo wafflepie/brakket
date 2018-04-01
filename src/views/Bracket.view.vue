@@ -101,7 +101,7 @@ export default class Bracket extends Vue {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .bracket {
   display: inline-flex;
   position: relative;
@@ -112,24 +112,24 @@ export default class Bracket extends Vue {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  margin: 0 0.25rem;
+  margin: 0 $round-margin;
 }
 
 .match {
   align-items: center;
   display: flex;
   flex-direction: column;
-  margin-bottom: 0.5rem;
-  min-width: 12rem;
+  margin-bottom: $match-margin;
+  width: $match-width;
 }
 
-@media screen and (min-width: 35em) {
+@media screen and (min-width: $mobile-breakpoint) {
   .round {
-    margin: 0 1rem;
+    margin: 0 (4 * $round-margin);
   }
 
   .match {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2 * $match-margin;
   }
 }
 </style>

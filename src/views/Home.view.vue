@@ -23,10 +23,10 @@ export default class Home extends Vue {
 </script>
 
 
-<style scoped>
+<style lang="scss" scoped>
 main {
   margin: 0 auto;
-  max-width: 40rem;
+  max-width: $home-width;
   text-align: center;
 }
 </style>

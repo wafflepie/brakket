@@ -44,8 +44,8 @@ button {
   color: inherit;
   cursor: pointer;
   display: inline-block;
-  font-size: 1.25rem;
-  padding: 1rem;
+  font-size: $form-element-font-size;
+  padding: $button-padding;
   position: relative;
   outline: none;
 
@@ -58,7 +58,7 @@ button {
 form {
   display: inline-block;
   margin: 0 auto;
-  margin-top: 2.5rem;
+  margin-top: $section-margin;
   text-align: left;
 }
 
@@ -69,13 +69,13 @@ input {
   border-right: 1px solid $border-color-inactive;
   color: $font-color;
   display: block;
-  font-size: 1.2em;
+  font-size: $form-element-font-size;
   margin: 0 auto;
   outline: none;
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
+  padding-bottom: $input-padding;
+  padding-top: $input-padding;
   position: relative;
-  width: 20rem;
+  width: $input-width;
 
   &::placeholder {
     color: $input-placeholder-color;
@@ -101,7 +101,7 @@ ul {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s;
+  transition: opacity $transition-duration;
 }
 
 .fade-enter,
@@ -110,7 +110,7 @@ ul {
 }
 
 .shifting {
-  transition: transform 0.3s;
+  transition: transform $transition-duration;
 
   &:hover {
     transform: translateX(0.5rem);
@@ -123,14 +123,14 @@ ul {
 
 .submit-button {
   float: right;
-  margin-top: 3rem;
+  margin-top: $section-margin;
 }
 
 .remove-button {
   display: inline-block;
-  font-size: 1.2em;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  font-size: $form-element-font-size;
+  padding-top: $input-padding;
+  padding-bottom: $input-padding;
   margin-left: 1rem;
 }
 
@@ -140,7 +140,7 @@ ul {
 
   color: $font-color;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
-  font-size: 1.2rem;
+  font-size: $font-size;
   text-align: center;
   padding: 0 0.5rem;
 }
@@ -152,20 +152,16 @@ ul {
 
 <style lang="scss" scoped>
 #title {
-  $font-size: 5rem;
-  $margin: 5rem;
-
-  font-size: $font-size;
-  line-height: $font-size;
-  margin-bottom: $margin / 2;
-  margin-top: $margin;
+  font-size: $title-font-size;
+  line-height: $title-font-size;
+  margin-bottom: $section-margin;
+  margin-top: $section-margin;
   transition: all 0.5s ease-in-out;
 
   &.small {
-    font-size: $font-size / 1.5;
-    line-height: $font-size / 1.5;
-    margin-bottom: $margin / 4;
-    margin-top: $margin / 2;
+    font-size: $title-font-size / 1.5;
+    line-height: $title-font-size / 1.5;
+    margin-bottom: $section-margin / 2;
   }
 
   a {

@@ -57,15 +57,15 @@ export default class NamedParticipantsForm extends Vue {
 
 <style lang="scss" scoped>
 form {
-  margin-bottom: 3rem;
+  margin-bottom: $section-margin;
 }
 
 input {
   display: inline-block;
-  margin-bottom: 1.5rem;
+  margin-bottom: $list-item-margin;
 }
 
 .add-new-field-button {
-  margin-top: 3rem;
+  margin-top: $section-margin;
 }
 </style>

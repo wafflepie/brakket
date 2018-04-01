@@ -9,5 +9,30 @@ $side-background-color: #181818;
 $side-placeholder-color: #333;
 $side-to-be-decided-color: #666;
 
+// Font Size
+$font-size: 120%;
+$form-element-font-size: 1.2em;
+$title-font-size: 5rem;
+
+// Widths & Heights
+$home-width: 40rem;
+$input-width: 20rem;
+$match-width: 12rem;
+$score-input-width: 4rem;
+
+// Paddings & Margins
+$button-padding: 1rem;
+$input-padding: 0.5rem;
+$list-item-margin: 0.5rem;
+$match-margin: 0.5rem;
+$round-margin: 0.25rem;
+$section-margin: 2.5rem;
+$side-margin: 0.25rem;
+$side-padding: 0.25rem;
+
+// Breakpoints
+$mobile-breakpoint: 35em;
+
 // Misc
+$transition-duration: 0.3s;
 $winner-brightness: 1.2;
