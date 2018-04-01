@@ -70,11 +70,11 @@ ul {
   line-height: $font-size;
   margin-bottom: $margin / 2;
   margin-top: $margin;
-  transition: all 0.5s ease-in;
+  transition: all 0.5s ease-in-out;
 
   &.small {
     font-size: $font-size / 1.5;
-    line-height: $font-size / 2;
+    line-height: $font-size / 1.5;
     margin-bottom: $margin / 4;
     margin-top: $margin / 2;
   }

@@ -50,7 +50,7 @@ export default class Side extends Vue {
   width: 100%;
 
   input {
-    background-color: transparent;
+    background: none;
     border: none;
     color: white;
     font-size: 1em;

@@ -27,6 +27,6 @@ export default class Home extends Vue {
 main {
   margin: 0 auto;
   max-width: 40rem;
-  text-align: left;
+  text-align: center;
 }
 </style>
