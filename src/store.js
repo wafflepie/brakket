@@ -74,7 +74,7 @@ export default new Vuex.Store({
         parseInt(score) || 0
     },
     [mutationTypes.INITIALIZE_BRACKET_STATE](state, payload) {
-      state.bracket = payload || R.clone(initialState.bracket)
+      state.bracket = R.clone(payload || initialState.bracket)
     },
     [mutationTypes.SET_BRACKET_NAME](state, payload) {
       state.bracket.name = payload
