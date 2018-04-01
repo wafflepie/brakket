@@ -28,19 +28,19 @@ export default class Home extends Vue {
 // BEGIN GLOBAL STYLES
 // ===================
 body {
-  background: #111;
+  background: $background-color;
   margin: 0;
   padding: 0;
 }
 
 a {
-  color: white;
+  color: $font-color;
   display: inline-block;
 }
 
 button {
   background: none;
-  border: 1px solid #333;
+  border: 1px solid $border-color-inactive;
   color: inherit;
   cursor: pointer;
   display: inline-block;
@@ -51,7 +51,7 @@ button {
 
   &:focus,
   &:hover {
-    border: 1px solid white;
+    border: 1px solid $border-color-active;
   }
 }
 
@@ -65,9 +65,9 @@ form {
 input {
   background: none;
   border: none;
-  border-bottom: 1px solid #333;
-  border-right: 1px solid #333;
-  color: white;
+  border-bottom: 1px solid $border-color-inactive;
+  border-right: 1px solid $border-color-inactive;
+  color: $font-color;
   display: block;
   font-size: 1.2em;
   margin: 0 auto;
@@ -78,12 +78,12 @@ input {
   width: 20rem;
 
   &::placeholder {
-    color: #666;
+    color: $input-placeholder-color;
   }
 
   &:not(:placeholder-shown),
   &:focus {
-    border-color: white;
+    border-color: $border-color-active;
   }
 }
 
@@ -138,7 +138,7 @@ ul {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  color: white;
+  color: $font-color;
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   font-size: 1.2rem;
   text-align: center;
@@ -175,7 +175,7 @@ ul {
 
 .letter-k {
   display: inline-block;
-  color: gold;
+  color: $primary-color;
   transform: rotate(8deg);
 
   &:last-of-type {

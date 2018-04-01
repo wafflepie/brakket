@@ -44,7 +44,7 @@ export default class Side extends Vue {
 
 <style lang="scss" scoped>
 .side {
-  background-color: #181818;
+  background-color: $side-background-color;
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -52,7 +52,7 @@ export default class Side extends Vue {
   input {
     background: none;
     border: none;
-    color: white;
+    color: $font-color;
     font-size: 1em;
     left: 1px;
     outline: none;
@@ -64,13 +64,11 @@ export default class Side extends Vue {
 }
 
 .winner {
-  $brightness: 1.2;
-  $color: gold / $brightness;
-  color: $color;
-  filter: brightness($brightness);
+  color: $primary-color / $winner-brightness;
+  filter: brightness($winner-brightness);
 
   input {
-    color: $color;
+    color: $primary-color / $winner-brightness;
   }
 }
 
@@ -80,10 +78,10 @@ export default class Side extends Vue {
 }
 
 .placeholder {
-  color: #333;
+  color: $side-placeholder-color;
 }
 
 .to-be-decided {
-  color: #999;
+  color: $side-to-be-decided-color;
 }
 </style>
