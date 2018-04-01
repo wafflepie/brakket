@@ -122,7 +122,7 @@ export default new Vuex.Store({
 
       localforage
         .setItem(state.bracket.id, JSON.stringify(newState))
-        .then(() => router.push(`/bracket/${state.bracket.id}`))
+        .then(() => router.push(`/bracket/local/${state.bracket.id}`))
     },
     [actionTypes.VALIDATE_RESULTS]({ commit, dispatch, state }) {
       const { bracket } = state
