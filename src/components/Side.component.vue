@@ -56,6 +56,7 @@ export default class Side extends Vue {
     font-size: 1em;
     left: 1px;
     outline: none;
+    padding: initial;
     position: relative;
     text-align: right;
     width: 4em;

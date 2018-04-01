@@ -3,15 +3,20 @@
     <div 
       v-for="(input, index) of inputs" 
       :key="index">
-      <input v-model="input.value">
+      <input
+        v-model="input.value"
+        :placeholder="`Team ${index + 1}`">
       <button 
+        class="remove-button"
         type="button"
         @click="removeInput(input)">X</button>
     </div>
     <button 
+      class="add-new-field-button"
       type="button"
       @click="addInput()">Add another field</button>
     <button 
+      class="submit-button with-arrow"
       type="submit"
       @click.prevent="submit()">Submit</button>
   </form>
@@ -49,3 +54,18 @@ export default class NamedParticipantsForm extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+form {
+  margin-bottom: 3rem;
+}
+
+input {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.add-new-field-button {
+  margin-top: 3rem;
+}
+</style>

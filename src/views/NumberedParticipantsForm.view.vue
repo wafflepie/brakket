@@ -1,11 +1,19 @@
 <template>
   <form>
-    <input 
-      v-model="value" 
-      type="number">
+    <label for="numbered-participants-input">
+      NUMBER OF PARTICIPANTS
+    </label>
+    <input
+      id="numbered-participants-input"
+      :value="value"
+      autocomplete="off"
+      placeholder="8"
+      type="number"
+      @change="handleInputChange($event.target.value)">
     <button 
+      class="submit-button with-arrow"
       type="submit"
-      @click.prevent="submit()">Submit</button>
+      @click.prevent="submit()">CREATE BRACKET</button>
   </form>
 </template>
 
@@ -25,6 +33,10 @@ export default class NumberedParticipantsForm extends Vue {
       actionTypes.GENERATE_NEW_BRACKET,
       R.times(index => `Team ${index + 1}`, Number(this.value))
     )
+  }
+
+  handleInputChange(value) {
+    this.value = R.clamp(1, 64, value)
   }
 }
 </script>

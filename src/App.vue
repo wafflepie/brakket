@@ -35,11 +35,62 @@ body {
 
 a {
   color: white;
+  display: inline-block;
+}
+
+button {
+  background: none;
+  border: 1px solid #333;
+  color: inherit;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1.25rem;
+  padding: 1rem;
+  position: relative;
+  outline: none;
+
+  &:focus,
+  &:hover {
+    border: 1px solid white;
+  }
+}
+
+form {
+  display: inline-block;
+  margin: 0 auto;
+  margin-top: 2.5rem;
+  text-align: left;
 }
 
 input {
+  background: none;
   border: none;
+  border-bottom: 1px solid #333;
+  border-right: 1px solid #333;
+  color: white;
+  display: block;
   font-size: 1.2em;
+  margin: 0 auto;
+  outline: none;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  position: relative;
+  width: 20rem;
+
+  &::placeholder {
+    color: #666;
+  }
+
+  &:not(:placeholder-shown),
+  &:focus {
+    border-color: white;
+  }
+}
+
+label {
+  display: block;
+  font-size: 0.9em;
+  margin-bottom: 0.25rem;
 }
 
 ul {
@@ -48,9 +99,41 @@ ul {
   padding: 0;
 }
 
-// =================
-// END GLOBAL STYLES
-// =================
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.shifting {
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: translateX(0.5rem);
+  }
+}
+
+.with-arrow::before {
+  content: "↪ ";
+}
+
+.submit-button {
+  float: right;
+  margin-top: 3rem;
+}
+
+.remove-button {
+  display: inline-block;
+  font-size: 1.2em;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-left: 1rem;
+}
+
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -62,6 +145,12 @@ ul {
   padding: 0 0.5rem;
 }
 
+// =================
+// END GLOBAL STYLES
+// =================
+</style>
+
+<style lang="scss" scoped>
 #title {
   $font-size: 5rem;
   $margin: 5rem;

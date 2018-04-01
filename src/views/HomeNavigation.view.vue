@@ -3,17 +3,23 @@
     <h2>Simple tournament brackets for everyone!</h2>
     <ul>
       <li>
-        <router-link :to="{ name: 'named-participants-form' }">
+        <router-link 
+          :to="{ name: 'named-participants-form' }"
+          class="shifting with-arrow">
           I want to enter the names of participants
         </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'numbered-participants-form' }">
+        <router-link
+          :to="{ name: 'numbered-participants-form' }"
+          class="shifting with-arrow">
           I don't need to enter the names, just keep them numbered
         </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'local-brackets' }">
+        <router-link
+          :to="{ name: 'local-brackets' }"
+          class="shifting with-arrow">
           Show me the brackets that I've created previously
         </router-link>
       </li>
@@ -35,16 +41,8 @@ li {
   margin: 1.25rem;
 
   a {
+    display: inline-block;
     text-decoration: none;
-    transition: padding 0.3s;
-
-    &:hover {
-      padding-left: 0.5rem;
-    }
-
-    &::before {
-      content: "↪";
-    }
   }
 }
 </style>

@@ -8,8 +8,11 @@
         <!-- The indentation is shitty because HTML is shitty. -->
         <router-link :to="{ name: 'bracket-detail', params: { id: bracket.id } }">
         {{ bracket.name || 'Unnamed bracket' }}</router-link>,
+        {{ bracket.participants.length }} participant{{ bracket.participants.length > 1 ? 's' : '' }},
         last modified {{ distanceInWordsToNow(bracket.lastModified) }} ago
-        <button @click="removeBracket(bracket.id)">X</button>
+        <button
+          class="remove-button"
+          @click="removeBracket(bracket.id)">X</button>
       </li>
     </ul>
     <button 
@@ -54,3 +57,13 @@ export default class StoredBracketList extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+ul {
+  text-align: left;
+}
+
+button {
+  float: right;
+}
+</style>
