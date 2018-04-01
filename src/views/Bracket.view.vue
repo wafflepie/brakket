@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <main>
     <div v-if="!bracketId">
       <h2>This bracket does not exist :(</h2>
     </div>
     <div v-if="bracketId">
       <h2>{{ bracketName || 'Unnamed bracket' }}</h2>
-      <h3 v-if="!winner">Enter the scores</h3>
+      <h3 v-if="!winner">Enter the the results by editing scores below</h3>
       <h3 v-if="winner">{{ winner.name }} is the winner of this bracket!</h3>
       <div class="bracket">
         <div 
@@ -34,7 +34,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -103,25 +103,33 @@ export default class Bracket extends Vue {
 
 <style scoped>
 .bracket {
-  display: flex;
-  justify-content: center;
+  display: inline-flex;
   position: relative;
+  text-align: left;
 }
 
 .round {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  margin: 0 2rem;
+  margin: 0 0.25rem;
 }
 
 .match {
   align-items: center;
-  background-color: white;
-  border: 1px solid #eee;
   display: flex;
   flex-direction: column;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   min-width: 12rem;
+}
+
+@media screen and (min-width: 35em) {
+  .round {
+    margin: 0 1rem;
+  }
+
+  .match {
+    margin-bottom: 1.5rem;
+  }
 }
 </style>

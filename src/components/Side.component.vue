@@ -42,44 +42,47 @@ export default class Side extends Vue {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .side {
+  background-color: #181818;
   display: flex;
   flex-direction: row;
   width: 100%;
+
+  input {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-size: 1em;
+    left: 1px;
+    outline: none;
+    position: relative;
+    text-align: right;
+    width: 4em;
+  }
 }
 
 .winner {
-  background-color: lightgreen;
-  font-weight: bold;
+  $brightness: 1.2;
+  $color: gold / $brightness;
+  color: $color;
+  filter: brightness($brightness);
+
+  input {
+    color: $color;
+  }
 }
 
 .side-name {
   flex-grow: 1;
   padding: 0.3em;
-  text-align: left;
 }
 
 .placeholder {
-  color: lightgray;
+  color: #333;
 }
 
-input {
-  background-color: transparent;
-  border: none;
-  font-size: 1em;
-  left: 1px;
-  outline: none;
-  position: relative;
-  text-align: right;
-  width: 4em;
-}
-
-input:not(:disabled) {
-  border-right: 1px solid black;
-}
-
-.winner input {
-  font-weight: bold;
+.to-be-decided {
+  color: #999;
 }
 </style>

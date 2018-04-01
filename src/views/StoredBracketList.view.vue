@@ -55,6 +55,3 @@ export default class StoredBracketList extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

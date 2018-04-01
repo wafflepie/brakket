@@ -1,11 +1,7 @@
 <template>
   <main>
-    <transition name="slide">
-      <section>
-        <router-view v-if="!isParticipantsForm || isBracketNameSet" />
-        <BracketNameForm v-else />
-      </section>
-    </transition>
+    <router-view v-if="!isRouteParticipantsForm || isBracketNameSet" />
+    <BracketNameForm v-else />
   </main>
 </template>
 
@@ -16,7 +12,7 @@ import BracketNameForm from "./BracketNameForm.view.vue"
 
 @Component({ components: { BracketNameForm } })
 export default class Home extends Vue {
-  get isParticipantsForm() {
+  get isRouteParticipantsForm() {
     return /participants-form/.test(this.$route.name)
   }
 
@@ -28,13 +24,9 @@ export default class Home extends Vue {
 
 
 <style scoped>
-.slide-enter-active,
-.slide-leave-active {
-  transition: opacity 0.5s;
-}
-
-.slide-enter,
-.slide-leave-to {
-  opacity: 0;
+main {
+  margin: 0 auto;
+  max-width: 40rem;
+  text-align: left;
 }
 </style>
