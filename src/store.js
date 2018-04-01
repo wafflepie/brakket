@@ -99,11 +99,10 @@ export default new Vuex.Store({
       commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
       dispatch(actionTypes.STORE_CURRENT_STATE)
     },
-    [actionTypes.LOAD_BRACKET_BY_KEY]({ commit }, key) {
-      localforage.getItem(key).then(value => {
-        const state = JSON.parse(value)
-        commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
-      })
+    async [actionTypes.LOAD_BRACKET_BY_KEY]({ commit }, key) {
+      const value = await localforage.getItem(key)
+      const state = JSON.parse(value)
+      commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
     },
     [actionTypes.SHUFFLE]({ commit, dispatch, state }) {
       const seed = generateSeedFromIdentifiers(
@@ -117,12 +116,10 @@ export default new Vuex.Store({
 
       dispatch(actionTypes.STORE_CURRENT_STATE)
     },
-    [actionTypes.STORE_CURRENT_STATE]({ state }) {
+    async [actionTypes.STORE_CURRENT_STATE]({ state }) {
       const newState = { ...state.bracket, lastModified: +new Date() }
-
-      localforage
-        .setItem(state.bracket.id, JSON.stringify(newState))
-        .then(() => router.push(`/bracket/local/${state.bracket.id}`))
+      await localforage.setItem(state.bracket.id, JSON.stringify(newState))
+      router.push(`/bracket/local/${state.bracket.id}`)
     },
     [actionTypes.VALIDATE_RESULTS]({ commit, dispatch, state }) {
       const { bracket } = state

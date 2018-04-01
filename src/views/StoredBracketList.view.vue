@@ -22,7 +22,6 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 import localforage from "localforage"
-import * as R from "ramda"
 import { distanceInWordsToNow } from "date-fns"
 
 const DEFAULT_BRACKET_LIMIT = 10
@@ -37,21 +36,21 @@ export default class StoredBracketList extends Vue {
   distanceInWordsToNow = distanceInWordsToNow
   limit = DEFAULT_BRACKET_LIMIT
 
-  loadBracketList() {
-    localforage
-      .keys()
-      .then(R.map(localforage.getItem.bind(localforage)))
-      .then(keys => Promise.all(keys))
-      .then(R.map(JSON.parse))
-      .then(brackets => (this.brackets = brackets))
+  async loadBracketList() {
+    const keys = await localforage.keys()
+    const values = await Promise.all(keys.map(key => localforage.getItem(key)))
+    const brackets = values.map(JSON.parse)
+
+    this.brackets = brackets
   }
 
   showMore() {
     this.limit += DEFAULT_BRACKET_LIMIT
   }
 
-  removeBracket(id) {
-    localforage.removeItem(id).then(this.loadBracketList.bind(this))
+  async removeBracket(id) {
+    await localforage.removeItem(id)
+    this.loadBracketList()
   }
 }
 </script>
