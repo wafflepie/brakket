@@ -70,6 +70,9 @@ export default class MatchSide extends Vue {
 
 .side-name {
   flex-grow: 1;
+  max-width: calc(100% - #{$score-input-width});
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .placeholder {
