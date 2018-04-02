@@ -1,12 +1,6 @@
 <template>
   <div id="app">
-    <h1 
-      id="title" 
-      :class="{ small: isRouteBracket }">
-      <router-link :to="{ name: 'home' }">
-        bra<span class="letter-k">k</span><span class="letter-k">k</span>et
-      </router-link>
-    </h1>
+    <BrakketTitle :class="{ small: isRouteBracket }" />
     <router-view />
   </div>
 </template>
@@ -14,7 +8,9 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
-@Component
+import BrakketTitle from "./components/BrakketTitle.vue"
+
+@Component({ components: { BrakketTitle } })
 export default class App extends Vue {
   get isRouteBracket() {
     return this.$route.name === "bracket-detail"
@@ -43,6 +39,10 @@ body {
 a {
   color: $font-color;
   display: inline-block;
+
+  &:hover {
+    color: $primary-color;
+  }
 }
 
 form {
@@ -92,34 +92,4 @@ label {
 // =================
 // END GLOBAL STYLES
 // =================
-</style>
-
-<style lang="scss" scoped>
-#title {
-  font-size: $title-font-size;
-  line-height: $title-font-size;
-  margin-bottom: $section-margin;
-  margin-top: $section-margin;
-  transition: all 0.5s ease-in-out;
-
-  &.small {
-    font-size: $title-font-size / 1.5;
-    line-height: $title-font-size / 1.5;
-    margin-bottom: $section-margin / 2;
-  }
-
-  a {
-    text-decoration: none;
-  }
-}
-
-.letter-k {
-  display: inline-block;
-  color: $primary-color;
-  transform: rotate(8deg);
-
-  &:last-of-type {
-    margin-right: -0.25rem;
-  }
-}
 </style>

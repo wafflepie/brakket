@@ -51,7 +51,6 @@ export default class MatchSide extends Vue {
   width: 100%;
 
   input {
-    background: none;
     border: none;
     font-size: 100%;
     padding: initial;

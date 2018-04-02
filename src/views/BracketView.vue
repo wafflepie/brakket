@@ -1,9 +1,9 @@
 <template>
   <main>
-    <div v-if="!bracketId">
+    <section v-if="!bracketId">
       <h2>This bracket does not exist :(</h2>
-    </div>
-    <div v-if="bracketId">
+    </section>
+    <section v-if="bracketId">
       <h2>{{ bracketName || 'Unnamed bracket' }}</h2>
       <h3 v-if="!winner">Enter the the results by editing scores below</h3>
       <h3 v-if="winner">{{ winner.name }} is the winner of this bracket!</h3>
@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
   </main>
 </template>
 

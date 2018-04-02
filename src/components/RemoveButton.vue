@@ -17,10 +17,17 @@ export default class RemoveButton extends Vue {
 
 <style lang="scss" scoped>
 .ghost-button.remove-button {
+  border-color: transparent;
   display: inline-block;
   font-size: $form-element-font-size;
+  margin-left: 1rem;
   padding-top: $input-padding;
   padding-bottom: $input-padding;
-  margin-left: 1rem;
+
+  &:hover,
+  &:focus {
+    border-color: transparent;
+    color: $primary-color;
+  }
 }
 </style>

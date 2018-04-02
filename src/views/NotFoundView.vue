@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <main>
     404
-  </div>
+  </main>
 </template>

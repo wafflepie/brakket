@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <section>
     <h2>Simple tournament brackets for everyone!</h2>
     <ul>
       <li>
@@ -20,7 +20,7 @@
         </router-link>
       </li>
     </ul>
-  </div>
+  </section>
 </template>
 
 <style lang="scss" scoped>

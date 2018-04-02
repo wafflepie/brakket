@@ -1,16 +1,19 @@
 <template>
-  <div>
+  <section>
     <ul>
       <li 
         v-for="(bracket, index) of brackets" 
         v-if="index < limit"
         :key="bracket.id">
-        <span>
+        <span class="bracket-text">
           <!-- The indentation is shitty because HTML is shitty. -->
           <router-link :to="{ name: 'bracket-detail', params: { id: bracket.id } }">
-          {{ bracket.name || 'Unnamed bracket' }}</router-link>,
-          {{ bracket.participants.length }} participant{{ bracket.participants.length > 1 ? 's' : '' }},
-          last modified {{ distanceInWordsToNow(bracket.lastModified) }} ago
+            {{ bracket.name || 'Unnamed bracket' }}
+          </router-link>
+          <span class="bracket-description">
+            {{ bracket.participants.length }} participant{{ bracket.participants.length > 1 ? 's' : '' }},
+            last modified {{ distanceInWordsToNow(bracket.lastModified) }} ago
+          </span>
         </span>
         <RemoveButton :on-click="() => removeBracket(bracket.id)">X</RemoveButton>
       </li>
@@ -18,7 +21,7 @@
     <GhostButton 
       v-if="brackets.length > limit"
       :on-click="showMore">Show more</GhostButton>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -61,7 +64,7 @@ export default class StoredBracketList extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 ul {
   text-align: left;
 }
@@ -70,6 +73,11 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $list-item-margin;
+  margin-bottom: $list-item-margin * 2;
+
+  a {
+    display: block;
+    font-size: $form-element-font-size;
+  }
 }
 </style>
