@@ -1,13 +1,13 @@
 <template>
   <form>
     <label for="numbered-participants-input">
-      NUMBER OF PARTICIPANTS
+      NUMBER OF PARTICIPANTS (2-64)
     </label>
     <input
       id="numbered-participants-input"
       :value="value"
       autocomplete="off"
-      placeholder="8"
+      placeholder="2"
       type="number"
       @change="handleInputChange($event.target.value)">
     <SubmitButton :on-click="submit">CREATE BRACKET</SubmitButton>
@@ -36,7 +36,7 @@ export default class NumberedParticipantsForm extends Vue {
   }
 
   handleInputChange(value) {
-    this.value = R.clamp(1, 64, value)
+    this.value = `${R.clamp(2, 64, value)}`
   }
 }
 </script>
