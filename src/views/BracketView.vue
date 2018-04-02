@@ -5,7 +5,7 @@
     </section>
     <section v-if="bracketId">
       <h2>{{ bracketName || 'Unnamed bracket' }}</h2>
-      <h3 v-if="!winner">Enter the the results by editing the scores below</h3>
+      <h3 v-if="!winner">Enter the results by editing the scores below</h3>
       <h3 v-if="winner">{{ winner.name }} is the winner of this bracket!</h3>
       <div class="bracket">
         <div 
