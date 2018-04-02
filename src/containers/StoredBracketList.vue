@@ -68,6 +68,7 @@ export default class StoredBracketList extends Vue {
 
 <style lang="scss" scoped>
 ul {
+  margin-top: 2 * $section-margin;
   text-align: left;
 }
 

@@ -26,7 +26,7 @@
 <style lang="scss" scoped>
 h2 {
   text-align: center;
-  margin: $section-margin auto;
+  margin: 2 * $section-margin auto $section-margin auto;
 }
 
 ul {
@@ -34,6 +34,7 @@ ul {
 }
 
 li {
+  font-size: $navigation-font-size;
   margin: $list-item-margin 0;
 
   a {
