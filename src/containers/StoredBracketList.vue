@@ -28,6 +28,7 @@
 import { Component, Vue } from "vue-property-decorator"
 import localforage from "localforage"
 import { distanceInWordsToNow } from "date-fns"
+import * as R from "ramda"
 
 import GhostButton from "../components/GhostButton.vue"
 import RemoveButton from "../components/RemoveButton.vue"
@@ -49,8 +50,9 @@ export default class StoredBracketList extends Vue {
     const keys = await localforage.keys()
     const values = await Promise.all(keys.map(key => localforage.getItem(key)))
     const brackets = values.map(JSON.parse)
+    const comparator = R.comparator((a, b) => a.lastModified > b.lastModified)
 
-    this.brackets = brackets
+    this.brackets = R.sort(comparator, brackets)
   }
 
   showMore() {
