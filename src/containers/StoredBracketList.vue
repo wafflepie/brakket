@@ -61,14 +61,14 @@ export default class StoredBracketList extends Vue {
 
   async removeBracket(id) {
     await localforage.removeItem(id)
-    this.loadBracketList()
+    await this.loadBracketList()
   }
 }
 </script>
 
 <style lang="scss" scoped>
 ul {
-  margin-top: 2 * $section-margin;
+  margin-top: $section-margin;
   text-align: left;
 }
 

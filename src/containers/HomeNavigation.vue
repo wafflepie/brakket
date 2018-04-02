@@ -26,7 +26,7 @@
 <style lang="scss" scoped>
 h2 {
   text-align: center;
-  margin: 2 * $section-margin auto $section-margin auto;
+  margin: $section-margin auto;
 }
 
 ul {

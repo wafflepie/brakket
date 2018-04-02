@@ -25,7 +25,7 @@ export default class HomeView extends Vue {
 
 <style lang="scss" scoped>
 main {
-  margin: 0 auto $section-margin auto;
+  margin: 0 auto;
   max-width: $home-width;
   text-align: center;
 }

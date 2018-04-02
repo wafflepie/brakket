@@ -32,7 +32,7 @@ body {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   font-size: $font-size;
   margin: 0;
-  padding: 0 $body-padding;
+  padding: 0 $body-padding $section-margin $body-padding;
   text-align: center;
 }
 
@@ -48,7 +48,6 @@ a {
 form {
   display: inline-block;
   margin: 0 auto;
-  margin-top: $section-margin;
   text-align: left;
 }
 

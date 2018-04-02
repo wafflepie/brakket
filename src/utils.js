@@ -245,6 +245,33 @@ export const createExtendMatch = (participants, results, seed) =>
   )
 
 /**
+ * Adds additional properties to all matches.
+ *
+ * @param {Array} participants list of all participants
+ * @param {Array} results results of all matches
+ * @param {Array} seed an array of matches in the first tournament round
+ */
+export const extendAllMatches = (participants, results, seed) => {
+  const extendMatch = createExtendMatch(participants, results, seed)
+  return R.map(R.map(extendMatch), results)
+}
+
+/**
+ * Returns the final match.
+ *
+ * @param {Array} results results of all matches
+ */
+export const getFinalMatch = results => R.last(R.defaultTo([], R.last(results)))
+
+/**
+ * Returns the winner side of a match with the winner property
+ *
+ * @param {Object} match a single extended match
+ */
+export const getWinnerSideOfExtendedMatch = match =>
+  R.prop(R.prop("winner", match), match)
+
+/**
  * Resets the scores of a match if they have a value but shouldn't.
  *
  * @param {Array} participants list of all participants
@@ -276,3 +303,14 @@ export const validateMatch = R.curry((participants, results, seed, match) =>
  */
 export const validateResults = (participants, results, seed) =>
   R.map(R.map(validateMatch(participants, results, seed)), results)
+
+/**
+ * Flattens results and returns all matches which have a score of 0 or null,
+ * meaning that the score has not been filled in by the user.
+ *
+ * @param {Array} results results of all matches
+ */
+export const filterMatchesWithScores = R.o(
+  R.filter(R.anyPass(SIDES.map(side => R.path([side, "score"])))),
+  R.flatten
+)

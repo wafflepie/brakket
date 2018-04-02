@@ -33,7 +33,9 @@
           </div>
         </div>
       </div>
-      <div class="shuffle">
+      <div
+        v-if="isShuffleShown"
+        class="shuffle">
         <GhostButton :on-click="shuffle">Not happy with the seed? Shuffle!</GhostButton>
       </div>
     </section>
@@ -45,7 +47,12 @@ import { Component, Vue, Watch } from "vue-property-decorator"
 import * as R from "ramda"
 
 import { actionTypes, mutationTypes, initialState } from "../store"
-import { createExtendMatch } from "../utils"
+import {
+  extendAllMatches,
+  filterMatchesWithScores,
+  getFinalMatch,
+  getWinnerSideOfExtendedMatch,
+} from "../utils"
 import GhostButton from "../components/GhostButton.vue"
 import MatchSide from "../components/MatchSide.vue"
 
@@ -59,23 +66,27 @@ import MatchSide from "../components/MatchSide.vue"
   },
 })
 export default class BracketView extends Vue {
-  get results() {
-    const { participants, results, seed } = this.$store.state.bracket
-    const extendMatch = createExtendMatch(participants, results, seed)
-    return R.map(R.map(extendMatch), results)
-  }
-
-  get winner() {
-    const finalMatch = R.last(R.defaultTo([], R.last(this.results)))
-    return R.path([R.prop("winner", finalMatch)], finalMatch)
+  get bracketId() {
+    return this.$store.state.bracket.id
   }
 
   get bracketName() {
     return this.$store.state.bracket.name
   }
 
-  get bracketId() {
-    return this.$store.state.bracket.id
+  get isShuffleShown() {
+    const { results } = this.$store.state.bracket
+    return R.isEmpty(filterMatchesWithScores(results))
+  }
+
+  get results() {
+    const { participants, results, seed } = this.$store.state.bracket
+    return extendAllMatches(participants, results, seed)
+  }
+
+  get winner() {
+    const finalMatch = getFinalMatch(this.results)
+    return getWinnerSideOfExtendedMatch(finalMatch)
   }
 
   @Watch("$route")
