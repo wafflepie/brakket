@@ -33,6 +33,9 @@
           </div>
         </div>
       </div>
+      <div class="shuffle">
+        <GhostButton :on-click="shuffle">Not happy with the seed? Shuffle!</GhostButton>
+      </div>
     </section>
   </main>
 </template>
@@ -43,10 +46,11 @@ import * as R from "ramda"
 
 import { actionTypes, mutationTypes, initialState } from "../store"
 import { createExtendMatch } from "../utils"
+import GhostButton from "../components/GhostButton.vue"
 import MatchSide from "../components/MatchSide.vue"
 
 @Component({
-  components: { MatchSide },
+  components: { GhostButton, MatchSide },
   created() {
     this.loadBracket()
   },
@@ -86,6 +90,10 @@ export default class BracketView extends Vue {
     )
   }
 
+  shuffle() {
+    this.$store.dispatch(actionTypes.SHUFFLE)
+  }
+
   handleScoreChange(roundIndex, matchIndex, side, score) {
     this.$store.commit(mutationTypes.CHANGE_SIDE_SCORE, {
       roundIndex,
@@ -102,6 +110,10 @@ export default class BracketView extends Vue {
 </script>
 
 <style lang="scss" scoped>
+h3 {
+  margin-bottom: $section-margin;
+}
+
 .bracket {
   display: inline-flex;
   position: relative;
@@ -121,6 +133,11 @@ export default class BracketView extends Vue {
   flex-direction: column;
   margin-bottom: $match-margin;
   width: $match-width;
+}
+
+.shuffle {
+  font-size: 0.8em;
+  margin-top: $section-margin - $match-margin;
 }
 
 @media screen and (min-width: $mobile-breakpoint) {
