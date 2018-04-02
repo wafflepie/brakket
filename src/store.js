@@ -81,22 +81,24 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    [actionTypes.GENERATE_NEW_BRACKET]({ commit, dispatch }, participants) {
+    [actionTypes.GENERATE_NEW_BRACKET](store, participants) {
+      const { commit, dispatch, state } = store
       const seed = generateSeedFromIdentifiers(Object.keys(participants))
       const results = generateResultStructureFromSeed(seed)
 
       const id = shortid.generate()
 
-      const state = {
+      const bracket = {
         created: +new Date(),
         id,
         lastModified: +new Date(),
+        name: state.bracket.name,
         participants,
         results,
         seed,
       }
 
-      commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
+      commit(mutationTypes.INITIALIZE_BRACKET_STATE, bracket)
       dispatch(actionTypes.STORE_CURRENT_STATE)
     },
     async [actionTypes.LOAD_BRACKET_BY_KEY]({ commit }, key) {
