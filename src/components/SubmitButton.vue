@@ -20,6 +20,11 @@ export default class SubmitButton extends Vue {
 .ghost-button.submit-button {
   float: right;
   margin-top: $section-margin;
-  background-color: $button-background-color;
+
+  &:hover,
+  &:focus {
+    border-color: $primary-color;
+    color: $primary-color;
+  }
 }
 </style>

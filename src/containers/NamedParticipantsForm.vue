@@ -1,17 +1,16 @@
 <template>
   <form>
-    <div 
-      v-for="(input, index) of inputs" 
-      :key="index">
-      <input
-        v-model="input.value"
-        :placeholder="`Team ${index + 1}`">
-      <RemoveButton :on-click="() => removeInput(input)">X</RemoveButton>
-    </div>
-    <GhostButton 
-      :on-click="addInput"
-      class="add-new-field-button"
-      type="button">ADD FIELD</GhostButton>
+    <ul>
+      <li
+        v-for="(input, index) of inputs" 
+        :key="index">
+        <input
+          v-model="input.value"
+          :placeholder="`Team ${index + 1}`">
+        <RemoveButton :on-click="() => removeInput(input)">X</RemoveButton>
+      </li>
+    </ul>
+    <GhostButton :on-click="addInput">ADD FIELD</GhostButton>
     <SubmitButton :on-click="submit">CREATE BRACKET</SubmitButton>
   </form>
 </template>
@@ -48,7 +47,7 @@ export default class NamedParticipantsForm extends Vue {
   submit() {
     const participants = this.inputs
       .map(input => input.value)
-      .filter(value => value)
+      .map((value, index) => value || `Team ${index + 1}`)
 
     participants.length &&
       this.$store.dispatch(actionTypes.GENERATE_NEW_BRACKET, participants)
@@ -63,10 +62,13 @@ form {
 
 input {
   display: inline-block;
-  margin-bottom: $list-item-margin;
 }
 
-.add-new-field-button {
+li {
+  margin-bottom: 2 * $list-item-margin;
+}
+
+:not(input) + button {
   margin-top: $section-margin;
 }
 </style>

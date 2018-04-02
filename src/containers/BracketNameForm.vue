@@ -7,7 +7,7 @@
       id="tournament-name"
       v-model="value"
       autocomplete="off"
-      placeholder="Foosball Playoffs">
+      placeholder="e.g. Foosball Playoffs">
     <transition name="fade">
       <SubmitButton
         v-if="value.length"
