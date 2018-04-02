@@ -15,7 +15,7 @@
 import { Component, Vue } from "vue-property-decorator"
 
 @Component
-export default class Home extends Vue {
+export default class App extends Vue {
   get isRouteBracket() {
     return this.$route.name === "bracket-detail"
   }
@@ -27,10 +27,17 @@ export default class Home extends Vue {
 // ===================
 // BEGIN GLOBAL STYLES
 // ===================
+
 body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background: $background-color;
+  color: $font-color;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-size: $font-size;
   margin: 0;
-  padding: 0;
+  padding: 0 $body-padding;
+  text-align: center;
 }
 
 a {
@@ -38,28 +45,17 @@ a {
   display: inline-block;
 }
 
-button {
-  background: none;
-  border: 1px solid $border-color-inactive;
-  color: inherit;
-  cursor: pointer;
-  display: inline-block;
-  font-size: $form-element-font-size;
-  padding: $button-padding;
-  position: relative;
-  outline: none;
-
-  &:focus,
-  &:hover {
-    border: 1px solid $border-color-active;
-  }
-}
-
 form {
   display: inline-block;
   margin: 0 auto;
   margin-top: $section-margin;
   text-align: left;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 
 input {
@@ -91,58 +87,6 @@ label {
   display: block;
   font-size: 0.9em;
   margin-bottom: 0.25rem;
-}
-
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity $transition-duration;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.shifting {
-  transition: transform $transition-duration;
-
-  &:hover {
-    transform: translateX(0.5rem);
-  }
-}
-
-.with-arrow::before {
-  content: "↪ ";
-}
-
-.submit-button {
-  float: right;
-  margin-top: $section-margin;
-}
-
-.remove-button {
-  display: inline-block;
-  font-size: $form-element-font-size;
-  padding-top: $input-padding;
-  padding-bottom: $input-padding;
-  margin-left: 1rem;
-}
-
-#app {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  color: $font-color;
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  font-size: $font-size;
-  text-align: center;
-  padding: 0 0.5rem;
 }
 
 // =================

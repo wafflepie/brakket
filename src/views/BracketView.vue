@@ -16,14 +16,14 @@
             v-for="(match, matchIndex) of round" 
             :key="matchIndex" 
             class="match">
-            <Side
+            <MatchSide
               :match="match"
               :round-index="roundIndex"
               :match-index="matchIndex"
               side="home"
               @score-change="handleScoreChange"
               @score-blur="handleScoreBlur" />
-            <Side
+            <MatchSide
               :match="match"
               :round-index="roundIndex"
               :match-index="matchIndex"
@@ -43,10 +43,10 @@ import * as R from "ramda"
 
 import { actionTypes, mutationTypes, initialState } from "../store"
 import { createExtendMatch } from "../utils"
-import Side from "../components/Side.component.vue"
+import MatchSide from "../components/MatchSide.vue"
 
 @Component({
-  components: { Side },
+  components: { MatchSide },
   created() {
     this.loadBracket()
   },
@@ -54,7 +54,7 @@ import Side from "../components/Side.component.vue"
     this.resetBracket()
   },
 })
-export default class Bracket extends Vue {
+export default class BracketView extends Vue {
   get results() {
     const { participants, results, seed } = this.$store.state.bracket
     const extendMatch = createExtendMatch(participants, results, seed)

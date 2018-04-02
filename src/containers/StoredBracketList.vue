@@ -12,15 +12,12 @@
           {{ bracket.participants.length }} participant{{ bracket.participants.length > 1 ? 's' : '' }},
           last modified {{ distanceInWordsToNow(bracket.lastModified) }} ago
         </span>
-        <button
-          class="remove-button"
-          @click="removeBracket(bracket.id)">X</button>
+        <RemoveButton :on-click="() => removeBracket(bracket.id)">X</RemoveButton>
       </li>
     </ul>
-    <button 
+    <GhostButton 
       v-if="brackets.length > limit"
-      type="button" 
-      @click="showMore()">Show more</button>
+      :on-click="showMore">Show more</GhostButton>
   </div>
 </template>
 
@@ -29,12 +26,16 @@ import { Component, Vue } from "vue-property-decorator"
 import localforage from "localforage"
 import { distanceInWordsToNow } from "date-fns"
 
+import GhostButton from "../components/GhostButton.vue"
+import RemoveButton from "../components/RemoveButton.vue"
+
 const DEFAULT_BRACKET_LIMIT = 10
 
 @Component({
   created() {
     this.loadBracketList()
   },
+  components: { GhostButton, RemoveButton },
 })
 export default class StoredBracketList extends Vue {
   brackets = []

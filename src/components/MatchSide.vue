@@ -30,7 +30,7 @@ import { Component, Prop, Vue } from "vue-property-decorator"
 import * as utils from "../utils"
 
 @Component
-export default class Side extends Vue {
+export default class MatchSide extends Vue {
   @Prop(Object) match
   @Prop(String) side
   @Prop(Number) roundIndex

@@ -9,11 +9,9 @@
       autocomplete="off"
       placeholder="Foosball Playoffs">
     <transition name="fade">
-      <button
+      <SubmitButton
         v-if="value.length"
-        class="submit-button with-arrow"
-        type="submit"
-        @click.prevent="submit()">PROCEED</button>
+        :on-click="submit">PROCEED</SubmitButton>
     </transition>
   </form>
 </template>
@@ -21,9 +19,10 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
+import SubmitButton from "../components/SubmitButton.vue"
 import { mutationTypes } from "../store"
 
-@Component
+@Component({ components: { SubmitButton } })
 export default class BracketNameForm extends Vue {
   value = ""
 
@@ -32,3 +31,15 @@ export default class BracketNameForm extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity $transition-duration;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

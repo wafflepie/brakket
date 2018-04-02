@@ -1,14 +1,14 @@
 import Vue from "vue"
 import Router from "vue-router"
 
-import Bracket from "./views/Bracket.view.vue"
-import Home from "./views/Home.view.vue"
-import NotFound from "./views/NotFound.view.vue"
+import BracketView from "./views/BracketView.vue"
+import HomeView from "./views/HomeView.vue"
+import NotFoundView from "./views/NotFoundView.vue"
 
-import HomeNavigation from "./views/HomeNavigation.view.vue"
-import NamedParticipantsForm from "./views/NamedParticipantsForm.view.vue"
-import NumberedParticipantsForm from "./views/NumberedParticipantsForm.view.vue"
-import StoredBracketList from "./views/StoredBracketList.view.vue"
+import HomeNavigation from "./containers/HomeNavigation.vue"
+import NamedParticipantsForm from "./containers/NamedParticipantsForm.vue"
+import NumberedParticipantsForm from "./containers/NumberedParticipantsForm.vue"
+import StoredBracketList from "./containers/StoredBracketList.vue"
 
 Vue.use(Router)
 
@@ -16,7 +16,7 @@ export default new Router({
   routes: [
     {
       path: "/",
-      component: Home,
+      component: HomeView,
       children: [
         {
           name: "home",
@@ -43,12 +43,12 @@ export default new Router({
     {
       name: "bracket-detail",
       path: "/bracket/local/:id",
-      component: Bracket,
+      component: BracketView,
     },
     {
       name: "not-found",
       path: "*",
-      component: NotFound,
+      component: NotFoundView,
     },
   ],
 })

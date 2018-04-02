@@ -6,19 +6,13 @@
       <input
         v-model="input.value"
         :placeholder="`Team ${index + 1}`">
-      <button 
-        class="remove-button"
-        type="button"
-        @click="removeInput(input)">X</button>
+      <RemoveButton :on-click="() => removeInput(input)">X</RemoveButton>
     </div>
-    <button 
+    <GhostButton 
+      :on-click="addInput"
       class="add-new-field-button"
-      type="button"
-      @click="addInput()">Add another field</button>
-    <button 
-      class="submit-button with-arrow"
-      type="submit"
-      @click.prevent="submit()">Submit</button>
+      type="button">ADD FIELD</GhostButton>
+    <SubmitButton :on-click="submit">CREATE BRACKET</SubmitButton>
   </form>
 </template>
 
@@ -26,10 +20,16 @@
 import { Component, Vue } from "vue-property-decorator"
 import * as R from "ramda"
 
-import ResetNameMixin from "../mixins/ResetName.mixin"
+import GhostButton from "../components/GhostButton.vue"
+import RemoveButton from "../components/RemoveButton.vue"
+import SubmitButton from "../components/SubmitButton.vue"
+import ResetNameMixin from "../mixins/ResetNameMixin"
 import { actionTypes } from "../store"
 
-@Component({ mixins: [ResetNameMixin] })
+@Component({
+  components: { GhostButton, RemoveButton, SubmitButton },
+  mixins: [ResetNameMixin],
+})
 export default class NamedParticipantsForm extends Vue {
   inputs = R.times(this.createEmptyInput, 4)
 
@@ -50,7 +50,8 @@ export default class NamedParticipantsForm extends Vue {
       .map(input => input.value)
       .filter(value => value)
 
-    this.$store.dispatch(actionTypes.GENERATE_NEW_BRACKET, participants)
+    participants.length &&
+      this.$store.dispatch(actionTypes.GENERATE_NEW_BRACKET, participants)
   }
 }
 </script>

@@ -10,10 +10,7 @@
       placeholder="8"
       type="number"
       @change="handleInputChange($event.target.value)">
-    <button 
-      class="submit-button with-arrow"
-      type="submit"
-      @click.prevent="submit()">CREATE BRACKET</button>
+    <SubmitButton :on-click="submit">CREATE BRACKET</SubmitButton>
   </form>
 </template>
 
@@ -21,14 +18,17 @@
 import { Component, Vue } from "vue-property-decorator"
 import * as R from "ramda"
 
-import ResetNameMixin from "../mixins/ResetName.mixin"
+import SubmitButton from "../components/SubmitButton"
+import ResetNameMixin from "../mixins/ResetNameMixin"
 import { actionTypes } from "../store"
 
-@Component({ mixins: [ResetNameMixin] })
+@Component({ components: { SubmitButton }, mixins: [ResetNameMixin] })
 export default class NumberedParticipantsForm extends Vue {
   value = ""
 
   submit() {
+    this.handleInputChange(this.value)
+
     this.$store.dispatch(
       actionTypes.GENERATE_NEW_BRACKET,
       R.times(index => `Team ${index + 1}`, Number(this.value))

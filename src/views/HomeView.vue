@@ -8,10 +8,10 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
-import BracketNameForm from "./BracketNameForm.view.vue"
+import BracketNameForm from "../containers/BracketNameForm.vue"
 
 @Component({ components: { BracketNameForm } })
-export default class Home extends Vue {
+export default class HomeView extends Vue {
   get isRouteParticipantsForm() {
     return /participants-form/.test(this.$route.name)
   }
