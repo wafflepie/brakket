@@ -71,6 +71,10 @@ ul {
   text-align: left;
 }
 
+ul + button {
+  margin-top: $section-margin;
+}
+
 li {
   display: flex;
   justify-content: space-between;

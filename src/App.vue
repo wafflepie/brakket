@@ -77,9 +77,12 @@ input {
     color: $input-placeholder-color;
   }
 
-  &:not(:placeholder-shown),
-  &:focus {
+  &:not(:placeholder-shown) {
     border-color: $border-color-active;
+  }
+
+  &:focus {
+    border-color: $primary-color;
   }
 }
 
