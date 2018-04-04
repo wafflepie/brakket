@@ -1,5 +1,6 @@
 /* eslint-env node */
 const path = require("path")
+const OfflinePlugin = require("offline-plugin")
 
 module.exports = {
   chainWebpack: config => {
@@ -19,5 +20,7 @@ module.exports = {
 
         return options
       })
+
+    config.plugin("offline").use(OfflinePlugin)
   },
 }

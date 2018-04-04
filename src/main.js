@@ -1,4 +1,5 @@
 import Vue from "vue"
+import * as OfflinePluginRuntime from "offline-plugin/runtime"
 
 import App from "./App.vue"
 import router from "./router"
@@ -11,3 +12,5 @@ new Vue({
   router,
   store,
 }).$mount("#app")
+
+OfflinePluginRuntime.install()
