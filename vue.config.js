@@ -10,7 +10,10 @@ module.exports = {
         options.loaders.scss.push({
           loader: "sass-resources-loader",
           options: {
-            resources: path.resolve(__dirname, "src/assets/_variables.scss"),
+            resources: path.resolve(
+              __dirname,
+              "src/assets/scss/_variables.scss"
+            ),
           },
         })
 
