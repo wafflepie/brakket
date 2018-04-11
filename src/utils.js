@@ -283,7 +283,7 @@ export const validateMatch = R.curry((participants, results, seed, match) =>
   R.compose(
     ...SIDES.map(side => {
       const sideName = getNameOfSide(participants, results, seed, match, side)
-      const xforms = { score: R.always(0) }
+      const xforms = { score: R.unless(R.equals(null), R.always(0)) }
 
       return R.when(
         // if it is an existing side but no name was found for it
