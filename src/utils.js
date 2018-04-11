@@ -66,15 +66,15 @@ export const generateResultStructureFromSeed = seed => {
     const matchCount = getMatchCountByRoundIndex(roundIndex, roundCount)
 
     for (let matchIndex = 0; matchIndex < matchCount; matchIndex++) {
-      const doesHomeExist =
+      const homeExists =
         Math.ceil(sideCount / Math.pow(2, roundIndex + 1)) > matchIndex
 
-      const doesAwayExist =
+      const awayExists =
         Math.ceil(sideCount / Math.pow(2, roundIndex + 1) - 0.5) > matchIndex
 
       results[roundIndex][matchIndex] = {
-        home: { score: doesHomeExist ? 0 : null },
-        away: { score: doesAwayExist ? 0 : null },
+        home: { score: homeExists ? 0 : null },
+        away: { score: awayExists ? 0 : null },
         roundIndex,
         matchIndex,
       }
@@ -305,8 +305,8 @@ export const validateResults = (participants, results, seed) =>
   R.map(R.map(validateMatch(participants, results, seed)), results)
 
 /**
- * Flattens results and returns all matches which have a score of 0 or null,
- * meaning that the score has not been filled in by the user.
+ * Flattens results and returns all matches which don't have a score of 0 or null,
+ * meaning that the score has been filled in by the user.
  *
  * @param {Array} results results of all matches
  */
