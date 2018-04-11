@@ -27,10 +27,10 @@ export const getSideCountBySeed = seed =>
 /**
  * Returns the number of matches in a specified round.
  *
- * @param {number} roundIndex index of the round, starting with 0
  * @param {number} roundCount total number of rounds
+ * @param {number} roundIndex index of the round, starting with 0
  */
-export const getMatchCountByRoundIndex = (roundIndex, roundCount) =>
+export const getMatchCountByRoundIndex = (roundCount, roundIndex) =>
   Math.pow(2, roundCount - roundIndex - 1)
 
 /**
@@ -63,7 +63,7 @@ export const generateResultStructureFromSeed = seed => {
 
   for (let roundIndex = 0; roundIndex < roundCount; roundIndex++) {
     results[roundIndex] = []
-    const matchCount = getMatchCountByRoundIndex(roundIndex, roundCount)
+    const matchCount = getMatchCountByRoundIndex(roundCount, roundIndex)
 
     for (let matchIndex = 0; matchIndex < matchCount; matchIndex++) {
       const homeExists =
@@ -180,12 +180,12 @@ export const getFirstMatchOfSide = (results, match, side) => {
  * Returns the participant name of the specified side of a match.
  *
  * @param {Array} participants list of all participants
- * @param {Array} results results of all matches
  * @param {Array} seed an array of matches in the first tournament round
+ * @param {Array} results results of all matches
  * @param {Object} match a single match
  * @param {string} side side to find the name of
  */
-export const getNameOfSide = (participants, results, seed, match, side) => {
+export const getNameOfSide = (participants, seed, results, match, side) => {
   if (isSidePlaceholder(match, side)) return null
 
   const [firstMatch, firstMatchSide] = getFirstMatchOfSide(results, match, side)
@@ -207,17 +207,17 @@ export const getNameOfSide = (participants, results, seed, match, side) => {
  * Returns the match with two additional computed properties: home.name and away.name.
  *
  * @param {Array} participants list of all participants
- * @param {Array} results results of all matches
  * @param {Array} seed an array of matches in the first tournament round
+ * @param {Array} results results of all matches
  * @param {Object} match a single match
  */
 export const extendMatchSidesWithNames = R.curry(
-  (participants, results, seed, match) =>
+  (participants, seed, results, match) =>
     R.compose(
       ...SIDES.map(side =>
         R.assocPath(
           [side, "name"],
-          getNameOfSide(participants, results, seed, match, side)
+          getNameOfSide(participants, seed, results, match, side)
         )
       )
     )(match)
@@ -235,24 +235,24 @@ export const extendMatchWithWinnerSide = match =>
  * Returns a function which adds additional computed properties to the passed match.
  *
  * @param {Array} participants list of all participants
- * @param {Array} results results of all matches
  * @param {Array} seed an array of matches in the first tournament round
+ * @param {Array} results results of all matches
  */
-export const createExtendMatch = (participants, results, seed) =>
+export const createExtendMatch = (participants, seed, results) =>
   R.compose(
     extendMatchWithWinnerSide,
-    extendMatchSidesWithNames(participants, results, seed)
+    extendMatchSidesWithNames(participants, seed, results)
   )
 
 /**
  * Adds additional properties to all matches.
  *
  * @param {Array} participants list of all participants
- * @param {Array} results results of all matches
  * @param {Array} seed an array of matches in the first tournament round
+ * @param {Array} results results of all matches
  */
-export const extendAllMatches = (participants, results, seed) => {
-  const extendMatch = createExtendMatch(participants, results, seed)
+export const extendResults = (participants, seed, results) => {
+  const extendMatch = createExtendMatch(participants, seed, results)
   return R.map(R.map(extendMatch), results)
 }
 
@@ -275,14 +275,14 @@ export const getWinnerSideOfExtendedMatch = match =>
  * Resets the scores of a match if they have a value but shouldn't.
  *
  * @param {Array} participants list of all participants
- * @param {Array} results results of all matches
  * @param {Array} seed an array of matches in the first tournament round
+ * @param {Array} results results of all matches
  * @param {Object} match a single match
  */
-export const validateMatch = R.curry((participants, results, seed, match) =>
+export const validateMatch = R.curry((participants, seed, results, match) =>
   R.compose(
     ...SIDES.map(side => {
-      const sideName = getNameOfSide(participants, results, seed, match, side)
+      const sideName = getNameOfSide(participants, seed, results, match, side)
       const xforms = { score: R.unless(R.equals(null), R.always(0)) }
 
       return R.when(
@@ -298,11 +298,11 @@ export const validateMatch = R.curry((participants, results, seed, match) =>
  * Resets the scores of all matches if they have a value but shouldn't.
  *
  * @param {Array} participants list of all participants
- * @param {Array} results results of all matches
  * @param {Array} seed an array of matches in the first tournament round
+ * @param {Array} results results of all matches
  */
-export const validateResults = (participants, results, seed) =>
-  R.map(R.map(validateMatch(participants, results, seed)), results)
+export const validateResults = (participants, seed, results) =>
+  R.map(R.map(validateMatch(participants, seed, results)), results)
 
 /**
  * Flattens results and returns all matches which don't have a score of 0 or null,

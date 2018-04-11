@@ -48,7 +48,7 @@ import * as R from "ramda"
 
 import { actionTypes, mutationTypes, initialState } from "../store"
 import {
-  extendAllMatches,
+  extendResults,
   filterMatchesWithScores,
   getFinalMatch,
   getWinnerSideOfExtendedMatch,
@@ -80,8 +80,8 @@ export default class BracketView extends Vue {
   }
 
   get results() {
-    const { participants, results, seed } = this.$store.state.bracket
-    return extendAllMatches(participants, results, seed)
+    const { participants, seed, results } = this.$store.state.bracket
+    return extendResults(participants, seed, results)
   }
 
   get winner() {

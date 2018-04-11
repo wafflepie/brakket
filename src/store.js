@@ -130,8 +130,8 @@ export default new Vuex.Store({
         ...bracket,
         results: validateResults(
           bracket.participants,
-          bracket.results,
-          bracket.seed
+          bracket.seed,
+          bracket.results
         ),
       })
 
