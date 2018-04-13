@@ -8,7 +8,7 @@ import {
   generateSeedFromIdentifiers,
   generateResultStructureFromSeed,
   validateResults,
-} from "./utils"
+} from "./domain"
 
 import router from "./router"
 

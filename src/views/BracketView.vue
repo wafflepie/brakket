@@ -52,7 +52,7 @@ import {
   filterMatchesWithScores,
   getFinalMatch,
   getWinnerSideOfExtendedMatch,
-} from "../utils"
+} from "../domain"
 import GhostButton from "../components/GhostButton.vue"
 import MatchSide from "../components/MatchSide.vue"
 

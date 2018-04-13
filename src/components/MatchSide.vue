@@ -27,7 +27,7 @@
 <script>
 import { Component, Prop, Vue } from "vue-property-decorator"
 
-import * as utils from "../utils"
+import { isSideDisabled, isSidePlaceholder, isSideToBeDecided } from "../domain"
 
 @Component
 export default class MatchSide extends Vue {
@@ -36,9 +36,9 @@ export default class MatchSide extends Vue {
   @Prop(Number) roundIndex
   @Prop(Number) matchIndex
 
-  isSideDisabled = utils.isSideDisabled
-  isSidePlaceholder = utils.isSidePlaceholder
-  isSideToBeDecided = utils.isSideToBeDecided
+  isSideDisabled = isSideDisabled
+  isSidePlaceholder = isSidePlaceholder
+  isSideToBeDecided = isSideToBeDecided
 }
 </script>
 
