@@ -7,32 +7,7 @@
       <h2>{{ bracketName || 'Unnamed bracket' }}</h2>
       <h3 v-if="!winner">Enter the results by editing the scores below</h3>
       <h3 v-if="winner">{{ winner.name }} is the winner of this bracket!</h3>
-      <div class="bracket">
-        <div 
-          v-for="(round, roundIndex) of results" 
-          :key="roundIndex" 
-          class="round">
-          <div 
-            v-for="(match, matchIndex) of round" 
-            :key="matchIndex" 
-            class="match">
-            <MatchSide
-              :match="match"
-              :round-index="roundIndex"
-              :match-index="matchIndex"
-              side="home"
-              @score-change="handleScoreChange"
-              @score-blur="handleScoreBlur" />
-            <MatchSide
-              :match="match"
-              :round-index="roundIndex"
-              :match-index="matchIndex"
-              side="away"
-              @score-change="handleScoreChange"
-              @score-blur="handleScoreBlur" />
-          </div>
-        </div>
-      </div>
+      <TournamentBracket />
       <div
         v-if="isShuffleShown"
         class="shuffle">
@@ -48,15 +23,14 @@ import * as R from "ramda"
 
 import { actionTypes, mutationTypes, initialState } from "../store"
 import {
-  selectResults,
   selectMatchesWithScores,
   selectWinnerSideOfFinalMatch,
 } from "../selectors"
 import GhostButton from "../components/GhostButton.vue"
-import MatchSide from "../components/MatchSide.vue"
+import TournamentBracket from "../containers/TournamentBracket.vue"
 
 @Component({
-  components: { GhostButton, MatchSide },
+  components: { GhostButton, TournamentBracket },
   created() {
     this.loadBracket()
   },
@@ -75,10 +49,6 @@ export default class BracketView extends Vue {
 
   get isShuffleShown() {
     return R.isEmpty(selectMatchesWithScores(this.$store.state))
-  }
-
-  get results() {
-    return selectResults(this.$store.state)
   }
 
   get winner() {
@@ -100,61 +70,11 @@ export default class BracketView extends Vue {
   shuffle() {
     this.$store.dispatch(actionTypes.SHUFFLE)
   }
-
-  handleScoreChange(roundIndex, matchIndex, side, score) {
-    this.$store.commit(mutationTypes.CHANGE_SIDE_SCORE, {
-      roundIndex,
-      matchIndex,
-      side,
-      score,
-    })
-  }
-
-  handleScoreBlur() {
-    this.$store.dispatch(actionTypes.VALIDATE_RESULTS)
-  }
 }
 </script>
 
 <style lang="scss" scoped>
 h3 {
   margin-bottom: $section-margin;
-}
-
-.bracket {
-  display: inline-flex;
-  position: relative;
-  text-align: left;
-}
-
-.round {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  margin: 0 $round-margin;
-}
-
-.match {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: $match-margin;
-  width: $match-width;
-}
-
-.shuffle {
-  font-size: 0.8em;
-  margin-top: $section-margin - $match-margin;
-}
-
-@media screen and (min-width: $mobile-breakpoint) {
-  .round {
-    margin: 0 (2 * $round-margin);
-  }
-
-  .match {
-    margin-bottom: 2 * $match-margin;
-    width: $match-width * 1.5;
-  }
 }
 </style>
