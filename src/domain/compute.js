@@ -40,13 +40,6 @@ export const isSideDisabled = (match, side) =>
   isSidePlaceholder(match, getOtherSide(side))
 
 /**
- * Returns the final match.
- *
- * @param {Array} results results of all matches
- */
-export const getFinalMatch = results => R.last(R.defaultTo([], R.last(results)))
-
-/**
  * Returns a string representing the winner of the passed match.
  *
  * @param {Object} match a single match
@@ -156,42 +149,4 @@ export const extendMatchSidesWithNames = R.curry(
  */
 export const extendMatchWithWinnerSide = R.curry(match =>
   R.assoc("winner", getWinnerOfMatch(match), match)
-)
-
-/**
- * Adds additional properties to all matches.
- *
- * @param {Array} participants list of all participants
- * @param {Array} seed an array of matches in the first tournament round
- * @param {Array} results results of all matches
- */
-export const extendResults = (participants, seed, results) =>
-  R.map(
-    R.map(
-      // this is called for each match
-      R.compose(
-        extendMatchWithWinnerSide(),
-        extendMatchSidesWithNames(participants, seed, results)
-      )
-    ),
-    results // is an array of rounds, which is an array of matches
-  )
-
-/**
- * Returns the winner side of a match with the winner property
- *
- * @param {Object} match a single extended match
- */
-export const getWinnerSideOfExtendedMatch = match =>
-  R.prop(R.prop("winner", match), match)
-
-/**
- * Flattens results and returns all matches which don't have a score of 0 or null,
- * meaning that the score has been filled in by the user.
- *
- * @param {Array} results results of all matches
- */
-export const filterMatchesWithScores = R.o(
-  R.filter(R.anyPass(SIDES.map(side => R.path([side, "score"])))),
-  R.flatten
 )

@@ -48,11 +48,10 @@ import * as R from "ramda"
 
 import { actionTypes, mutationTypes, initialState } from "../store"
 import {
-  extendResults,
-  filterMatchesWithScores,
-  getFinalMatch,
-  getWinnerSideOfExtendedMatch,
-} from "../domain"
+  selectResults,
+  selectMatchesWithScores,
+  selectWinnerSideOfFinalMatch,
+} from "../selectors"
 import GhostButton from "../components/GhostButton.vue"
 import MatchSide from "../components/MatchSide.vue"
 
@@ -75,18 +74,15 @@ export default class BracketView extends Vue {
   }
 
   get isShuffleShown() {
-    const { results } = this.$store.state.bracket
-    return R.isEmpty(filterMatchesWithScores(results))
+    return R.isEmpty(selectMatchesWithScores(this.$store.state))
   }
 
   get results() {
-    const { participants, seed, results } = this.$store.state.bracket
-    return extendResults(participants, seed, results)
+    return selectResults(this.$store.state)
   }
 
   get winner() {
-    const finalMatch = getFinalMatch(this.results)
-    return getWinnerSideOfExtendedMatch(finalMatch)
+    return selectWinnerSideOfFinalMatch(this.$store.state)
   }
 
   @Watch("$route")

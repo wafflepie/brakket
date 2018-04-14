@@ -7,7 +7,7 @@ import * as R from "ramda"
 import {
   generateSeedFromIdentifiers,
   generateResultStructureFromSeed,
-  validateResults,
+  ensureBracketStateValidity,
 } from "./domain"
 
 import router from "./router"
@@ -126,14 +126,10 @@ export default new Vuex.Store({
     [actionTypes.VALIDATE_RESULTS]({ commit, dispatch, state }) {
       const { bracket } = state
 
-      commit(mutationTypes.INITIALIZE_BRACKET_STATE, {
-        ...bracket,
-        results: validateResults(
-          bracket.participants,
-          bracket.seed,
-          bracket.results
-        ),
-      })
+      commit(
+        mutationTypes.INITIALIZE_BRACKET_STATE,
+        ensureBracketStateValidity(bracket)
+      )
 
       dispatch(actionTypes.STORE_CURRENT_STATE)
     },
