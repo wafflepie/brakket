@@ -1,23 +1,23 @@
 <template>
   <main>
-    <router-view v-if="!isRouteParticipantsForm || isBracketNameSet" />
-    <BracketNameForm v-else />
+    <router-view v-if="!isRouteParticipantsForm || isTournamentNameSet" />
+    <TournamentNameForm v-else />
   </main>
 </template>
 
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
-import BracketNameForm from "../containers/BracketNameForm.vue"
+import TournamentNameForm from "../containers/TournamentNameForm.vue"
 
-@Component({ components: { BracketNameForm } })
+@Component({ components: { TournamentNameForm } })
 export default class HomeView extends Vue {
   get isRouteParticipantsForm() {
     return /participants-form/.test(this.$route.name)
   }
 
-  get isBracketNameSet() {
-    return !!this.$store.state.bracket.name
+  get isTournamentNameSet() {
+    return !!this.$store.state.tournament.name
   }
 }
 </script>

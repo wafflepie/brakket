@@ -23,11 +23,11 @@ import SubmitButton from "../components/SubmitButton.vue"
 import { mutationTypes } from "../store"
 
 @Component({ components: { SubmitButton } })
-export default class BracketNameForm extends Vue {
+export default class TournamentNameForm extends Vue {
   value = ""
 
   submit() {
-    this.$store.commit(mutationTypes.SET_BRACKET_NAME, this.value)
+    this.$store.commit(mutationTypes.SET_TOURNAMENT_NAME, this.value)
   }
 }
 </script>

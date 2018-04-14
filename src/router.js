@@ -1,14 +1,14 @@
 import Vue from "vue"
 import Router from "vue-router"
 
-import BracketView from "./views/BracketView.vue"
+import TournamentBracketView from "./views/TournamentBracketView.vue"
 import HomeView from "./views/HomeView.vue"
 import NotFoundView from "./views/NotFoundView.vue"
 
 import HomeNavigation from "./containers/HomeNavigation.vue"
 import NamedParticipantsForm from "./containers/NamedParticipantsForm.vue"
 import NumberedParticipantsForm from "./containers/NumberedParticipantsForm.vue"
-import StoredBracketList from "./containers/StoredBracketList.vue"
+import StoredTournamentList from "./containers/StoredTournamentList.vue"
 
 Vue.use(Router)
 
@@ -34,16 +34,16 @@ export default new Router({
           component: NumberedParticipantsForm,
         },
         {
-          name: "local-brackets",
-          path: "/bracket/local",
-          component: StoredBracketList,
+          name: "local-tournaments",
+          path: "/tournament",
+          component: StoredTournamentList,
         },
       ],
     },
     {
-      name: "bracket-detail",
-      path: "/bracket/local/:id",
-      component: BracketView,
+      name: "tournament-bracket",
+      path: "/tournament/:id",
+      component: TournamentBracketView,
     },
     {
       name: "not-found",

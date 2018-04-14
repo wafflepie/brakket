@@ -50,7 +50,7 @@ export default class BracketView extends Vue {
   }
 
   handleScoreBlur() {
-    this.$store.dispatch(actionTypes.VALIDATE_RESULTS)
+    this.$store.dispatch(actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY)
   }
 }
 </script>

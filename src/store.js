@@ -7,7 +7,7 @@ import * as R from "ramda"
 import {
   generateSeedFromIdentifiers,
   generateResultStructureFromSeed,
-  ensureBracketStateValidity,
+  ensureTournamentStateValidity,
 } from "./domain"
 
 import router from "./router"
@@ -16,16 +16,16 @@ Vue.use(Vuex)
 
 export const mutationTypes = {
   CHANGE_SIDE_SCORE: "CHANGE_SIDE_SCORE",
-  INITIALIZE_BRACKET_STATE: "INITIALIZE_BRACKET_STATE",
-  SET_BRACKET_NAME: "SET_BRACKET_NAME",
+  INITIALIZE_TOURNAMENT_STATE: "INITIALIZE_TOURNAMENT_STATE",
+  SET_TOURNAMENT_NAME: "SET_TOURNAMENT_NAME",
 }
 
 export const actionTypes = {
-  GENERATE_NEW_BRACKET: "GENERATE_NEW_BRACKET",
-  LOAD_BRACKET_BY_KEY: "LOAD_BRACKET_BY_URL",
+  ENSURE_TOURNAMENT_STATE_VALIDITY: "ENSURE_TOURNAMENT_STATE_VALIDITY",
+  GENERATE_NEW_TOURNAMENT: "GENERATE_NEW_TOURNAMENT",
+  LOAD_TOURNAMENT_BY_KEY: "LOAD_TOURNAMENT_BY_URL",
   SHUFFLE: "SHUFFLE",
-  STORE_CURRENT_STATE: "STORE_CURRENT_STATE",
-  VALIDATE_RESULTS: "VALIDATE_RESULTS",
+  STORE_CURRENT_TOURNAMENT_STATE: "STORE_CURRENT_TOURNAMENT_STATE",
 }
 
 // type Participants = Array<string>
@@ -53,7 +53,7 @@ export const actionTypes = {
 // }
 
 export const initialState = {
-  bracket: {
+  tournament: {
     created: null,
     id: null,
     lastModified: null,
@@ -70,68 +70,73 @@ export default new Vuex.Store({
     [mutationTypes.CHANGE_SIDE_SCORE](state, payload) {
       const { roundIndex, matchIndex, side, score } = payload
 
-      state.bracket.results[roundIndex][matchIndex][side].score =
+      state.tournament.results[roundIndex][matchIndex][side].score =
         parseInt(score) || 0
     },
-    [mutationTypes.INITIALIZE_BRACKET_STATE](state, payload) {
-      state.bracket = R.clone(payload || initialState.bracket)
+    [mutationTypes.INITIALIZE_TOURNAMENT_STATE](state, payload) {
+      state.tournament = R.clone(payload || initialState.tournament)
     },
-    [mutationTypes.SET_BRACKET_NAME](state, payload) {
-      state.bracket.name = payload
+    [mutationTypes.SET_TOURNAMENT_NAME](state, payload) {
+      state.tournament.name = payload
     },
   },
   actions: {
-    [actionTypes.GENERATE_NEW_BRACKET](store, participants) {
+    [actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY](context) {
+      const { commit, dispatch, state } = context
+      const { tournament } = state
+
+      commit(
+        mutationTypes.INITIALIZE_TOURNAMENT_STATE,
+        ensureTournamentStateValidity(tournament)
+      )
+
+      dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
+    },
+    [actionTypes.GENERATE_NEW_TOURNAMENT](store, participants) {
       const { commit, dispatch, state } = store
       const seed = generateSeedFromIdentifiers(Object.keys(participants))
       const results = generateResultStructureFromSeed(seed)
 
       const id = shortid.generate()
 
-      const bracket = {
+      const tournament = {
         created: +new Date(),
         id,
         lastModified: +new Date(),
-        name: state.bracket.name,
+        name: state.tournament.name,
         participants,
         results,
         seed,
       }
 
-      commit(mutationTypes.INITIALIZE_BRACKET_STATE, bracket)
-      dispatch(actionTypes.STORE_CURRENT_STATE)
+      commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, tournament)
+      dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
     },
-    async [actionTypes.LOAD_BRACKET_BY_KEY]({ commit }, key) {
+    async [actionTypes.LOAD_TOURNAMENT_BY_KEY]({ commit }, key) {
       const value = await localforage.getItem(key)
       const state = JSON.parse(value)
-      commit(mutationTypes.INITIALIZE_BRACKET_STATE, state)
+      commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, state)
     },
     [actionTypes.SHUFFLE]({ commit, dispatch, state }) {
       const seed = generateSeedFromIdentifiers(
-        Object.keys(state.bracket.participants)
+        Object.keys(state.tournament.participants)
       )
 
-      commit(mutationTypes.INITIALIZE_BRACKET_STATE, {
-        ...state.bracket,
+      commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, {
+        ...state.tournament,
         seed,
       })
 
-      dispatch(actionTypes.STORE_CURRENT_STATE)
+      dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
     },
-    async [actionTypes.STORE_CURRENT_STATE]({ state }) {
-      const newState = { ...state.bracket, lastModified: +new Date() }
-      await localforage.setItem(state.bracket.id, JSON.stringify(newState))
-      router.push(`/bracket/local/${state.bracket.id}`)
-    },
-    [actionTypes.VALIDATE_RESULTS]({ commit, dispatch, state }) {
-      const { bracket } = state
+    async [actionTypes.STORE_CURRENT_TOURNAMENT_STATE]({ state }) {
+      const newState = { ...state.tournament, lastModified: +new Date() }
+      await localforage.setItem(state.tournament.id, JSON.stringify(newState))
 
-      commit(
-        mutationTypes.INITIALIZE_BRACKET_STATE,
-        ensureBracketStateValidity(bracket)
-      )
-
-      dispatch(actionTypes.STORE_CURRENT_STATE)
+      router.push({
+        name: "tournament-bracket",
+        params: { id: state.tournament.id },
+      })
     },
   },
 })

@@ -10,7 +10,7 @@
       placeholder="2"
       type="number"
       @change="handleInputChange($event.target.value)">
-    <SubmitButton :on-click="submit">CREATE BRACKET</SubmitButton>
+    <SubmitButton :on-click="submit">CREATE</SubmitButton>
   </form>
 </template>
 
@@ -30,7 +30,7 @@ export default class NumberedParticipantsForm extends Vue {
     this.handleInputChange(this.value)
 
     this.$store.dispatch(
-      actionTypes.GENERATE_NEW_BRACKET,
+      actionTypes.GENERATE_NEW_TOURNAMENT,
       R.times(index => `Team ${index + 1}`, Number(this.value))
     )
   }

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <BrakketTitle :class="{ small: isRouteBracket }" />
+    <BrakketTitle :class="{ small: isRouteTournamentBracket }" />
     <router-view />
   </div>
 </template>
@@ -12,8 +12,8 @@ import BrakketTitle from "./components/BrakketTitle.vue"
 
 @Component({ components: { BrakketTitle } })
 export default class App extends Vue {
-  get isRouteBracket() {
-    return this.$route.name === "bracket-detail"
+  get isRouteTournamentBracket() {
+    return this.$route.name === "tournament-bracket"
   }
 }
 </script>

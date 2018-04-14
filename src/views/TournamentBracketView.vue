@@ -1,15 +1,15 @@
 <template>
   <main>
-    <section v-if="!bracketId">
+    <section v-if="!tournamentId">
       <h2>This bracket does not exist :(</h2>
     </section>
-    <section v-if="bracketId">
-      <h2>{{ bracketName || 'Unnamed bracket' }}</h2>
+    <section v-if="tournamentId">
+      <h2>{{ tournamentName || 'Unnamed tournament' }}</h2>
       <h3 v-if="!winner">Enter the results by editing the scores below</h3>
-      <h3 v-if="winner">{{ winner.name }} is the winner of this bracket!</h3>
+      <h3 v-if="winner">{{ winner.name }} is the winner of this tournament!</h3>
       <TournamentBracket />
       <div
-        v-if="isShuffleShown"
+        v-hide="!isShuffleShown"
         class="shuffle">
         <GhostButton :on-click="shuffle">Not happy with the seed? Shuffle!</GhostButton>
       </div>
@@ -32,19 +32,19 @@ import TournamentBracket from "../containers/TournamentBracket.vue"
 @Component({
   components: { GhostButton, TournamentBracket },
   created() {
-    this.loadBracket()
+    this.loadTournament()
   },
   destroyed() {
-    this.resetBracket()
+    this.resetTournamentState()
   },
 })
-export default class BracketView extends Vue {
-  get bracketId() {
-    return this.$store.state.bracket.id
+export default class TournamentBracketView extends Vue {
+  get tournamentId() {
+    return this.$store.state.tournament.id
   }
 
-  get bracketName() {
-    return this.$store.state.bracket.name
+  get tournamentName() {
+    return this.$store.state.tournament.name
   }
 
   get isShuffleShown() {
@@ -56,14 +56,17 @@ export default class BracketView extends Vue {
   }
 
   @Watch("$route")
-  loadBracket() {
-    this.$store.dispatch(actionTypes.LOAD_BRACKET_BY_KEY, this.$route.params.id)
+  loadTournament() {
+    this.$store.dispatch(
+      actionTypes.LOAD_TOURNAMENT_BY_KEY,
+      this.$route.params.id
+    )
   }
 
-  resetBracket() {
+  resetTournamentState() {
     this.$store.commit(
-      mutationTypes.INITIALIZE_BRACKET_STATE,
-      initialState.bracket
+      mutationTypes.INITIALIZE_TOURNAMENT_STATE,
+      initialState.tournament
     )
   }
 
@@ -76,5 +79,9 @@ export default class BracketView extends Vue {
 <style lang="scss" scoped>
 h3 {
   margin-bottom: $section-margin;
+}
+
+.shuffle {
+  margin-top: $section-margin;
 }
 </style>

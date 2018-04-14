@@ -15,7 +15,7 @@
         </router-link>
       </li>
       <li>
-        <router-link :to="{ name: 'local-brackets' }">
+        <router-link :to="{ name: 'local-tournaments' }">
           Show me the brackets that I've created previously
         </router-link>
       </li>

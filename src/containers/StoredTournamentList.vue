@@ -2,24 +2,24 @@
   <section>
     <ul>
       <li 
-        v-for="(bracket, index) of brackets" 
+        v-for="(tournament, index) of tournaments" 
         v-if="index < limit"
-        :key="bracket.id">
-        <span class="bracket-text">
+        :key="tournament.id">
+        <span class="tournament-text">
           <!-- The indentation is shitty because HTML is shitty. -->
-          <router-link :to="{ name: 'bracket-detail', params: { id: bracket.id } }">
-            {{ bracket.name || 'Unnamed bracket' }}
+          <router-link :to="{ name: 'tournament-bracket', params: { id: tournament.id } }">
+            {{ tournament.name || 'Unnamed tournament' }}
           </router-link>
-          <span class="bracket-description">
-            {{ bracket.participants.length }} participant{{ bracket.participants.length > 1 ? 's' : '' }},
-            last modified {{ distanceInWordsToNow(bracket.lastModified) }} ago
+          <span class="tournament-description">
+            {{ tournament.participants.length }} participant{{ tournament.participants.length > 1 ? 's' : '' }},
+            last modified {{ distanceInWordsToNow(tournament.lastModified) }} ago
           </span>
         </span>
-        <RemoveButton :on-click="() => removeBracket(bracket.id)">X</RemoveButton>
+        <RemoveButton :on-click="() => removeTournament(tournament.id)">X</RemoveButton>
       </li>
     </ul>
     <GhostButton 
-      v-if="brackets.length > limit"
+      v-if="tournaments.length > limit"
       :on-click="showMore">Show more</GhostButton>
   </section>
 </template>
@@ -30,38 +30,37 @@ import localforage from "localforage"
 import { distanceInWordsToNow } from "date-fns"
 import * as R from "ramda"
 
+import { DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT } from "../constants"
 import GhostButton from "../components/GhostButton.vue"
 import RemoveButton from "../components/RemoveButton.vue"
 
-const DEFAULT_BRACKET_LIMIT = 10
-
 @Component({
   created() {
-    this.loadBracketList()
+    this.loadTournamentList()
   },
   components: { GhostButton, RemoveButton },
 })
-export default class StoredBracketList extends Vue {
-  brackets = []
+export default class StoredTournamentList extends Vue {
+  tournaments = []
   distanceInWordsToNow = distanceInWordsToNow
-  limit = DEFAULT_BRACKET_LIMIT
+  limit = DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT
 
-  async loadBracketList() {
+  async loadTournamentList() {
     const keys = await localforage.keys()
     const values = await Promise.all(keys.map(key => localforage.getItem(key)))
-    const brackets = values.map(JSON.parse)
+    const tournaments = values.map(JSON.parse)
     const comparator = R.comparator((a, b) => a.lastModified > b.lastModified)
 
-    this.brackets = R.sort(comparator, brackets)
+    this.tournaments = R.sort(comparator, tournaments)
   }
 
   showMore() {
-    this.limit += DEFAULT_BRACKET_LIMIT
+    this.limit += DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT
   }
 
-  async removeBracket(id) {
+  async removeTournament(id) {
     await localforage.removeItem(id)
-    await this.loadBracketList()
+    await this.loadTournamentList()
   }
 }
 </script>

@@ -11,7 +11,7 @@
       </li>
     </ul>
     <GhostButton :on-click="addInput">ADD FIELD</GhostButton>
-    <SubmitButton :on-click="submit">CREATE BRACKET</SubmitButton>
+    <SubmitButton :on-click="submit">CREATE</SubmitButton>
   </form>
 </template>
 
@@ -50,7 +50,7 @@ export default class NamedParticipantsForm extends Vue {
       .map((value, index) => value || `Team ${index + 1}`)
 
     participants.length &&
-      this.$store.dispatch(actionTypes.GENERATE_NEW_BRACKET, participants)
+      this.$store.dispatch(actionTypes.GENERATE_NEW_TOURNAMENT, participants)
   }
 }
 </script>

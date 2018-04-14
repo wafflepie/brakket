@@ -11,13 +11,13 @@ import { getNameOfSide, getOtherSide, isSidePlaceholder } from "./compute"
  * @param {Array} results results of all matches
  * @param {Object} match a single match
  */
-export const ensureMatchValidity = R.curry((bracket, match) =>
+export const ensureMatchValidity = R.curry((tournament, match) =>
   R.compose(
     ...SIDES.map(side => {
       const sideName = getNameOfSide(
-        bracket.participants,
-        bracket.seed,
-        bracket.results,
+        tournament.participants,
+        tournament.seed,
+        tournament.results,
         match,
         side
       )
@@ -34,14 +34,14 @@ export const ensureMatchValidity = R.curry((bracket, match) =>
 )
 
 /**
- * Ensures that the scores in the bracket state are valid.
+ * Ensures that the scores in the tournament state are valid.
  *
- * @param {Object} bracket bracket state
+ * @param {Object} tournament tournament state
  */
-export const ensureBracketStateValidity = bracket =>
+export const ensureTournamentStateValidity = tournament =>
   R.evolve(
     {
-      results: R.map(R.map(ensureMatchValidity(bracket))),
+      results: R.map(R.map(ensureMatchValidity(tournament))),
     },
-    bracket
+    tournament
   )

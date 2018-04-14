@@ -9,7 +9,7 @@ import { extendMatchSidesWithNames, extendMatchWithWinnerSide } from "../domain"
  *
  * @param {Object} state state of the application
  */
-export const selectMatchesWithScores = ({ bracket: { results } }) =>
+export const selectMatchesWithScores = ({ tournament: { results } }) =>
   R.filter(
     R.anyPass(SIDES.map(side => R.path([side, "score"]))),
     R.flatten(results)
@@ -20,7 +20,9 @@ export const selectMatchesWithScores = ({ bracket: { results } }) =>
  *
  * @param {Object} state state of the application
  */
-export const selectResults = ({ bracket: { participants, seed, results } }) =>
+export const selectResults = ({
+  tournament: { participants, seed, results },
+}) =>
   R.map(
     R.map(
       // this is called for each match
@@ -37,7 +39,7 @@ export const selectResults = ({ bracket: { participants, seed, results } }) =>
  *
  * @param {Object} state state of the application
  */
-export const selectFinalMatch = ({ bracket: { results } }) =>
+export const selectFinalMatch = ({ tournament: { results } }) =>
   R.last(R.defaultTo([], R.last(results)))
 
 /**
@@ -47,6 +49,6 @@ export const selectFinalMatch = ({ bracket: { results } }) =>
  */
 export const selectWinnerSideOfFinalMatch = state => {
   const results = selectResults(state)
-  const finalMatch = selectFinalMatch({ bracket: { results } })
+  const finalMatch = selectFinalMatch({ tournament: { results } })
   return R.prop(R.prop("winner", finalMatch), finalMatch)
 }
