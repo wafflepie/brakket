@@ -49,7 +49,7 @@ li {
     }
 
     &::before {
-      content: "↪ ";
+      content: "> ";
     }
   }
 }
