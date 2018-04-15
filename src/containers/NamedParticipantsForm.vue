@@ -7,11 +7,11 @@
         <input
           v-model="input.value"
           :placeholder="`Team ${index + 1}`">
-        <RemoveButton :on-click="() => removeInput(input)">X</RemoveButton>
+        <RemoveItemButton :on-click="() => removeInput(input)">X</RemoveItemButton>
       </li>
     </ul>
     <GhostButton :on-click="addInput">ADD FIELD</GhostButton>
-    <SubmitButton :on-click="submit">CREATE</SubmitButton>
+    <GhostSubmitButton :on-click="submit">CREATE</GhostSubmitButton>
   </form>
 </template>
 
@@ -24,13 +24,13 @@ import {
   MAXIMUM_PARTICIPANTS_COUNT,
 } from "../constants"
 import GhostButton from "../components/GhostButton.vue"
-import RemoveButton from "../components/RemoveButton.vue"
-import SubmitButton from "../components/SubmitButton.vue"
+import RemoveItemButton from "../components/RemoveItemButton.vue"
+import GhostSubmitButton from "../components/GhostSubmitButton.vue"
 import ResetNameMixin from "../mixins/ResetNameMixin"
 import { actionTypes } from "../store"
 
 @Component({
-  components: { GhostButton, RemoveButton, SubmitButton },
+  components: { GhostButton, RemoveItemButton, GhostSubmitButton },
   mixins: [ResetNameMixin],
 })
 export default class NamedParticipantsForm extends Vue {

@@ -11,7 +11,7 @@ import { Component, Prop, Vue } from "vue-property-decorator"
 import GhostButton from "./GhostButton.vue"
 
 @Component({ components: { GhostButton } })
-export default class SubmitButton extends Vue {
+export default class GhostSubmitButton extends Vue {
   @Prop(Function) onClick
 }
 </script>
@@ -20,11 +20,5 @@ export default class SubmitButton extends Vue {
 .ghost-button.submit-button {
   float: right;
   margin-top: $section-margin;
-
-  &:hover,
-  &:focus {
-    border-color: $primary-color;
-    color: $primary-color;
-  }
 }
 </style>

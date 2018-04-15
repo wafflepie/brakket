@@ -9,9 +9,9 @@
       autocomplete="off"
       placeholder="e.g. Foosball Playoffs">
     <transition name="fade">
-      <SubmitButton
+      <GhostSubmitButton
         v-if="value.length"
-        :on-click="submit">PROCEED</SubmitButton>
+        :on-click="submit">PROCEED</GhostSubmitButton>
     </transition>
   </form>
 </template>
@@ -19,10 +19,10 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
-import SubmitButton from "../components/SubmitButton.vue"
+import GhostSubmitButton from "../components/GhostSubmitButton.vue"
 import { mutationTypes } from "../store"
 
-@Component({ components: { SubmitButton } })
+@Component({ components: { GhostSubmitButton } })
 export default class TournamentNameForm extends Vue {
   value = ""
 

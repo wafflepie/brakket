@@ -1,34 +1,33 @@
 <template>
   <button
-    class="ghost-button"
+    class="remove-item-button"
     type="button"
-    @click.prevent="onClick"><slot /></button>
+    @click.prevent="onClick">⌫</button>
 </template>
 
 <script>
 import { Component, Prop, Vue } from "vue-property-decorator"
 
 @Component
-export default class GhostButton extends Vue {
+export default class RemoveItemButton extends Vue {
   @Prop(Function) onClick
 }
 </script>
 
 <style lang="scss" scoped>
-.ghost-button {
+.remove-item-button {
   background: none;
-  border: 1px solid $border-color-active;
+  border: none;
   color: inherit;
   cursor: pointer;
   display: inline-block;
   font-size: $form-element-font-size;
-  padding: $button-padding;
+  padding: $input-padding $button-padding;
   position: relative;
   outline: none;
 
-  &:focus,
-  &:hover {
-    border: 1px solid $primary-color;
+  &:hover,
+  &:focus {
     color: $primary-color;
   }
 }

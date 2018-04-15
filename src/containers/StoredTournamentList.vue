@@ -15,7 +15,7 @@
             last modified {{ distanceInWordsToNow(tournament.lastModified) }} ago
           </span>
         </span>
-        <RemoveButton :on-click="() => removeTournament(tournament.id)">X</RemoveButton>
+        <RemoveItemButton :on-click="() => removeTournament(tournament.id)">X</RemoveItemButton>
       </li>
     </ul>
     <GhostButton 
@@ -32,13 +32,13 @@ import * as R from "ramda"
 
 import { DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT } from "../constants"
 import GhostButton from "../components/GhostButton.vue"
-import RemoveButton from "../components/RemoveButton.vue"
+import RemoveItemButton from "../components/RemoveItemButton.vue"
 
 @Component({
   created() {
     this.loadTournamentList()
   },
-  components: { GhostButton, RemoveButton },
+  components: { GhostButton, RemoveItemButton },
 })
 export default class StoredTournamentList extends Vue {
   tournaments = []

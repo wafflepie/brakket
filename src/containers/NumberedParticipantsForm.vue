@@ -10,7 +10,7 @@
       autocomplete="off"
       type="number"
       @change="handleInputChange($event.target.value)">
-    <SubmitButton :on-click="submit">CREATE</SubmitButton>
+    <GhostSubmitButton :on-click="submit">CREATE</GhostSubmitButton>
   </form>
 </template>
 
@@ -22,11 +22,11 @@ import {
   MINIMUM_PARTICIPANTS_COUNT,
   MAXIMUM_PARTICIPANTS_COUNT,
 } from "../constants"
-import SubmitButton from "../components/SubmitButton"
+import GhostSubmitButton from "../components/GhostSubmitButton"
 import ResetNameMixin from "../mixins/ResetNameMixin"
 import { actionTypes } from "../store"
 
-@Component({ components: { SubmitButton }, mixins: [ResetNameMixin] })
+@Component({ components: { GhostSubmitButton }, mixins: [ResetNameMixin] })
 export default class NumberedParticipantsForm extends Vue {
   value = ""
   min = MINIMUM_PARTICIPANTS_COUNT
