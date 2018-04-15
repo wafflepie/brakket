@@ -1,6 +1,7 @@
 <template>
   <!-- Root coordinate system-->
   <svg
+    v-if="isModernBrowser"
     class="root-svg"
     height="100%"
     width="100%"
@@ -96,6 +97,11 @@ import {
 @Component
 export default class BracketBranches extends Vue {
   @Prop(Array) results
+
+  get isModernBrowser() {
+    // FIXME: vector-effect not working in IE and Edge
+    return !document.documentMode && !/Edge/.test(navigator.userAgent)
+  }
 
   isInwardLineShown(match, side) {
     return (
