@@ -122,7 +122,7 @@ export default class BracketBranches extends Vue {
     return (
       match.matchIndex / round.length * 100 +
       1 / round.length * 50 +
-      1 / this.results[0].length * 20 * (side === "away" ? 1 : -1)
+      (side === "away" ? 1 : -1) / this.results[0].length * 20
     )
   }
 
