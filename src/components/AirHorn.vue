@@ -9,27 +9,30 @@
 
 <script>
 import { Vue, Component } from "vue-property-decorator"
-import throttle from "lodash.throttle"
 
 import hornSoundEffect from "../assets/audio/horn.mp3"
 
 @Component({
   created() {
     this.audio.volume = 0.5
-    this.play = throttle(this.play, this.audio.duration * 1000)
   },
 })
 export default class AirHorn extends Vue {
   audio = new Audio(hornSoundEffect)
+  timeoutId = null
   playing = false
 
   play() {
+    clearInterval(this.timeoutId)
+    this.audio.pause()
+    this.audio.currentTime = 0.15 // HACK: audio could be trimmed
+
     this.audio.play()
     this.playing = true
 
-    setTimeout(() => {
+    this.timeoutId = setTimeout(() => {
       this.playing = false
-    }, this.audio.duration * 1000)
+    }, (this.audio.duration - 0.6) * 1000) // HACK: audio could be trimmed
   }
 }
 </script>
@@ -39,5 +42,6 @@ export default class AirHorn extends Vue {
   cursor: pointer;
   display: inline-block;
   margin: 0 0.5rem;
+  user-select: none;
 }
 </style>
