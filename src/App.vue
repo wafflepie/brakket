@@ -48,7 +48,9 @@ a {
 form {
   display: inline-block;
   margin: 0 auto;
+  max-width: $input-width;
   text-align: left;
+  width: 100%;
 }
 
 ul {
@@ -66,11 +68,12 @@ input {
   display: block;
   font-size: $form-element-font-size;
   margin: 0 auto;
+  max-width: $input-width;
   outline: none;
   padding-bottom: $input-padding;
   padding-top: $input-padding;
   position: relative;
-  width: $input-width;
+  width: 100%;
 
   &::placeholder {
     color: $input-placeholder-color;

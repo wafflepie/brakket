@@ -10,9 +10,7 @@
         <AirHorn />{{ winner.name }} is the winner of this tournament!<AirHorn />
       </h3>
       <TournamentBracket />
-      <div
-        v-show="isShuffleShown"
-        class="shuffle">
+      <div :class="['shuffle', { visible: isShuffleShown }]">
         <GhostButton :on-click="shuffle">Not happy with the seed? Shuffle!</GhostButton>
       </div>
     </section>
@@ -86,5 +84,10 @@ h3 {
 
 .shuffle {
   margin-top: $section-margin;
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
 }
 </style>

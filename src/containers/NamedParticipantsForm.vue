@@ -73,6 +73,7 @@ input {
 }
 
 li {
+  display: flex;
   margin-bottom: 2 * $list-item-margin;
 }
 

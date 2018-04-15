@@ -20,7 +20,6 @@ export default class RemoveButton extends Vue {
   border-color: transparent;
   display: inline-block;
   font-size: $form-element-font-size;
-  margin-left: 1rem;
   padding-top: $input-padding;
   padding-bottom: $input-padding;
 
