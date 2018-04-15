@@ -1,25 +1,27 @@
 <template>
   <section>
     <h2>Simple tournament brackets for everyone!</h2>
-    <ul>
-      <li>
-        <router-link :to="{ name: 'named-participants-form' }">
-          I want to enter the names of participants
-        </router-link>
-      </li>
-      <li>
-        <router-link
-          :to="{ name: 'numbered-participants-form' }"
-          class="shifting with-arrow">
-          I don't need to enter the names, just keep them numbered
-        </router-link>
-      </li>
-      <li>
-        <router-link :to="{ name: 'local-tournaments' }">
-          Show me the brackets that I've created previously
-        </router-link>
-      </li>
-    </ul>
+    <nav>
+      <ul>
+        <li>
+          <router-link :to="{ name: 'named-participants-form' }">
+            I want to enter the names of participants
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            :to="{ name: 'numbered-participants-form' }"
+            class="shifting with-arrow">
+            I don't need to enter the names, just keep them numbered
+          </router-link>
+        </li>
+        <li>
+          <router-link :to="{ name: 'local-tournaments' }">
+            Show me the brackets that I've created previously
+          </router-link>
+        </li>
+      </ul>
+    </nav>
   </section>
 </template>
 
