@@ -1,6 +1,6 @@
 <template>
   <section>
-    <ul>
+    <ul v-if="tournaments.length">
       <li 
         v-for="(tournament, index) of tournaments" 
         v-if="index < limit"
@@ -18,6 +18,9 @@
         <RemoveItemButton :on-click="() => removeTournament(tournament.id)">X</RemoveItemButton>
       </li>
     </ul>
+    <h3 v-if="!tournaments.length">
+      You haven't created any tournaments yet.
+    </h3>
     <GhostButton 
       :class="{ invisible: tournaments.length <= limit }"
       :on-click="showMore">SHOW MORE</GhostButton>
