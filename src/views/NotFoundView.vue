@@ -1,5 +1,5 @@
 <template>
-  <main>
-    404
-  </main>
+  <div>
+    This page does not exist :(
+  </div>
 </template>

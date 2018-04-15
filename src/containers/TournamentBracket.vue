@@ -1,11 +1,11 @@
 <template>
-  <div class="bracket">
+  <article class="bracket">
     <BracketBranches :results="results" />
-    <div 
+    <article 
       v-for="(round, roundIndex) of results" 
       :key="roundIndex" 
       class="round">
-      <div 
+      <article 
         v-for="(match, matchIndex) of round" 
         :key="matchIndex" 
         class="match">
@@ -23,9 +23,9 @@
           side="away"
           @score-change="handleScoreChange"
           @score-blur="handleScoreBlur" />
-      </div>
-    </div>
-  </div>
+      </article>
+    </article>
+  </article>
 </template>
 
 <script>

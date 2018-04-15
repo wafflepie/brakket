@@ -1,5 +1,5 @@
 <template>
-  <div :class="[{ winner: match.winner === side }, 'side', side]">
+  <article :class="[{ winner: match.winner === side }, 'side', side]">
     <div
       v-if="isSidePlaceholder(match, side)"
       class="side-name placeholder">
@@ -21,7 +21,7 @@
       type="number"
       @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
       @blur="$emit('score-blur')">
-  </div>
+  </article>
 </template>
 
 <script>
@@ -53,7 +53,7 @@ export default class MatchSide extends Vue {
   input {
     border: none;
     font-size: 100%;
-    padding: initial;
+    padding: 0;
     text-align: right;
     width: $score-input-width;
   }

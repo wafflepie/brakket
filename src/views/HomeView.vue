@@ -1,8 +1,8 @@
 <template>
-  <main>
+  <div class="home-container">
     <router-view v-if="!isRouteParticipantsForm || isTournamentNameSet" />
     <TournamentNameForm v-else />
-  </main>
+  </div>
 </template>
 
 <script>
@@ -24,7 +24,7 @@ export default class HomeView extends Vue {
 
 
 <style lang="scss" scoped>
-main {
+.home-container {
   margin: 0 auto;
   max-width: $home-width;
   text-align: center;

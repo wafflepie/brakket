@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div>
     <section v-if="!tournamentId">
       <h2>This bracket does not exist :(</h2>
     </section>
@@ -14,7 +14,7 @@
         <GhostButton :on-click="shuffle">Not happy with the seed? Shuffle!</GhostButton>
       </div>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>
