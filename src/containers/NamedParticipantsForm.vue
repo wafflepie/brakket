@@ -19,6 +19,10 @@
 import { Component, Vue } from "vue-property-decorator"
 import * as R from "ramda"
 
+import {
+  MINIMUM_PARTICIPANTS_COUNT,
+  MAXIMUM_PARTICIPANTS_COUNT,
+} from "../constants"
 import GhostButton from "../components/GhostButton.vue"
 import RemoveButton from "../components/RemoveButton.vue"
 import SubmitButton from "../components/SubmitButton.vue"
@@ -37,11 +41,15 @@ export default class NamedParticipantsForm extends Vue {
   }
 
   addInput() {
-    this.inputs = [...this.inputs, this.createEmptyInput()]
+    if (this.inputs.length < MAXIMUM_PARTICIPANTS_COUNT) {
+      this.inputs = [...this.inputs, this.createEmptyInput()]
+    }
   }
 
   removeInput(input) {
-    this.inputs = this.inputs.filter(element => element !== input)
+    if (this.inputs.length > MINIMUM_PARTICIPANTS_COUNT) {
+      this.inputs = this.inputs.filter(element => element !== input)
+    }
   }
 
   submit() {
