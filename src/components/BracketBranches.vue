@@ -11,7 +11,7 @@
       v-for="(round, roundIndex) of results"
       :key="roundIndex"
       :x="(roundIndex / results.length) * 100"
-      :width="100 / results.length"
+      :width="100 / results.length + 0.1 /* HACK: to make the line junction look better */"
       viewBox="0 0 100 100"
       preserveAspectRatio="none">
       <!-- Horizontal line coming out of the right side of a match if home is the winner -->
@@ -121,7 +121,7 @@ export default class BracketBranches extends Vue {
   getHorizontalLineY(round, match, side) {
     return (
       match.matchIndex / round.length * 100 +
-      1 / round.length * 50 +
+      100 / round.length * 0.5 +
       (side === "away" ? 1 : -1) / this.results[0].length * 20
     )
   }
@@ -146,10 +146,10 @@ export default class BracketBranches extends Vue {
 
 .line {
   stroke: $bracket-branch-color;
-  stroke-width: 1px;
+  stroke-width: $bracket-branch-line-width;
 }
 
 .vertical {
-  stroke-width: 2px;
+  stroke-width: 2 * $bracket-branch-line-width;
 }
 </style>

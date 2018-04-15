@@ -60,6 +60,7 @@ export default class BracketView extends Vue {
 <style lang="scss" scoped>
 .bracket {
   display: inline-flex;
+  margin: $section-margin 0;
   position: relative;
   text-align: left;
 }

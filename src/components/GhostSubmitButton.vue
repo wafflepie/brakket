@@ -20,5 +20,9 @@ export default class GhostSubmitButton extends Vue {
 .ghost-button.submit-button {
   float: right;
   margin-top: $section-margin;
+
+  &::before {
+    content: "✓ ";
+  }
 }
 </style>

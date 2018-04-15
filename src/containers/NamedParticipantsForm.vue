@@ -77,6 +77,10 @@ li {
   margin-bottom: 2 * $list-item-margin;
 }
 
+ul + button::before {
+  content: "+ ";
+}
+
 :not(input) + button {
   margin-top: $section-margin;
 }

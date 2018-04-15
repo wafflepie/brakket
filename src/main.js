@@ -13,4 +13,7 @@ new Vue({
   store,
 }).$mount("#app")
 
-OfflinePluginRuntime.install()
+// eslint-disable-next-line no-undef
+if (process.env.NODE_ENV === "production") {
+  OfflinePluginRuntime.install()
+}

@@ -10,7 +10,7 @@
         <AirHorn />{{ winner.name }} is the winner of this tournament!<AirHorn />
       </h3>
       <TournamentBracket />
-      <div :class="['shuffle', { visible: isShuffleShown }]">
+      <div :class="{ invisible: !isShuffleShown }">
         <GhostButton :on-click="shuffle">Not happy with the seed? Shuffle!</GhostButton>
       </div>
     </section>
@@ -79,15 +79,10 @@ export default class TournamentBracketView extends Vue {
 
 <style lang="scss" scoped>
 h3 {
-  margin-bottom: $section-margin;
+  margin-bottom: 0;
 }
 
-.shuffle {
-  margin-top: $section-margin;
+.invisible {
   visibility: hidden;
-}
-
-.visible {
-  visibility: visible;
 }
 </style>

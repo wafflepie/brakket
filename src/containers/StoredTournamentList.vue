@@ -19,8 +19,8 @@
       </li>
     </ul>
     <GhostButton 
-      v-if="tournaments.length > limit"
-      :on-click="showMore">Show more</GhostButton>
+      :class="{ invisible: tournaments.length <= limit }"
+      :on-click="showMore">SHOW MORE</GhostButton>
   </section>
 </template>
 
@@ -85,5 +85,9 @@ li {
     display: block;
     font-size: $form-element-font-size;
   }
+}
+
+.invisible {
+  visibility: hidden;
 }
 </style>
