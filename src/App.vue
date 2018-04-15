@@ -90,7 +90,7 @@ input {
 
 label {
   display: block;
-  font-size: 0.9em;
+  font-size: 1rem;
   margin-bottom: 0.25rem;
 }
 

@@ -36,7 +36,7 @@ ul {
 }
 
 li {
-  font-size: $navigation-font-size;
+  font-size: $navigation-item-font-size;
   margin: $list-item-margin 0;
 
   a {
