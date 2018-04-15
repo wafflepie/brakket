@@ -17,6 +17,7 @@ Vue.use(Vuex)
 export const mutationTypes = {
   CHANGE_SIDE_SCORE: "CHANGE_SIDE_SCORE",
   INITIALIZE_TOURNAMENT_STATE: "INITIALIZE_TOURNAMENT_STATE",
+  SET_LOADING: "SET_LOADING",
   SET_TOURNAMENT_NAME: "SET_TOURNAMENT_NAME",
 }
 
@@ -53,6 +54,7 @@ export const actionTypes = {
 // }
 
 export const initialState = {
+  loading: false,
   tournament: {
     created: null,
     id: null,
@@ -74,7 +76,11 @@ export default new Vuex.Store({
         parseInt(score) || 0
     },
     [mutationTypes.INITIALIZE_TOURNAMENT_STATE](state, payload) {
+      state.loading = false
       state.tournament = R.clone(payload || initialState.tournament)
+    },
+    [mutationTypes.SET_LOADING](state, payload) {
+      state.loading = payload
     },
     [mutationTypes.SET_TOURNAMENT_NAME](state, payload) {
       state.tournament.name = payload
@@ -113,6 +119,7 @@ export default new Vuex.Store({
       dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
     },
     async [actionTypes.LOAD_TOURNAMENT_BY_KEY]({ commit }, key) {
+      commit(mutationTypes.SET_LOADING, true)
       const value = await localforage.getItem(key)
       const state = JSON.parse(value)
       commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, state)

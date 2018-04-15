@@ -1,9 +1,10 @@
 <template>
   <div>
     <section v-if="!tournamentId">
-      <h2>This bracket does not exist :(</h2>
+      <h2 v-if="!loading">This bracket does not exist :(</h2>
+      <h2 v-if="loading">Loading your tournament...</h2>
     </section>
-    <section v-if="tournamentId">
+    <section v-if="!loading && tournamentId">
       <h2>{{ tournamentName || 'Unnamed tournament' }}</h2>
       <h3 v-if="!winner">Enter the results by editing the scores below</h3>
       <h3 v-if="winner">
@@ -40,6 +41,10 @@ import TournamentBracket from "../containers/TournamentBracket.vue"
   },
 })
 export default class TournamentBracketView extends Vue {
+  get loading() {
+    return this.$store.state.loading
+  }
+
   get tournamentId() {
     return this.$store.state.tournament.id
   }
