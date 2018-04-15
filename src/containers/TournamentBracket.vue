@@ -1,5 +1,6 @@
 <template>
   <div class="bracket">
+    <BracketBranches :results="results" />
     <div 
       v-for="(round, roundIndex) of results" 
       :key="roundIndex" 
@@ -33,8 +34,9 @@ import { Component, Vue } from "vue-property-decorator"
 import { actionTypes, mutationTypes } from "../store"
 import { selectResults } from "../selectors"
 import MatchSide from "../components/MatchSide.vue"
+import BracketBranches from "../components/BracketBranches.vue"
 
-@Component({ components: { MatchSide } })
+@Component({ components: { BracketBranches, MatchSide } })
 export default class BracketView extends Vue {
   get results() {
     return selectResults(this.$store.state)
@@ -73,17 +75,17 @@ export default class BracketView extends Vue {
   align-items: center;
   display: flex;
   flex-direction: column;
+  margin-top: $match-margin;
   margin-bottom: $match-margin;
   width: $match-width;
 }
 
 @media screen and (min-width: $mobile-breakpoint) {
   .round {
-    margin: 0 (2 * $round-margin);
+    margin: 0 (4 * $round-margin);
   }
 
   .match {
-    margin-bottom: 2 * $match-margin;
     width: $match-width * 1.5;
   }
 }

@@ -60,11 +60,11 @@ export default class MatchSide extends Vue {
 }
 
 .winner {
-  color: $primary-color / $winner-brightness;
-  filter: brightness($winner-brightness);
+  background-color: $side-background-color * $winner-brightness;
+  color: $primary-color;
 
   input {
-    color: $primary-color / $winner-brightness;
+    color: $primary-color;
   }
 }
 
