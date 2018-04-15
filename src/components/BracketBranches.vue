@@ -21,9 +21,9 @@
         :key="'home-outward-line-' + matchIndex"
         :y1="getHorizontalLineY(round, match, 'home')"
         :y2="getHorizontalLineY(round, match, 'home')"
-        class="line"
-        x1="50"
-        x2="100"
+        class="line horizontal"
+        x1="100"
+        x2="50"
         vector-effect="non-scaling-stroke" />
       <!-- Horizontal line coming out of the right side of a match if away is the winner -->
       <line
@@ -32,9 +32,9 @@
         :key="'away-outward-line-' + matchIndex"
         :y1="getHorizontalLineY(round, match, 'away')"
         :y2="getHorizontalLineY(round, match, 'away')"
-        class="line"
-        x1="50"
-        x2="100"
+        class="line horizontal"
+        x1="100"
+        x2="50"
         vector-effect="non-scaling-stroke" />
       <!-- Horizontal line coming to the left home side of a match if it is filled by a participant -->
       <line
@@ -43,9 +43,9 @@
         :key="'home-inward-line-' + matchIndex"
         :y1="getHorizontalLineY(round, match, 'home')"
         :y2="getHorizontalLineY(round, match, 'home')"
-        class="line"
-        x1="0"
-        x2="50"
+        class="line horizontal"
+        x1="50"
+        x2="0"
         vector-effect="non-scaling-stroke" />
       <!-- Horizontal line coming to the left away side of a match if it is filled by a participant -->
       <line
@@ -54,9 +54,9 @@
         :key="'away-inward-line-' + matchIndex"
         :y1="getHorizontalLineY(round, match, 'away')"
         :y2="getHorizontalLineY(round, match, 'away')"
-        class="line"
-        x1="0"
-        x2="50"
+        class="line horizontal"
+        x1="50"
+        x2="0"
         vector-effect="non-scaling-stroke" />
       <!-- Vertical line connecting the home inward line with the appropriate outward line -->
       <line
@@ -65,7 +65,7 @@
         :key="'home-vertical-line-' + matchIndex"
         :y1="getHorizontalLineY(round, match, 'home')"
         :y2="getPreviousMatchHorizontalLineY(round, match, 'home')"
-        class="line"
+        class="line vertical"
         x1="0"
         x2="0"
         vector-effect="non-scaling-stroke" />
@@ -76,7 +76,7 @@
         :key="'away-vertical-line-' + matchIndex"
         :y1="getHorizontalLineY(round, match, 'away')"
         :y2="getPreviousMatchHorizontalLineY(round, match, 'away')"
-        class="line"
+        class="line vertical"
         x1="0"
         x2="0"
         vector-effect="non-scaling-stroke" />
@@ -146,6 +146,10 @@ export default class BracketBranches extends Vue {
 
 .line {
   stroke: $bracket-branch-color;
-  stroke-width: 1;
+  stroke-width: 1px;
+}
+
+.vertical {
+  stroke-width: 2px;
 }
 </style>
