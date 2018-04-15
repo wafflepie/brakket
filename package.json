@@ -13,6 +13,7 @@
     "date-fns": "^1.29.0",
     "localforage": "^1.6.0",
     "lodash.shuffle": "^4.2.0",
+    "lodash.throttle": "4.1.1",
     "offline-plugin": "^4.9.0",
     "ramda": "^0.25.0",
     "shortid": "^2.2.8",

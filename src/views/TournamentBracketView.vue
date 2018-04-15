@@ -6,10 +6,12 @@
     <section v-if="tournamentId">
       <h2>{{ tournamentName || 'Unnamed tournament' }}</h2>
       <h3 v-if="!winner">Enter the results by editing the scores below</h3>
-      <h3 v-if="winner">{{ winner.name }} is the winner of this tournament!</h3>
+      <h3 v-if="winner">
+        <AirHorn />{{ winner.name }} is the winner of this tournament!<AirHorn />
+      </h3>
       <TournamentBracket />
       <div
-        v-hide="!isShuffleShown"
+        v-show="isShuffleShown"
         class="shuffle">
         <GhostButton :on-click="shuffle">Not happy with the seed? Shuffle!</GhostButton>
       </div>
@@ -26,11 +28,12 @@ import {
   selectMatchesWithScores,
   selectWinnerSideOfFinalMatch,
 } from "../selectors"
+import AirHorn from "../components/AirHorn.vue"
 import GhostButton from "../components/GhostButton.vue"
 import TournamentBracket from "../containers/TournamentBracket.vue"
 
 @Component({
-  components: { GhostButton, TournamentBracket },
+  components: { AirHorn, GhostButton, TournamentBracket },
   created() {
     this.loadTournament()
   },
