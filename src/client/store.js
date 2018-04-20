@@ -18,7 +18,10 @@ export const mutationTypes = {
   CHANGE_SIDE_SCORE: "CHANGE_SIDE_SCORE",
   INITIALIZE_TOURNAMENT_STATE: "INITIALIZE_TOURNAMENT_STATE",
   SET_LOADING: "SET_LOADING",
+  SET_SOCKET: "SET_SOCKET",
   SET_TOURNAMENT_NAME: "SET_TOURNAMENT_NAME",
+  SOCKET_CONNECT: "SOCKET_CONNECT",
+  SOCKET_DISCONNECT: "SOCKET_DISCONNECT",
 }
 
 export const actionTypes = {
@@ -54,7 +57,11 @@ export const actionTypes = {
 // }
 
 export const initialState = {
-  loading: false,
+  $socket: null,
+  loading: {
+    tournament: false,
+  },
+  online: false,
   tournament: {
     created: null,
     id: null,
@@ -76,14 +83,23 @@ export default new Vuex.Store({
         parseInt(score) || 0
     },
     [mutationTypes.INITIALIZE_TOURNAMENT_STATE](state, payload) {
-      state.loading = false
+      state.loading.tournament = false
       state.tournament = R.clone(payload || initialState.tournament)
     },
     [mutationTypes.SET_LOADING](state, payload) {
-      state.loading = payload
+      state.loading = R.mergeDeepRight(state.loading, payload)
+    },
+    [mutationTypes.SET_SOCKET](state, payload) {
+      state.$socket = payload
     },
     [mutationTypes.SET_TOURNAMENT_NAME](state, payload) {
       state.tournament.name = payload
+    },
+    [mutationTypes.SOCKET_CONNECT](state) {
+      state.online = true
+    },
+    [mutationTypes.SOCKET_DISCONNECT](state) {
+      state.online = false
     },
   },
   actions: {
@@ -119,7 +135,7 @@ export default new Vuex.Store({
       dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
     },
     async [actionTypes.LOAD_TOURNAMENT_BY_KEY]({ commit }, key) {
-      commit(mutationTypes.SET_LOADING, true)
+      commit(mutationTypes.SET_LOADING, { tournament: true })
       const value = await localforage.getItem(key)
       const state = JSON.parse(value)
       commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, state)

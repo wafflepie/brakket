@@ -4,21 +4,24 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve --open",
+    "serve": "concurrently \"vue-cli-service serve --open\" \"nodemon --config .nodemonrc.json ./src/server\"",
     "build": "vue-cli-service build",
     "test": "vue-cli-service test",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "date-fns": "^1.29.0",
+    "koa": "2.5.0",
     "localforage": "^1.6.0",
     "lodash.shuffle": "^4.2.0",
     "offline-plugin": "^4.9.0",
     "ramda": "^0.25.0",
     "shortid": "^2.2.8",
+    "socket.io": "2.1.0",
     "vue": "^2.5.13",
     "vue-property-decorator": "^6.0.0",
     "vue-router": "^3.0.1",
+    "vue-socket.io": "2.1.1-a",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
@@ -34,8 +37,10 @@
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^22.0.4",
+    "concurrently": "3.5.1",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.7.2",
+    "nodemon": "1.17.3",
     "sass-loader": "^6.0.6",
     "sass-resources-loader": "^1.3.3",
     "vue-template-compiler": "^2.5.13"

@@ -42,7 +42,7 @@ import TournamentBracket from "../containers/TournamentBracket.vue"
 })
 export default class TournamentBracketView extends Vue {
   get loading() {
-    return this.$store.state.loading
+    return this.$store.state.loading.tournament
   }
 
   get tournamentId() {

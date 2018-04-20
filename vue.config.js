@@ -13,7 +13,7 @@ module.exports = {
           options: {
             resources: path.resolve(
               __dirname,
-              "src/assets/scss/_variables.scss"
+              "src/client/assets/scss/_variables.scss"
             ),
           },
         })
@@ -22,5 +22,12 @@ module.exports = {
       })
 
     config.plugin("offline").use(OfflinePlugin)
+    config
+      .entry("app")
+      .clear()
+      .add("./src/client/index.js")
+  },
+  devServer: {
+    proxy: "http://localhost:3001",
   },
 }
