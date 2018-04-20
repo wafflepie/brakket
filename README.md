@@ -1,3 +1,3 @@
-# brakket-client-only
+# brakket
 
 Vue.js application for tournament brackets.
