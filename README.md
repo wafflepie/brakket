@@ -2,9 +2,12 @@
 
 Vue.js application for tournament brackets.
 
-## Types
+## Type reference
+
+Although this project does not use Flow, this type reference can help you understand the model structure a bit better.
 
 ```js
+// This is the model structure used in Vuex state.
 type Participants = Array<string>
 type Seed = Array<{ home: number, away: number }>
 type Side = { score: ?number }
@@ -19,6 +22,7 @@ type Match = {
 type Round = Array<Match>
 type Results = Array<Round>
 
+// These types are used in selectors only.
 type ExtendedSide = Side & { name: ?string }
 
 type ExtendedMatch = {
