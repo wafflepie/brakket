@@ -1,10 +1,13 @@
 // Colors
 $background-color: #111;
+$bracket-status-bar-color: #181818;
 $border-color-inactive: #666;
 $border-color-active: white;
 $bracket-branch-color: #333;
 $font-color: white;
 $input-placeholder-color: #666;
+$offline-color: red;
+$online-color: green;
 $primary-color: gold;
 $side-background-color: #181818;
 $side-placeholder-color: #333;
@@ -18,6 +21,7 @@ $title-font-size: 5rem;
 
 // Widths & Heights
 $bracket-branch-line-width: 1.5px;
+$bracket-status-bar-height: 3rem;
 $home-width: 40rem;
 $input-width: 20rem;
 $match-width: 8rem;

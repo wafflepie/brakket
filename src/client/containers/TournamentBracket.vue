@@ -43,7 +43,7 @@ export default class BracketView extends Vue {
   }
 
   handleScoreChange(roundIndex, matchIndex, side, score) {
-    this.$store.commit(mutationTypes.CHANGE_SIDE_SCORE, {
+    this.$store.commit(mutationTypes.SET_TOURNAMENT_SIDE_SCORE, {
       roundIndex,
       matchIndex,
       side,

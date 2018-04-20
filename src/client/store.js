@@ -15,11 +15,11 @@ import router from "./router"
 Vue.use(Vuex)
 
 export const mutationTypes = {
-  CHANGE_SIDE_SCORE: "CHANGE_SIDE_SCORE",
   INITIALIZE_TOURNAMENT_STATE: "INITIALIZE_TOURNAMENT_STATE",
-  SET_LOADING: "SET_LOADING",
+  MERGE_LOADING: "MERGE_LOADING",
   SET_SOCKET: "SET_SOCKET",
   SET_TOURNAMENT_NAME: "SET_TOURNAMENT_NAME",
+  SET_TOURNAMENT_SIDE_SCORE: "SET_TOURNAMENT_SIDE_SCORE",
   SOCKET_CONNECT: "SOCKET_CONNECT",
   SOCKET_DISCONNECT: "SOCKET_DISCONNECT",
 }
@@ -31,30 +31,6 @@ export const actionTypes = {
   SHUFFLE: "SHUFFLE",
   STORE_CURRENT_TOURNAMENT_STATE: "STORE_CURRENT_TOURNAMENT_STATE",
 }
-
-// type Participants = Array<string>
-// type Seed = Array<{ home: number, away: number }>
-// type Side = { score: ?number }
-
-// type Match = {
-//   home: Side,
-//   away: Side,
-//   roundIndex: number,
-//   matchIndex: number
-// }
-
-// type Round = Array<Match>
-// type Results = Array<Round>
-
-// type ExtendedSide = Side & { name: ?string }
-
-// type ExtendedMatch = {
-//   home: ExtendedSide,
-//   away: ExtendedSide,
-//   roundIndex: number,
-//   matchIndex: number,
-//   winner: 'home' | 'away'
-// }
 
 export const initialState = {
   $socket: null,
@@ -76,17 +52,11 @@ export const initialState = {
 export default new Vuex.Store({
   state: R.clone(initialState),
   mutations: {
-    [mutationTypes.CHANGE_SIDE_SCORE](state, payload) {
-      const { roundIndex, matchIndex, side, score } = payload
-
-      state.tournament.results[roundIndex][matchIndex][side].score =
-        parseInt(score) || 0
-    },
     [mutationTypes.INITIALIZE_TOURNAMENT_STATE](state, payload) {
       state.loading.tournament = false
       state.tournament = R.clone(payload || initialState.tournament)
     },
-    [mutationTypes.SET_LOADING](state, payload) {
+    [mutationTypes.MERGE_LOADING](state, payload) {
       state.loading = R.mergeDeepRight(state.loading, payload)
     },
     [mutationTypes.SET_SOCKET](state, payload) {
@@ -94,6 +64,12 @@ export default new Vuex.Store({
     },
     [mutationTypes.SET_TOURNAMENT_NAME](state, payload) {
       state.tournament.name = payload
+    },
+    [mutationTypes.SET_TOURNAMENT_SIDE_SCORE](state, payload) {
+      const { roundIndex, matchIndex, side, score } = payload
+
+      state.tournament.results[roundIndex][matchIndex][side].score =
+        parseInt(score) || 0
     },
     [mutationTypes.SOCKET_CONNECT](state) {
       state.online = true
@@ -135,7 +111,7 @@ export default new Vuex.Store({
       dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
     },
     async [actionTypes.LOAD_TOURNAMENT_BY_KEY]({ commit }, key) {
-      commit(mutationTypes.SET_LOADING, { tournament: true })
+      commit(mutationTypes.MERGE_LOADING, { tournament: true })
       const value = await localforage.getItem(key)
       const state = JSON.parse(value)
       commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, state)

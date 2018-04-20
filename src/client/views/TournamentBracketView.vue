@@ -1,5 +1,6 @@
 <template>
   <div>
+    <BracketStatusBar />
     <section v-if="!tournamentId">
       <h2 v-if="!loading">This bracket does not exist :(</h2>
       <h2 v-if="loading">Loading your tournament...</h2>
@@ -28,11 +29,12 @@ import {
   selectWinnerSideOfFinalMatch,
 } from "../selectors"
 import AirHorn from "../components/AirHorn.vue"
+import BracketStatusBar from "../containers/BracketStatusBar.vue"
 import GhostButton from "../components/GhostButton.vue"
 import TournamentBracket from "../containers/TournamentBracket.vue"
 
 @Component({
-  components: { AirHorn, GhostButton, TournamentBracket },
+  components: { AirHorn, BracketStatusBar, GhostButton, TournamentBracket },
   created() {
     this.loadTournament()
   },
