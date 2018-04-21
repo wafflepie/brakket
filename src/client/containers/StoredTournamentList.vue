@@ -4,18 +4,18 @@
       <li 
         v-for="(tournament, index) of tournaments" 
         v-if="index < limit"
-        :key="tournament.id">
+        :key="tournament.local.token">
         <span class="tournament-text">
           <!-- The indentation is shitty because HTML is shitty. -->
-          <router-link :to="{ name: 'tournament-bracket', params: { id: tournament.id } }">
-            {{ tournament.name || 'Unnamed tournament' }}
+          <router-link :to="{ name: 'tournament-bracket', params: { token: tournament.token } }">
+            {{ tournament.domain.name || 'Unnamed tournament' }}
           </router-link>
           <span class="tournament-description">
-            {{ tournament.participants.length }} participant{{ tournament.participants.length > 1 ? 's' : '' }},
-            last modified {{ distanceInWordsToNow(tournament.lastModified) }} ago
+            {{ tournament.domain.participants.length }} participant{{ tournament.domain.participants.length > 1 ? 's' : '' }},
+            last modified {{ distanceInWordsToNow(tournament.local.lastModified) }} ago
           </span>
         </span>
-        <RemoveItemButton :on-click="() => removeTournament(tournament.id)">X</RemoveItemButton>
+        <RemoveItemButton :on-click="() => removeTournament(tournament.local.token)">X</RemoveItemButton>
       </li>
     </ul>
     <h3 v-if="!tournaments.length">
@@ -52,7 +52,10 @@ export default class StoredTournamentList extends Vue {
     const keys = await localforage.keys()
     const values = await Promise.all(keys.map(key => localforage.getItem(key)))
     const tournaments = values.map(JSON.parse)
-    const comparator = R.comparator((a, b) => a.lastModified > b.lastModified)
+
+    const comparator = R.comparator(
+      (a, b) => a.local.lastModified > b.local.lastModified
+    )
 
     this.tournaments = R.sort(comparator, tournaments)
   }

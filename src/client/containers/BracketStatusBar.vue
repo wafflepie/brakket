@@ -3,7 +3,7 @@
     <span
       v-if="online"
       class="connection-status online">
-      Online
+      Online, {{ clientCount }} total viewer{{ clientCount - 1 ? 's' : '' }}
     </span>
     <span
       v-else
@@ -20,6 +20,10 @@ import { Component, Vue } from "vue-property-decorator"
 export default class BracketStatusBar extends Vue {
   get online() {
     return this.$store.state.online
+  }
+
+  get clientCount() {
+    return this.$store.state.tournament.transient.clientCount
   }
 }
 </script>

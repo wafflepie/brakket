@@ -14,4 +14,4 @@ export default new Vuex.Store({
   state: R.clone(initialState),
 })
 
-export { actionTypes, mutationTypes }
+export { actionTypes, mutationTypes, initialState }

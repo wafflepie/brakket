@@ -42,7 +42,7 @@ export default new Router({
     },
     {
       name: "tournament-bracket",
-      path: "/tournament/:id",
+      path: "/tournament/:token",
       component: TournamentBracketView,
     },
     {

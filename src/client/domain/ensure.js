@@ -34,14 +34,14 @@ export const ensureMatchValidity = R.curry((tournament, match) =>
 )
 
 /**
- * Ensures that the scores in the tournament state are valid.
+ * Ensures that the scores in the tournament domain state are valid.
  *
- * @param {Object} tournament tournament state
+ * @param {Object} domain tournament domain state (object with participants, results and seed)
  */
-export const ensureTournamentStateValidity = tournament =>
+export const ensureTournamentDomainValidity = domain =>
   R.evolve(
     {
-      results: R.map(R.map(ensureMatchValidity(tournament))),
+      results: R.map(R.map(ensureMatchValidity(domain))),
     },
-    tournament
+    domain
   )

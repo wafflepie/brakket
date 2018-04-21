@@ -17,7 +17,7 @@ export default class HomeView extends Vue {
   }
 
   get isTournamentNameSet() {
-    return !!this.$store.state.tournament.name
+    return !!this.$store.state.tournament.domain.name
   }
 }
 </script>
