@@ -41,12 +41,11 @@ io.on("connection", socket => {
     if (!store.tokenToPermissionsMap[token]) {
       const id = shortid()
 
-      store.tokenToPermissionsMap[token] = [id, PERMISSIONS.ORGANIZER]
+      socket.join(id)
+      io.to(id).emit("updateClientCount", 1)
 
-      store.idToTournamentMap[id] = {
-        domain,
-        meta: { id },
-      }
+      store.tokenToPermissionsMap[token] = [id, PERMISSIONS.ORGANIZER]
+      store.idToTournamentMap[id] = domain
     } else {
       socket.emit("tokenAlreadyExists")
     }
