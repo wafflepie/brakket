@@ -5,7 +5,7 @@ const TournamentSchema = new mongoose.Schema({
   domain: {
     name: String,
     participants: [String],
-    results: mongoose.Schema.Types.Mixed,
+    results: [[mongoose.Schema.Types.Mixed]],
     seed: [
       {
         away: Number,

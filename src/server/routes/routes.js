@@ -110,6 +110,7 @@ module.exports = io => {
 
         if (tournament) {
           tournament.domain.results[roundIndex][matchIndex][side].score = score
+          tournament.markModified("domain")
 
           await tournament.save()
 
@@ -129,6 +130,8 @@ module.exports = io => {
 
         if (tournament) {
           tournament.domain = state.domain
+          tournament.markModified("domain")
+
           await tournament.save()
         } else {
           socket.emit("tournamentDoesNotExist")

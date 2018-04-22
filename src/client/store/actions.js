@@ -134,7 +134,7 @@ export const actions = {
     commit(mutationTypes.SET_TOURNAMENT_SCORE, payload)
     dispatch(actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY)
   },
-  [actionTypes.SOCKET_TOURNAMENT_STATE]({ commit }, payload) {
+  [actionTypes.SOCKET_TOURNAMENT_STATE]({ commit, state }, payload) {
     const { domain, ...remote } = payload
 
     commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, {
@@ -142,6 +142,13 @@ export const actions = {
       local: remote,
       remote,
       token: router.currentRoute.params.token,
+      transient: {
+        // we usually want to make sure that all transient data is erased
+        // before initializing new tournament state, but because we don't
+        // want to fetch clientCount after reinitializing the state from remote,
+        // we need to make sure we don't accidentally overwrite it
+        clientCount: state.tournament.transient.clientCount,
+      },
     })
   },
   async [actionTypes.STORE_TOURNAMENT_STATE_LOCALLY]({ state }) {
