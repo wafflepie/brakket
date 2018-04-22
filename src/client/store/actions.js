@@ -83,10 +83,11 @@ export const actions = {
 
       state.$socket.emit(
         "tournamentOpened",
-        tournamentState.token,
+        token,
         tournamentState.local.lastModified
       )
     } else if (state.online) {
+      state.$socket.emit("tournamentOpened", token)
       state.$socket.emit("requestTournamentState", token)
       commit(mutationTypes.SET_TOURNAMENT_LOADING, true)
     } else {

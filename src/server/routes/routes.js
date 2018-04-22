@@ -26,6 +26,9 @@ module.exports = io => {
       io.to(id).emit("clientCount", getRoomClientCountByTournamentId(id))
 
     const joinRoom = tournamentId => {
+      const currentTournamentId = getCurrentTournamentId()
+      socket.leave(currentTournamentId)
+
       if (tournamentId) {
         socket.join(tournamentId)
         emitClientCountByTournamentId(tournamentId)
@@ -88,6 +91,7 @@ module.exports = io => {
         joinRoom(tournamentId)
         const tournament = await Access.findTournamentByToken(token)
 
+        // lastModifiedLocally may be undefined if it was never opened client-side
         if (!tournament || lastModifiedLocally > tournament.lastModified) {
           socket.emit("requestTournamentState")
         } else {
