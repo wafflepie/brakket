@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "concurrently \"vue-cli-service serve --open\" \"nodemon --config .nodemonrc.json ./src/server\"",
+    "serve": "concurrently \"vue-cli-service serve\" \"nodemon --config .nodemonrc.json ./src/server\"",
     "build": "vue-cli-service build",
     "test": "vue-cli-service test",
     "lint": "vue-cli-service lint"
