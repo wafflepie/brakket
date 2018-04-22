@@ -107,11 +107,13 @@ export const actions = {
     dispatch(actionTypes.STORE_TOURNAMENT_STATE_REMOTELY)
   },
   [actionTypes.SOCKET_RECONNECT]({ state }) {
-    if (state.tournament.local.created) {
-      state.$socket.emit(
+    const { $socket, tournament } = state
+
+    if (tournament.local.created) {
+      $socket.emit(
         "tournamentOpened",
-        state.tournament.token,
-        state.tournament.local.lastModified
+        tournament.token,
+        tournament.local.lastModified
       )
     }
   },
@@ -119,12 +121,10 @@ export const actions = {
     dispatch(actionTypes.STORE_TOURNAMENT_STATE_REMOTELY)
   },
   [actionTypes.SOCKET_TOURNAMENT_DOES_NOT_EXIST]({ commit, state }) {
-    if (state.tournament.local.created) {
-      state.$socket.emit(
-        "doCreateTournament",
-        state.tournament.token,
-        state.tournament.domain
-      )
+    const { $socket, tournament } = state
+
+    if (tournament.local.created) {
+      $socket.emit("doCreateTournament", tournament.token, tournament.domain)
     } else {
       commit(mutationTypes.SET_TOURNAMENT_LOADING, false)
     }
@@ -134,28 +134,34 @@ export const actions = {
     dispatch(actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY)
   },
   [actionTypes.SOCKET_TOURNAMENT_STATE]({ commit }, payload) {
+    const { domain, ...remote } = payload
+
     commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, {
-      ...payload,
-      local: payload.remote,
+      domain,
+      local: remote,
+      remote,
       token: router.currentRoute.params.token,
     })
   },
   async [actionTypes.STORE_TOURNAMENT_STATE_LOCALLY]({ state }) {
+    const { tournament } = state
+
     await localforage.setItem(
-      state.tournament.token,
-      JSON.stringify(R.omit(["transient", "remote"], state.tournament))
+      tournament.token,
+      JSON.stringify(R.omit(["transient", "remote"], tournament))
     )
   },
   [actionTypes.STORE_TOURNAMENT_STATE_REMOTELY]({ state }) {
-    state.$socket.emit(
-      "tournamentState",
-      R.omit(["transient", "remote"], state.tournament)
-    )
+    const { $socket, tournament } = state
+    const { token } = tournament
+
+    // we keep the structure consistent across the app, although BE only needs the domain
+    $socket.emit("tournamentState", token, R.pick(["domain"], tournament))
   },
   [actionTypes.UPDATE_TOURNAMENT_SCORE]({ commit, state }, payload) {
     state.$socket.emit("tournamentScore", state.tournament.token, payload)
     commit(mutationTypes.SET_TOURNAMENT_SCORE, payload)
-    // we do not want to store the score here, because it might not be validated
+    // we do not want to store the score here, because it might not be valid
     // we wait until the ENSURE_TOURNAMENT_STATE_VALIDITY action
   },
 }
