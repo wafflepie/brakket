@@ -3,7 +3,13 @@ const Koa = require("koa")
 const http = require("http")
 const SocketIO = require("socket.io")
 const shortid = require("shortid")
-const R = require("ramda")
+
+const { PERMISSIONS } = require("./constants")
+
+const {
+  emitClientCountByTournamentId,
+  getTournamentIdBySocket,
+} = require("./utils")
 
 const app = new Koa()
 const server = http.createServer(app.callback())
@@ -11,64 +17,108 @@ const io = SocketIO(server)
 
 app.context.io = io
 
-const PERMISSIONS = {
-  ORGANIZER: "ORGANIZER",
-  SPECTATOR: "SPECTATOR",
-}
-
 const store = {
-  tokenToPermissionsMap: {},
-  idToTournamentMap: {},
+  tokenToAccessMap: {},
+  tournamentIdToTournamentMap: {},
 }
-
-const getTournamentIdBySocket = socket =>
-  R.compose(
-    R.head,
-    R.filter(R.complement(R.equals(socket.id))),
-    R.keys,
-    R.prop("rooms")
-  )(socket)
-
-const getRoomClientCountById = (io, id) =>
-  R.compose(
-    R.length,
-    R.defaultTo([]),
-    R.path(["sockets", "adapter", "rooms", id])
-  )(io)
 
 io.on("connection", socket => {
-  socket.on("tournamentCreated", (token, domain) => {
-    if (!store.tokenToPermissionsMap[token]) {
-      const id = shortid()
+  socket.on("doCreateTournament", (token, domain) => {
+    if (!store.tokenToAccessMap[token]) {
+      const tournamentId = shortid()
 
-      socket.join(id)
-      io.to(id).emit("updateClientCount", 1)
+      store.tokenToAccessMap[token] = [tournamentId, PERMISSIONS.ORGANIZER]
+      store.tournamentIdToTournamentMap[tournamentId] = {
+        domain,
+        remote: {
+          created: +new Date(),
+          lastModified: +new Date(),
+        },
+      }
 
-      store.tokenToPermissionsMap[token] = [id, PERMISSIONS.ORGANIZER]
-      store.idToTournamentMap[id] = domain
+      socket.join(tournamentId)
+      emitClientCountByTournamentId(io, tournamentId)
     } else {
       socket.emit("tokenAlreadyExists")
     }
   })
 
-  socket.on("tournamentLoaded", token => {
-    const permissions = store.tokenToPermissionsMap[token]
+  socket.on("requestTournamentState", token => {
+    const access = store.tokenToAccessMap[token]
 
-    if (permissions) {
-      const [id] = permissions
-      socket.join(id)
-      io.to(id).emit("updateClientCount", getRoomClientCountById(io, id))
+    if (access) {
+      const [tournamentId] = access
+      const tournament = store.tournamentIdToTournamentMap[tournamentId]
+
+      socket.emit("tournamentState", tournament)
     } else {
       socket.emit("tournamentDoesNotExist")
     }
   })
 
-  socket.on("disconnecting", () => {
-    const id = getTournamentIdBySocket(socket)
+  socket.on("tournamentLoaded", (token, lastModifiedLocally) => {
+    const access = store.tokenToAccessMap[token]
 
-    if (id) {
-      socket.leave(id)
-      io.to(id).emit("updateClientCount", getRoomClientCountById(io, id))
+    if (access) {
+      const [tournamentId] = access
+
+      socket.join(tournamentId)
+      emitClientCountByTournamentId(io, tournamentId)
+
+      const tournament = store.tournamentIdToTournamentMap[tournamentId]
+
+      if (lastModifiedLocally > tournament.remote.lastModified) {
+        socket.emit("requestTournamentState")
+      } else {
+        socket.emit("tournamentState", tournament)
+      }
+    } else {
+      socket.emit("tournamentDoesNotExist")
+    }
+  })
+
+  socket.on("tournamentState", (token, tournamentState) => {
+    const access = store.tokenToAccessMap[token]
+
+    if (access) {
+      const [tournamentId, permissions] = access
+
+      if (permissions === PERMISSIONS.ORGANIZER) {
+        const tournament = store.tournamentIdToTournamentMap[tournamentId]
+        tournament.domain = tournamentState.domain
+        tournament.remote.lastModified = tournamentState.local.lastModified
+      }
+    }
+  })
+
+  socket.on("tournamentScore", (token, payload) => {
+    const { roundIndex, matchIndex, side, score } = payload
+
+    const access = store.tokenToAccessMap[token]
+
+    if (access) {
+      const [tournamentId, permissions] = access
+
+      if (permissions === PERMISSIONS.ORGANIZER) {
+        const tournament = store.tournamentIdToTournamentMap[tournamentId]
+        const lastModified = +new Date()
+
+        tournament.domain.results[roundIndex][matchIndex][side].score = score
+        tournament.remote.lastModified = lastModified
+
+        io
+          .to(tournamentId)
+          .emit("tournamentScore", { ...payload, lastModified })
+      }
+    }
+  })
+
+  socket.on("disconnecting", () => {
+    const tournamentId = getTournamentIdBySocket(socket)
+
+    if (tournamentId) {
+      socket.leave(tournamentId)
+      emitClientCountByTournamentId(io, tournamentId)
     }
   })
 })

@@ -7,10 +7,10 @@ export const mutationTypes = {
   SET_SOCKET: "SET_SOCKET",
   SET_TOURNAMENT_LOADING: "SET_TOURNAMENT_LOADING",
   SET_TOURNAMENT_NAME: "SET_TOURNAMENT_NAME",
-  SET_TOURNAMENT_SIDE_SCORE: "SET_TOURNAMENT_SIDE_SCORE",
+  SET_TOURNAMENT_SCORE: "SET_TOURNAMENT_SCORE",
   SOCKET_CONNECT: "SOCKET_CONNECT",
   SOCKET_DISCONNECT: "SOCKET_DISCONNECT",
-  SOCKET_UPDATE_CLIENT_COUNT: "SOCKET_UPDATECLIENTCOUNT",
+  SOCKET_CLIENT_COUNT: "SOCKET_CLIENTCOUNT",
 }
 
 export const mutations = {
@@ -27,9 +27,10 @@ export const mutations = {
   [mutationTypes.SET_TOURNAMENT_NAME](state, payload) {
     state.tournament.domain.name = payload
   },
-  [mutationTypes.SET_TOURNAMENT_SIDE_SCORE](state, payload) {
+  [mutationTypes.SET_TOURNAMENT_SCORE](state, payload) {
     const { roundIndex, matchIndex, side, score } = payload
 
+    state.tournament.local.lastModified = +new Date()
     state.tournament.domain.results[roundIndex][matchIndex][side].score =
       parseInt(score) || 0
   },
@@ -39,7 +40,7 @@ export const mutations = {
   [mutationTypes.SOCKET_DISCONNECT](state) {
     state.online = false
   },
-  [mutationTypes.SOCKET_UPDATE_CLIENT_COUNT](state, payload) {
+  [mutationTypes.SOCKET_CLIENT_COUNT](state, payload) {
     state.tournament.transient.clientCount = payload
   },
 }

@@ -16,8 +16,14 @@ export const actionTypes = {
   GENERATE_NEW_TOURNAMENT: "GENERATE_NEW_TOURNAMENT",
   LOAD_TOURNAMENT_BY_TOKEN: "LOAD_TOURNAMENT_BY_TOKEN",
   SHUFFLE: "SHUFFLE",
+  SOCKET_RECONNECT: "socket_reconnect",
+  SOCKET_REQUEST_TOURNAMENT_STATE: "socket_requestTournamentState",
   SOCKET_TOURNAMENT_DOES_NOT_EXIST: "socket_tournamentDoesNotExist",
-  STORE_CURRENT_TOURNAMENT_STATE: "STORE_CURRENT_TOURNAMENT_STATE",
+  SOCKET_TOURNAMENT_SCORE: "socket_tournamentScore",
+  SOCKET_TOURNAMENT_STATE: "socket_tournamentState",
+  STORE_TOURNAMENT_STATE_LOCALLY: "STORE_TOURNAMENT_STATE_LOCALLY",
+  STORE_TOURNAMENT_STATE_REMOTELY: "STORE_TOURNAMENT_STATE_REMOTELY",
+  UPDATE_TOURNAMENT_SCORE: "UPDATE_TOURNAMENT_SCORE",
 }
 
 export const actions = {
@@ -29,7 +35,7 @@ export const actions = {
       R.evolve({ domain: ensureTournamentDomainValidity }, state.tournament)
     )
 
-    dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
+    dispatch(actionTypes.STORE_TOURNAMENT_STATE_LOCALLY)
   },
   async [actionTypes.GENERATE_NEW_TOURNAMENT](store, participants) {
     const { commit, dispatch, state } = store
@@ -53,9 +59,11 @@ export const actions = {
     }
 
     commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, tournament)
-    state.$socket.emit("tournamentCreated", token, tournament.domain)
-    await dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
+    await dispatch(actionTypes.STORE_TOURNAMENT_STATE_LOCALLY)
 
+    // this relies on the fact that the TournamentBracketView dispatches
+    // LOAD_TOURNAMENT_BY_TOKEN action, which emits 'tournamentLoaded', the server
+    // responds with 'tournamentDoesNotExist' and we respond with 'doCreateTournament'
     router.push({
       name: "tournament-bracket",
       params: { token },
@@ -65,16 +73,21 @@ export const actions = {
     commit(mutationTypes.SET_TOURNAMENT_LOADING, true)
     const value = await localforage.getItem(token)
 
-    if (!value) {
-      return commit(
-        mutationTypes.INITIALIZE_TOURNAMENT_STATE,
-        initialState.tournament
-      )
-    }
+    if (value) {
+      const tournamentState = JSON.parse(value)
+      commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, tournamentState)
 
-    const tournamentState = JSON.parse(value)
-    commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, tournamentState)
-    state.$socket.emit("tournamentLoaded", tournamentState.token)
+      state.$socket.emit(
+        "tournamentLoaded",
+        tournamentState.token,
+        tournamentState.local.lastModified
+      )
+    } else if (state.online) {
+      state.$socket.emit("requestTournamentState", token)
+      commit(mutationTypes.SET_TOURNAMENT_LOADING, true)
+    } else {
+      commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, initialState.tournament)
+    }
   },
   [actionTypes.SHUFFLE]({ commit, dispatch, state }) {
     const seed = generateSeedFromIdentifiers(
@@ -86,19 +99,59 @@ export const actions = {
       R.assocPath(["domain", "seed"], seed, state.tournament)
     )
 
-    dispatch(actionTypes.STORE_CURRENT_TOURNAMENT_STATE)
+    dispatch(actionTypes.STORE_TOURNAMENT_STATE_LOCALLY)
+    dispatch(actionTypes.STORE_TOURNAMENT_STATE_REMOTELY)
   },
-  [actionTypes.SOCKET_TOURNAMENT_DOES_NOT_EXIST]({ state }) {
-    state.$socket.emit(
-      "tournamentCreated",
-      state.tournament.token,
-      state.tournament.domain
-    )
+  [actionTypes.SOCKET_RECONNECT]({ state }) {
+    if (state.tournament.local.created) {
+      state.$socket.emit(
+        "tournamentLoaded",
+        state.tournament.token,
+        state.tournament.local.lastModified
+      )
+    }
   },
-  async [actionTypes.STORE_CURRENT_TOURNAMENT_STATE]({ state }) {
+  [actionTypes.SOCKET_REQUEST_TOURNAMENT_STATE]({ dispatch }) {
+    dispatch(actionTypes.STORE_TOURNAMENT_STATE_REMOTELY)
+  },
+  [actionTypes.SOCKET_TOURNAMENT_DOES_NOT_EXIST]({ commit, state }) {
+    if (state.tournament.local.created) {
+      state.$socket.emit(
+        "doCreateTournament",
+        state.tournament.token,
+        state.tournament.domain
+      )
+    } else {
+      commit(mutationTypes.SET_TOURNAMENT_LOADING, false)
+    }
+  },
+  [actionTypes.SOCKET_TOURNAMENT_SCORE]({ commit, dispatch }, payload) {
+    commit(mutationTypes.SET_TOURNAMENT_SCORE, payload)
+    dispatch(actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY)
+  },
+  [actionTypes.SOCKET_TOURNAMENT_STATE]({ commit }, payload) {
+    commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, {
+      ...payload,
+      local: payload.remote,
+      token: router.currentRoute.params.token,
+    })
+  },
+  async [actionTypes.STORE_TOURNAMENT_STATE_LOCALLY]({ state }) {
     await localforage.setItem(
       state.tournament.token,
       JSON.stringify(R.omit(["transient", "remote"], state.tournament))
     )
+  },
+  [actionTypes.STORE_TOURNAMENT_STATE_REMOTELY]({ state }) {
+    state.$socket.emit(
+      "tournamentState",
+      R.omit(["transient", "remote"], state.tournament)
+    )
+  },
+  [actionTypes.UPDATE_TOURNAMENT_SCORE]({ commit, state }, payload) {
+    state.$socket.emit("tournamentScore", state.tournament.token, payload)
+    commit(mutationTypes.SET_TOURNAMENT_SCORE, payload)
+    // we do not want to store the score here, because it might not be validated
+    // we wait until the ENSURE_TOURNAMENT_STATE_VALIDITY action
   },
 }

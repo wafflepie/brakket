@@ -31,7 +31,7 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
-import { actionTypes, mutationTypes } from "../store"
+import { actionTypes } from "../store"
 import { selectResults } from "../selectors"
 import MatchSide from "../components/MatchSide.vue"
 import BracketBranches from "../components/BracketBranches.vue"
@@ -43,7 +43,7 @@ export default class BracketView extends Vue {
   }
 
   handleScoreChange(roundIndex, matchIndex, side, score) {
-    this.$store.commit(mutationTypes.SET_TOURNAMENT_SIDE_SCORE, {
+    this.$store.dispatch(actionTypes.UPDATE_TOURNAMENT_SCORE, {
       roundIndex,
       matchIndex,
       side,
