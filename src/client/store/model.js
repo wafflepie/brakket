@@ -18,7 +18,7 @@ export default {
     },
     token: null,
     transient: {
-      clientCount: 0,
+      clientCount: 1, // default is 1 because we include the current client as well
       loading: false,
     },
   },
