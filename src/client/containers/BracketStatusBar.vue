@@ -1,22 +1,39 @@
 <template>
   <nav class="status-bar">
+    <ShareModal />
     <span
-      v-if="online"
+      v-show="online"
       class="connection-status online">
-      Online, {{ clientCount }} total viewer{{ clientCount - 1 ? 's' : '' }}
+      {{ clientCount - 1 }} other viewer{{ clientCount - 2 ? 's' : '' }}
     </span>
     <span
-      v-else
+      v-show="!online"
       class="connection-status offline">
       Offline
+    </span>
+    <span
+      class="status-bar-button"
+      @click="showShareModal">
+      <icon name="link" />
+    </span>
+    <span
+      :class="['status-bar-button', { disabled: !canShuffle }]"
+      :tabindex="canShuffle ? 0 : ''"
+      @click="shuffle">
+      <icon name="random" />
     </span>
   </nav>
 </template>
 
 <script>
 import { Component, Vue } from "vue-property-decorator"
+import * as R from "ramda"
 
-@Component
+import { selectMatchesWithScores } from "../selectors"
+import { actionTypes } from "../store"
+import ShareModal from "./ShareModal.vue"
+
+@Component({ components: { ShareModal } })
 export default class BracketStatusBar extends Vue {
   get online() {
     return this.$store.state.online
@@ -24,6 +41,18 @@ export default class BracketStatusBar extends Vue {
 
   get clientCount() {
     return this.$store.state.tournament.transient.clientCount
+  }
+
+  get canShuffle() {
+    return R.isEmpty(selectMatchesWithScores(this.$store.state))
+  }
+
+  showShareModal() {
+    this.$modal.show("share")
+  }
+
+  shuffle() {
+    this.canShuffle && this.$store.dispatch(actionTypes.SHUFFLE)
   }
 }
 </script>
@@ -39,18 +68,37 @@ export default class BracketStatusBar extends Vue {
   position: fixed;
   right: 0;
   top: 0;
+  z-index: 2;
 
-  .connection-status::before {
-    content: "●";
-    display: inline-block;
+  // HACK: If you are scrolled all the way to the top on macOS devies
+  // and you try to scroll more, the browser sort of "tries to scroll more".
+  // This makes it so that the color above is consistent with the status-bar
+  top: -9999px;
+  padding-top: 9999px;
+
+  .connection-status {
+    &::before {
+      content: "●";
+      display: inline-block;
+    }
+
+    &.online::before {
+      color: $online-color;
+    }
+
+    &.offline::before {
+      color: $offline-color;
+    }
   }
 }
 
-.online::before {
-  color: $online-color;
-}
+.status-bar-button {
+  cursor: pointer;
+  margin: 0 0.5rem;
 
-.offline::before {
-  color: $offline-color;
+  &.disabled {
+    filter: brightness(0.2);
+    cursor: not-allowed;
+  }
 }
 </style>

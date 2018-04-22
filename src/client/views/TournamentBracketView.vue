@@ -12,22 +12,15 @@
         <AirHorn />{{ winner.name }} is the winner of this tournament!<AirHorn />
       </h3>
       <TournamentBracket />
-      <div :class="{ invisible: !isShuffleShown }">
-        <GhostButton :on-click="shuffle">Not happy with the seed? Shuffle!</GhostButton>
-      </div>
     </section>
   </div>
 </template>
 
 <script>
 import { Component, Vue, Watch } from "vue-property-decorator"
-import * as R from "ramda"
 
 import { actionTypes, mutationTypes, initialState } from "../store"
-import {
-  selectMatchesWithScores,
-  selectWinnerSideOfFinalMatch,
-} from "../selectors"
+import { selectWinnerSideOfFinalMatch } from "../selectors"
 import AirHorn from "../components/AirHorn.vue"
 import BracketStatusBar from "../containers/BracketStatusBar.vue"
 import GhostButton from "../components/GhostButton.vue"
@@ -55,10 +48,6 @@ export default class TournamentBracketView extends Vue {
     return this.$store.state.tournament.domain.name
   }
 
-  get isShuffleShown() {
-    return R.isEmpty(selectMatchesWithScores(this.$store.state))
-  }
-
   get winner() {
     return selectWinnerSideOfFinalMatch(this.$store.state)
   }
@@ -77,10 +66,6 @@ export default class TournamentBracketView extends Vue {
       initialState.tournament
     )
   }
-
-  shuffle() {
-    this.$store.dispatch(actionTypes.SHUFFLE)
-  }
 }
 </script>
 
@@ -88,9 +73,5 @@ export default class TournamentBracketView extends Vue {
 h3 {
   line-height: 1.1rem;
   margin-bottom: 0;
-}
-
-.invisible {
-  visibility: hidden;
 }
 </style>
