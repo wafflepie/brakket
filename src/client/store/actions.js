@@ -12,6 +12,7 @@ import {
 } from "../domain"
 
 export const actionTypes = {
+  CLOSE_CURRENT_TOURNAMENT: "CLOSE_CURRENT_TOURNAMENT",
   ENSURE_TOURNAMENT_STATE_VALIDITY: "ENSURE_TOURNAMENT_STATE_VALIDITY",
   GENERATE_NEW_TOURNAMENT: "GENERATE_NEW_TOURNAMENT",
   LOAD_TOURNAMENT_BY_TOKEN: "LOAD_TOURNAMENT_BY_TOKEN",
@@ -27,6 +28,9 @@ export const actionTypes = {
 }
 
 export const actions = {
+  [actionTypes.CLOSE_CURRENT_TOURNAMENT]({ state }) {
+    state.$socket.emit("tournamentClosed", state.tournament.token)
+  },
   [actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY](context) {
     const { commit, dispatch, state } = context
 
@@ -62,7 +66,7 @@ export const actions = {
     await dispatch(actionTypes.STORE_TOURNAMENT_STATE_LOCALLY)
 
     // this relies on the fact that the TournamentBracketView dispatches
-    // LOAD_TOURNAMENT_BY_TOKEN action, which emits 'tournamentLoaded', the server
+    // LOAD_TOURNAMENT_BY_TOKEN action, which emits 'tournamentOpened', the server
     // responds with 'tournamentDoesNotExist' and we respond with 'doCreateTournament'
     router.push({
       name: "tournament-bracket",
@@ -78,7 +82,7 @@ export const actions = {
       commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, tournamentState)
 
       state.$socket.emit(
-        "tournamentLoaded",
+        "tournamentOpened",
         tournamentState.token,
         tournamentState.local.lastModified
       )
@@ -105,7 +109,7 @@ export const actions = {
   [actionTypes.SOCKET_RECONNECT]({ state }) {
     if (state.tournament.local.created) {
       state.$socket.emit(
-        "tournamentLoaded",
+        "tournamentOpened",
         state.tournament.token,
         state.tournament.local.lastModified
       )

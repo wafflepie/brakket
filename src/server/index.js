@@ -56,7 +56,17 @@ io.on("connection", socket => {
     }
   })
 
-  socket.on("tournamentLoaded", (token, lastModifiedLocally) => {
+  socket.on("tournamentClosed", token => {
+    const access = store.tokenToAccessMap[token]
+
+    if (access) {
+      const [tournamentId] = access
+      socket.leave(tournamentId)
+      emitClientCountByTournamentId(io, tournamentId)
+    }
+  })
+
+  socket.on("tournamentOpened", (token, lastModifiedLocally) => {
     const access = store.tokenToAccessMap[token]
 
     if (access) {

@@ -32,6 +32,7 @@ import TournamentBracket from "../containers/TournamentBracket.vue"
     this.loadTournament()
   },
   destroyed() {
+    this.closeTournament()
     this.resetTournamentState()
   },
 })
@@ -53,11 +54,20 @@ export default class TournamentBracketView extends Vue {
   }
 
   @Watch("$route")
+  handleTournamentChange() {
+    this.closeTournament()
+    this.loadTournament()
+  }
+
   loadTournament() {
     this.$store.dispatch(
       actionTypes.LOAD_TOURNAMENT_BY_TOKEN,
       this.$route.params.token
     )
+  }
+
+  closeTournament() {
+    this.$store.dispatch(actionTypes.CLOSE_CURRENT_TOURNAMENT)
   }
 
   resetTournamentState() {
