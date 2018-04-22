@@ -50,6 +50,8 @@ module.exports = io => {
       } else {
         const tournamentId = new mongoose.Types.ObjectId()
 
+        joinRoom(tournamentId)
+
         const access = new Access({
           permissions: PERMISSIONS.ORGANIZER,
           token,
@@ -61,7 +63,6 @@ module.exports = io => {
           domain,
         })
 
-        joinRoom(tournamentId)
         await access.save()
         await tournament.save()
       }
