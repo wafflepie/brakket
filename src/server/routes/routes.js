@@ -3,25 +3,38 @@ const R = require("ramda")
 
 const { PERMISSIONS } = require("../constants")
 
-const {
-  emitClientCountByTournamentId,
-  getTournamentIdBySocket,
-} = require("../utils")
-
 module.exports = (io, store) => {
   io.on("connection", socket => {
     // UTILITY
+    const getCurrentTournamentId = () =>
+      R.compose(
+        R.head,
+        R.filter(R.complement(R.equals(socket.id))),
+        R.keys,
+        R.prop("rooms")
+      )(socket)
+
+    const getRoomClientCountByTournamentId = id =>
+      R.compose(
+        R.length,
+        R.defaultTo([]),
+        R.path(["sockets", "adapter", "rooms", id])
+      )(io)
+
+    const emitClientCountByTournamentId = id =>
+      io.to(id).emit("clientCount", getRoomClientCountByTournamentId(id))
+
     const joinRoom = tournamentId => {
       if (tournamentId) {
         socket.join(tournamentId)
-        emitClientCountByTournamentId(io, tournamentId)
+        emitClientCountByTournamentId(tournamentId)
       }
     }
 
     const leaveRoom = tournamentId => {
       if (tournamentId) {
         socket.leave(tournamentId)
-        emitClientCountByTournamentId(io, tournamentId)
+        emitClientCountByTournamentId(tournamentId)
       }
     }
 
@@ -41,6 +54,10 @@ module.exports = (io, store) => {
       )
 
     // HANDLERS
+    socket.on("disconnecting", () => {
+      leaveRoom(getCurrentTournamentId(socket))
+    })
+
     socket.on("doCreateTournament", (token, domain) => {
       if (!store.tokenToAccessMap[token]) {
         const tournamentId = shortid()
@@ -88,14 +105,6 @@ module.exports = (io, store) => {
       }
     })
 
-    socket.on("tournamentState", (token, tournamentState) => {
-      if (isTokenOrganizer(token)) {
-        const tournament = getTournamentByToken(token)
-        tournament.domain = tournamentState.domain
-        tournament.remote.lastModified = tournamentState.local.lastModified
-      }
-    })
-
     socket.on("tournamentScore", (token, payload) => {
       const { roundIndex, matchIndex, side, score } = payload
 
@@ -113,8 +122,12 @@ module.exports = (io, store) => {
       }
     })
 
-    socket.on("disconnecting", () => {
-      leaveRoom(getTournamentIdBySocket(socket))
+    socket.on("tournamentState", (token, tournamentState) => {
+      if (isTokenOrganizer(token)) {
+        const tournament = getTournamentByToken(token)
+        tournament.domain = tournamentState.domain
+        tournament.remote.lastModified = tournamentState.local.lastModified
+      }
     })
   })
 }
