@@ -15,7 +15,7 @@
             last modified {{ distanceInWordsToNow(tournament.local.lastModified) }} ago
           </span>
         </span>
-        <RemoveItemButton :on-click="() => removeTournament(tournament.local.token)">X</RemoveItemButton>
+        <RemoveItemButton :on-click="() => removeTournament(tournament.token)">X</RemoveItemButton>
       </li>
     </ul>
     <h3 v-if="!tournaments.length">
