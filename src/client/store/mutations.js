@@ -30,7 +30,7 @@ export const mutations = {
   [mutationTypes.SET_TOURNAMENT_SCORE](state, payload) {
     const { roundIndex, matchIndex, side, score } = payload
 
-    state.tournament.local.lastModified = +new Date()
+    state.tournament.meta.lastModified = +new Date()
     state.tournament.domain.results[roundIndex][matchIndex][side].score =
       parseInt(score) || 0
   },

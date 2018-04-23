@@ -8,15 +8,14 @@ export default {
       results: [], // Results
       seed: [], // Seed
     },
-    local: {
+    meta: {
       created: null,
       lastModified: null,
     },
-    remote: {
-      created: null,
-      lastModified: null,
+    accesses: {
+      main: null,
+      other: [],
     },
-    token: null,
     transient: {
       clientCount: 1, // default is 1 because we include the current client as well
       loading: false,

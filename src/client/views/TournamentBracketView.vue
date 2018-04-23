@@ -7,9 +7,9 @@
     </section>
     <section v-if="!loading && isCreated">
       <h2>{{ tournamentName || 'Unnamed tournament' }}</h2>
-      <h3 v-if="!winner">Enter the results by editing the scores below</h3>
-      <h3 v-if="winner">
-        <AirHorn />{{ winner.name }} is the winner of this tournament!<AirHorn />
+      <h3 v-if="!winnerSide">Enter the results by editing the scores below</h3>
+      <h3 v-if="winnerSide">
+        <AirHorn />{{ winnerSide.name }} is the winner of this tournament!<AirHorn />
       </h3>
       <TournamentBracket />
     </section>
@@ -42,14 +42,14 @@ export default class TournamentBracketView extends Vue {
   }
 
   get isCreated() {
-    return !!this.$store.state.tournament.local.created
+    return !!this.$store.state.tournament.meta.created
   }
 
   get tournamentName() {
     return this.$store.state.tournament.domain.name
   }
 
-  get winner() {
+  get winnerSide() {
     return selectWinnerSideOfFinalMatch(this.$store.state)
   }
 

@@ -4,18 +4,18 @@
       <li 
         v-for="(tournament, index) of tournaments" 
         v-if="index < limit"
-        :key="tournament.local.token">
+        :key="getToken(tournament)">
         <span class="tournament-text">
           <!-- The indentation is shitty because HTML is shitty. -->
-          <router-link :to="{ name: 'tournament-bracket', params: { token: tournament.token } }">
+          <router-link :to="{ name: 'tournament-bracket', params: { token: getToken(tournament) } }">
             {{ tournament.domain.name || 'Unnamed tournament' }}
           </router-link>
           <span class="tournament-description">
             {{ tournament.domain.participants.length }} participant{{ tournament.domain.participants.length > 1 ? 's' : '' }},
-            last modified {{ distanceInWordsToNow(tournament.local.lastModified) }} ago
+            last modified {{ distanceInWordsToNow(tournament.meta.lastModified) }} ago
           </span>
         </span>
-        <RemoveItemButton :on-click="() => removeTournament(tournament.token)">X</RemoveItemButton>
+        <RemoveItemButton :on-click="() => removeTournament(getToken(tournament))">X</RemoveItemButton>
       </li>
     </ul>
     <h3 v-if="!tournaments.length">
@@ -54,7 +54,7 @@ export default class StoredTournamentList extends Vue {
     const tournaments = values.map(JSON.parse)
 
     const comparator = R.comparator(
-      (a, b) => a.local.lastModified > b.local.lastModified
+      (a, b) => a.meta.lastModified > b.meta.lastModified
     )
 
     this.tournaments = R.sort(comparator, tournaments)
@@ -64,8 +64,12 @@ export default class StoredTournamentList extends Vue {
     this.limit += DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT
   }
 
-  async removeTournament(id) {
-    await localforage.removeItem(id)
+  getToken(tournament) {
+    return tournament.accesses.main.token
+  }
+
+  async removeTournament(token) {
+    await localforage.removeItem(token)
     await this.loadTournamentList()
   }
 }

@@ -54,3 +54,10 @@ export const selectWinnerSideOfFinalMatch = state => {
   const finalMatch = selectFinalMatch({ tournament: { domain: { results } } })
   return R.prop(R.prop("winner", finalMatch), finalMatch)
 }
+
+/**
+ * Selects the main token for the current tournament.
+ *
+ * @param {Object} state state of the application
+ */
+export const selectToken = state => state.tournament.accesses.main.token

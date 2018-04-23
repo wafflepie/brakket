@@ -1,7 +1,6 @@
 const mongoose = require("mongoose")
 const R = require("ramda")
 
-const { PERMISSIONS } = require("../constants")
 const { Tournament, Access } = require("../models")
 
 module.exports = io => {
@@ -56,9 +55,9 @@ module.exports = io => {
         joinRoom(tournamentId)
 
         const access = new Access({
-          permissions: PERMISSIONS.ORGANIZER,
+          organizer: true,
           token,
-          tournamentId,
+          tournament: tournamentId,
         })
 
         const tournament = new Tournament({
@@ -74,9 +73,12 @@ module.exports = io => {
     socket.on("requestTournamentState", async token => {
       const tournament = await Access.findTournamentByToken(token)
 
-      tournament
-        ? socket.emit("tournamentState", tournament)
-        : socket.emit("tournamentDoesNotExist")
+      if (tournament) {
+        joinRoom(tournament._id)
+        socket.emit("tournamentState", tournament)
+      } else {
+        socket.emit("tournamentDoesNotExist")
+      }
     })
 
     socket.on("tournamentClosed", async token => {
@@ -84,15 +86,15 @@ module.exports = io => {
       tournamentId && leaveRoom(tournamentId)
     })
 
-    socket.on("tournamentOpened", async (token, lastModifiedLocally) => {
+    socket.on("tournamentOpened", async (token, lastModified) => {
       const tournamentId = await Access.findTournamentIdByToken(token)
 
       if (tournamentId) {
         joinRoom(tournamentId)
         const tournament = await Access.findTournamentByToken(token)
 
-        // lastModifiedLocally may be undefined if it was never opened client-side
-        if (!tournament || lastModifiedLocally > tournament.lastModified) {
+        // lastModified may be undefined if it was never opened client-side
+        if (!tournament || lastModified > tournament.meta.lastModified) {
           socket.emit("requestTournamentState")
         } else {
           socket.emit("tournamentState", tournament)
@@ -116,7 +118,7 @@ module.exports = io => {
 
           io.to(tournament._id).emit("tournamentScore", {
             ...payload,
-            lastModified: tournament.lastModified,
+            lastModified: tournament.meta.lastModified,
           })
         } else {
           socket.emit("tournamentDoesNotExist")
