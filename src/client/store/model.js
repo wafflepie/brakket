@@ -13,8 +13,9 @@ export default {
       lastModified: null,
     },
     accesses: {
-      main: null,
-      other: [],
+      creator: null,
+      organizers: [],
+      spectator: null,
     },
     transient: {
       clientCount: 1, // default is 1 because we include the current client as well

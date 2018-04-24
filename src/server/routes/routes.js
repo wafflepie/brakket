@@ -1,25 +1,16 @@
 const mongoose = require("mongoose")
-const R = require("ramda")
 
+const { PERMISSIONS } = require("../../common")
 const { Tournament, Access } = require("../models")
 
 module.exports = io => {
   io.on("connection", socket => {
     // UTILITY
     const getCurrentTournamentId = () =>
-      R.compose(
-        R.head,
-        R.filter(R.complement(R.equals(socket.id))),
-        R.keys,
-        R.prop("rooms")
-      )(socket)
+      Object.keys(socket.rooms).filter(room => room !== socket.id)[0]
 
     const getRoomClientCountByTournamentId = id =>
-      R.compose(
-        R.length,
-        R.defaultTo([]),
-        R.path(["sockets", "adapter", "rooms", id])
-      )(io)
+      (io.sockets.adapter.rooms[id] || []).length
 
     const emitClientCountByTournamentId = id =>
       io.to(id).emit("clientCount", getRoomClientCountByTournamentId(id))
@@ -41,33 +32,16 @@ module.exports = io => {
       }
     }
 
+    const emitTournamentState = async (token, tournament) =>
+      socket.emit("tournamentState", {
+        accesses: await Access.findEligibleAccessesByToken(token),
+        domain: tournament.domain,
+        meta: tournament.meta,
+      })
+
     // HANDLERS
     socket.on("disconnecting", () => {
       leaveRoom(getCurrentTournamentId(socket))
-    })
-
-    socket.on("doCreateTournament", async (token, domain) => {
-      if (await Access.findOne({ token })) {
-        socket.emit("tokenAlreadyExists")
-      } else {
-        const tournamentId = new mongoose.Types.ObjectId()
-
-        joinRoom(tournamentId)
-
-        const access = new Access({
-          organizer: true,
-          token,
-          tournament: tournamentId,
-        })
-
-        const tournament = new Tournament({
-          _id: tournamentId,
-          domain,
-        })
-
-        await access.save()
-        await tournament.save()
-      }
     })
 
     socket.on("requestTournamentState", async token => {
@@ -75,7 +49,7 @@ module.exports = io => {
 
       if (tournament) {
         joinRoom(tournament._id)
-        socket.emit("tournamentState", tournament)
+        await emitTournamentState(token, tournament)
       } else {
         socket.emit("tournamentDoesNotExist")
       }
@@ -97,7 +71,7 @@ module.exports = io => {
         if (!tournament || lastModified > tournament.meta.lastModified) {
           socket.emit("requestTournamentState")
         } else {
-          socket.emit("tournamentState", tournament)
+          await emitTournamentState(token, tournament)
         }
       } else {
         socket.emit("tournamentDoesNotExist")
@@ -107,7 +81,7 @@ module.exports = io => {
     socket.on("tournamentScore", async (token, payload) => {
       const { roundIndex, matchIndex, side, score } = payload
 
-      if (await Access.isTokenOrganizer(token)) {
+      if (await Access.isTokenCreator(token)) {
         const tournament = await Access.findTournamentByToken(token)
 
         if (tournament) {
@@ -127,7 +101,7 @@ module.exports = io => {
     })
 
     socket.on("tournamentState", async (token, state) => {
-      if (await Access.isTokenOrganizer(token)) {
+      if (await Access.isTokenCreator(token)) {
         const tournament = await Access.findTournamentByToken(token)
 
         if (tournament) {
@@ -135,9 +109,25 @@ module.exports = io => {
           tournament.markModified("domain")
 
           await tournament.save()
-        } else {
-          socket.emit("tournamentDoesNotExist")
         }
+      } else {
+        const tournamentId = new mongoose.Types.ObjectId()
+
+        joinRoom(tournamentId)
+
+        const access = new Access({
+          permissions: PERMISSIONS.CREATOR,
+          token,
+          tournament: tournamentId,
+        })
+
+        const tournament = new Tournament({
+          _id: tournamentId,
+          domain: state.domain,
+        })
+
+        await access.save()
+        await tournament.save()
       }
     })
   })

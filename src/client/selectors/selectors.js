@@ -56,8 +56,30 @@ export const selectWinnerSideOfFinalMatch = state => {
 }
 
 /**
- * Selects the main token for the current tournament.
+ * Selects the best token for the passed tournament state.
+ *
+ * @param {Object} tournamentState
+ */
+export const selectTokenFromTournamentState = tournamentState => {
+  const { accesses } = tournamentState
+
+  return R.prop(
+    "token",
+    accesses.creator || accesses.organizers[0] || accesses.spectator
+  )
+}
+
+/**
+ * Selects the best token for the current tournament.
  *
  * @param {Object} state state of the application
  */
-export const selectToken = state => state.tournament.accesses.main.token
+export const selectToken = state =>
+  selectTokenFromTournamentState(state.tournament)
+
+/**
+ * Selects whether the tournament can be displayed (it is loaded properly)
+ *
+ * @param {Object} state state of the application
+ */
+export const selectTournamentIsLoaded = state => !!state.tournament.meta.created

@@ -1,11 +1,11 @@
 <template>
   <div>
     <BracketStatusBar />
-    <section v-if="!isCreated">
+    <section v-if="!tournamentIsLoaded">
       <h2 v-if="!loading">This bracket does not exist :(</h2>
       <h2 v-if="loading">Loading your tournament...</h2>
     </section>
-    <section v-if="!loading && isCreated">
+    <section v-if="!loading && tournamentIsLoaded">
       <h2>{{ tournamentName || 'Unnamed tournament' }}</h2>
       <h3 v-if="!winnerSide">Enter the results by editing the scores below</h3>
       <h3 v-if="winnerSide">
@@ -19,8 +19,11 @@
 <script>
 import { Component, Vue, Watch } from "vue-property-decorator"
 
-import { actionTypes, mutationTypes, initialState } from "../store"
-import { selectWinnerSideOfFinalMatch } from "../selectors"
+import { actionTypes } from "../store"
+import {
+  selectWinnerSideOfFinalMatch,
+  selectTournamentIsLoaded,
+} from "../selectors"
 import AirHorn from "../components/AirHorn.vue"
 import BracketStatusBar from "../containers/BracketStatusBar.vue"
 import GhostButton from "../components/GhostButton.vue"
@@ -33,7 +36,6 @@ import TournamentBracket from "../containers/TournamentBracket.vue"
   },
   destroyed() {
     this.closeTournament()
-    this.resetTournamentState()
   },
 })
 export default class TournamentBracketView extends Vue {
@@ -41,8 +43,8 @@ export default class TournamentBracketView extends Vue {
     return this.$store.state.tournament.transient.loading
   }
 
-  get isCreated() {
-    return !!this.$store.state.tournament.meta.created
+  get tournamentIsLoaded() {
+    return selectTournamentIsLoaded(this.$store.state)
   }
 
   get tournamentName() {
@@ -68,13 +70,6 @@ export default class TournamentBracketView extends Vue {
 
   closeTournament() {
     this.$store.dispatch(actionTypes.CLOSE_CURRENT_TOURNAMENT)
-  }
-
-  resetTournamentState() {
-    this.$store.commit(
-      mutationTypes.INITIALIZE_TOURNAMENT_STATE,
-      initialState.tournament
-    )
   }
 }
 </script>

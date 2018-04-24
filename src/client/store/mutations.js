@@ -4,6 +4,7 @@ import initialState from "./model"
 
 export const mutationTypes = {
   INITIALIZE_TOURNAMENT_STATE: "INITIALIZE_TOURNAMENT_STATE",
+  RESET_TOURNAMENT_STATE: "RESET_TOURNAMENT_STATE",
   SET_SOCKET: "SET_SOCKET",
   SET_TOURNAMENT_LOADING: "SET_TOURNAMENT_LOADING",
   SET_TOURNAMENT_NAME: "SET_TOURNAMENT_NAME",
@@ -17,6 +18,9 @@ export const mutations = {
   [mutationTypes.INITIALIZE_TOURNAMENT_STATE](state, payload) {
     state.tournament = R.mergeDeepRight(initialState.tournament, payload)
     state.tournament.transient.loading = false
+  },
+  [mutationTypes.RESET_TOURNAMENT_STATE](state) {
+    state.tournament = R.clone(initialState.tournament)
   },
   [mutationTypes.SET_SOCKET](state, payload) {
     state.$socket = payload

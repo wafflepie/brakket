@@ -11,7 +11,7 @@
             {{ tournament.domain.name || 'Unnamed tournament' }}
           </router-link>
           <span class="tournament-description">
-            {{ tournament.domain.participants.length }} participant{{ tournament.domain.participants.length > 1 ? 's' : '' }},
+            {{ getNumberOfParticipants(tournament) }},
             last modified {{ distanceInWordsToNow(tournament.meta.lastModified) }} ago
           </span>
         </span>
@@ -33,6 +33,7 @@ import localforage from "localforage"
 import { distanceInWordsToNow } from "date-fns"
 import * as R from "ramda"
 
+import { selectTokenFromTournamentState } from "../selectors"
 import { DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT } from "../constants"
 import GhostButton from "../components/GhostButton.vue"
 import RemoveItemButton from "../components/RemoveItemButton.vue"
@@ -65,7 +66,13 @@ export default class StoredTournamentList extends Vue {
   }
 
   getToken(tournament) {
-    return tournament.accesses.main.token
+    return selectTokenFromTournamentState(tournament)
+  }
+
+  getNumberOfParticipants(tournament) {
+    return `${tournament.domain.participants.length}  participant${
+      tournament.domain.participants.length > 1 ? "s" : ""
+    }`
   }
 
   async removeTournament(token) {

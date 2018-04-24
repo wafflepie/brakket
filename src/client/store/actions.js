@@ -3,14 +3,14 @@ import shortid from "shortid"
 import * as R from "ramda"
 
 import { mutationTypes } from "./mutations"
-import initialState from "./model"
 import router from "../router"
 import {
   generateSeedFromIdentifiers,
   generateResultStructureFromSeed,
   ensureTournamentDomainValidity,
 } from "../domain"
-import { selectToken } from "../selectors"
+import { selectToken, selectTournamentIsLoaded } from "../selectors"
+import { PERMISSIONS } from "../../common"
 
 export const actionTypes = {
   CLOSE_CURRENT_TOURNAMENT: "CLOSE_CURRENT_TOURNAMENT",
@@ -29,8 +29,9 @@ export const actionTypes = {
 }
 
 export const actions = {
-  [actionTypes.CLOSE_CURRENT_TOURNAMENT]({ state }) {
+  [actionTypes.CLOSE_CURRENT_TOURNAMENT]({ commit, state }) {
     state.$socket.emit("tournamentClosed", selectToken(state))
+    commit(mutationTypes.RESET_TOURNAMENT_STATE)
   },
   [actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY](context) {
     const { commit, dispatch, state } = context
@@ -61,9 +62,9 @@ export const actions = {
         lastModified: +new Date(),
       },
       accesses: {
-        main: {
-          organizer: true,
+        creator: {
           token,
+          permissions: PERMISSIONS.CREATOR,
         },
       },
     }
@@ -73,7 +74,7 @@ export const actions = {
 
     // this relies on the fact that the TournamentBracketView dispatches
     // LOAD_TOURNAMENT_BY_TOKEN action, which emits 'tournamentOpened', the server
-    // responds with 'tournamentDoesNotExist' and we respond with 'doCreateTournament'
+    // responds with 'tournamentDoesNotExist' and we respond with 'tournamentState'
     router.push({
       name: "tournament-bracket",
       params: { token },
@@ -93,7 +94,7 @@ export const actions = {
       state.$socket.emit("requestTournamentState", token)
       commit(mutationTypes.SET_TOURNAMENT_LOADING, true)
     } else {
-      commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, initialState.tournament)
+      commit(mutationTypes.RESET_TOURNAMENT_STATE)
     }
   },
   [actionTypes.SHUFFLE]({ commit, dispatch, state }) {
@@ -113,7 +114,7 @@ export const actions = {
     const { $socket, tournament } = state
     const lastModified = tournament.meta.lastModified
 
-    if (tournament.meta.created) {
+    if (selectTournamentIsLoaded(state)) {
       $socket.emit("tournamentOpened", selectToken(state), lastModified)
     }
   },
@@ -123,8 +124,8 @@ export const actions = {
   [actionTypes.SOCKET_TOURNAMENT_DOES_NOT_EXIST]({ commit, state }) {
     const { $socket, tournament } = state
 
-    if (tournament.meta.created) {
-      $socket.emit("doCreateTournament", selectToken(state), tournament.domain)
+    if (selectTournamentIsLoaded(state)) {
+      $socket.emit("tournamentState", selectToken(state), tournament)
     } else {
       commit(mutationTypes.SET_TOURNAMENT_LOADING, false)
     }
@@ -137,15 +138,6 @@ export const actions = {
     commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, {
       ...state.tournament,
       ...payload,
-      // TODO: THIS IS ABSOLUTELY WRONG, THIS WILL NOT WORK WITH MULTIPLE URLS
-      // we must take the previous known accesses into account as well
-      accesses: {
-        main: {
-          organizer: true,
-          value: router.currentRoute.params.token,
-        },
-        other: [],
-      },
     })
   },
   async [actionTypes.STORE_TOURNAMENT_STATE_LOCALLY]({ state }) {

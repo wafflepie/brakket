@@ -4,21 +4,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "concurrently \"vue-cli-service serve\" \"nodemon --config .nodemonrc.json ./src/server\"",
     "build": "vue-cli-service build",
-    "test": "vue-cli-service test",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "mongo": "mongod --dbpath database",
+    "serve": "vue-cli-service serve",
+    "start": "concurrently \"yarn serve --open\" \"nodemon --config .nodemonrc.json ./src/server\"",
+    "test": "vue-cli-service test"
   },
   "dependencies": {
     "date-fns": "^1.29.0",
-    "koa": "2.5.0",
+    "koa": "^2.5.0",
     "localforage": "^1.6.0",
     "lodash.shuffle": "^4.2.0",
     "mongoose": "^5.0.15",
     "offline-plugin": "^4.9.0",
     "ramda": "^0.25.0",
     "shortid": "^2.2.8",
-    "socket.io": "2.1.0",
+    "socket.io": "^2.1.0",
     "vue": "^2.5.13",
     "vue-awesome": "^3.0.0",
     "vue-js-modal": "^1.3.13",

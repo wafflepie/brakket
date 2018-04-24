@@ -1,4 +1,5 @@
-dist
+/dist
+/database
 
 # Created by https://www.gitignore.io/api/code,node,linux,macos,windows,webstorm,intellij
 

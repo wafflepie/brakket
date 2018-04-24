@@ -1,16 +1,35 @@
 const mongoose = require("mongoose")
 
+const {
+  MINIMUM_PARTICIPANTS_COUNT,
+  MAXIMUM_PARTICIPANTS_COUNT,
+} = require("../../common")
+
+const participantsValidate = array =>
+  array.length >= MINIMUM_PARTICIPANTS_COUNT &&
+  array.length <= MAXIMUM_PARTICIPANTS_COUNT
+
+const seedValidate = array =>
+  array.length >= MINIMUM_PARTICIPANTS_COUNT / 2 &&
+  array.length <= MAXIMUM_PARTICIPANTS_COUNT / 2
+
 const TournamentSchema = new mongoose.Schema({
   domain: {
     name: String,
-    participants: [String],
+    participants: {
+      type: [String],
+      validate: [participantsValidate, "{PATH} has invalid length"],
+    },
     results: [[]],
-    seed: [
-      {
-        away: Number,
-        home: Number,
-      },
-    ],
+    seed: {
+      type: [
+        {
+          away: Number,
+          home: Number,
+        },
+      ],
+      validate: [seedValidate, "{PATH} has invalid length"],
+    },
   },
   meta: {
     created: Number,

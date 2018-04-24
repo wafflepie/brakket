@@ -1,9 +1,11 @@
 const mongoose = require("mongoose")
+const { PERMISSIONS } = require("../../common")
 
 const AccessSchema = new mongoose.Schema({
-  organizer: {
-    default: false,
-    type: Boolean,
+  permissions: {
+    type: String,
+    enum: Object.values(PERMISSIONS),
+    default: PERMISSIONS.SPECTATOR,
   },
   token: String,
   tournament: {
@@ -21,9 +23,9 @@ AccessSchema.static("findTournamentIdByToken", async function(token) {
   return access ? access.tournament : null
 })
 
-AccessSchema.static("isTokenOrganizer", async function(token) {
+AccessSchema.static("isTokenCreator", async function(token) {
   const access = await this.findByToken(token)
-  return access ? access.organizer : false
+  return access ? access.permissions === PERMISSIONS.CREATOR : false
 })
 
 AccessSchema.static("findTournamentByToken", async function(token) {
@@ -32,6 +34,55 @@ AccessSchema.static("findTournamentByToken", async function(token) {
   return tournamentId
     ? await this.model("Tournament").findById(tournamentId)
     : null
+})
+
+AccessSchema.static("findAccessesByToken", async function(token) {
+  const access = await this.findByToken(token)
+
+  if (!access) return []
+
+  return await this.find({ tournament: access.tournament })
+})
+
+AccessSchema.static("findEligibleAccessesByToken", async function(token) {
+  const access = await this.findByToken(token)
+
+  if (!access) return []
+
+  // SPECTATOR
+  if (access.permissions === PERMISSIONS.SPECTATOR) {
+    return {
+      creator: null,
+      organizers: [],
+      spectator: access,
+    }
+  }
+
+  const accesses = await this.find({ tournament: access.tournament })
+
+  const spectatorAccess = accesses.find(
+    access => access.permissions === PERMISSIONS.SPECTATOR
+  )
+
+  // ORGANIZER
+  if (access.permissions === PERMISSIONS.ORGANIZER) {
+    return {
+      creator: null,
+      organizers: [access],
+      spectator: spectatorAccess,
+    }
+  } else {
+    // CREATOR
+    const organizerAccesses = accesses.filter(
+      access => access.permissions === PERMISSIONS.ORGANIZER
+    )
+
+    return {
+      creator: access,
+      organizers: organizerAccesses,
+      spectator: spectatorAccess,
+    }
+  }
 })
 
 module.exports = mongoose.model("Access", AccessSchema)
