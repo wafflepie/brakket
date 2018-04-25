@@ -70,17 +70,16 @@ export const selectAccessFromTournamentState = tournamentState => {
  *
  * @param {Object} tournamentState
  */
-export const selectTokenFromTournamentState = tournamentState => R.prop("token",
-    selectAccessFromTournamentState(tournamentState)
-  )
+export const selectTokenFromTournamentState = tournamentState =>
+  R.prop("token", selectAccessFromTournamentState(tournamentState))
 
-  /**
-   * Selects the best access for the current tournament state.
-   *
-   * @param {Object} state state of the application
-   */
-export const selectAccess = state => selectAccessFromTournamentState(state.tournament)
-
+/**
+ * Selects the best access for the current tournament state.
+ *
+ * @param {Object} state state of the application
+ */
+export const selectAccess = state =>
+  selectAccessFromTournamentState(state.tournament)
 
 /**
  * Selects the best token for the current tournament.

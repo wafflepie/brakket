@@ -33,7 +33,7 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
-import {PERMISSIONS} from "../../common"
+import { PERMISSIONS } from "../../common"
 import { actionTypes } from "../store"
 import { selectResults, selectAccess } from "../selectors"
 import MatchSide from "../components/MatchSide.vue"
@@ -45,7 +45,7 @@ export default class BracketView extends Vue {
     return selectResults(this.$store.state)
   }
 
-  get isSpectator(){
+  get isSpectator() {
     return selectAccess(this.$store.state).permissions === PERMISSIONS.SPECTATOR
   }
 
