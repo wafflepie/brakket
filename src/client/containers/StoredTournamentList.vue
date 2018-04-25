@@ -19,7 +19,7 @@
       </li>
     </ul>
     <h3 v-if="!tournaments.length">
-      You haven't created any tournaments yet.
+      You haven't visited any tournaments yet.
     </h3>
     <GhostButton 
       :class="{ invisible: tournaments.length <= limit }"

@@ -14,7 +14,7 @@
     <span
       class="status-bar-button"
       @click="showShareModal">
-      <icon name="link" />
+      <icon name="share" />
     </span>
     <span
       :class="['status-bar-button', { disabled: !canShuffle }]"
