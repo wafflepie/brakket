@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const shortid = require("shortid")
 
 const { PERMISSIONS } = require("../../common")
 const { Tournament, Access } = require("../models")
@@ -115,9 +116,15 @@ module.exports = io => {
 
         joinRoom(tournamentId)
 
-        const access = new Access({
+        const creatorAccess = new Access({
           permissions: PERMISSIONS.CREATOR,
           token,
+          tournament: tournamentId,
+        })
+
+        const spectatorAccess = new Access({
+          permissions: PERMISSIONS.SPECTATOR,
+          token: shortid.generate(),
           tournament: tournamentId,
         })
 
@@ -126,8 +133,11 @@ module.exports = io => {
           domain: state.domain,
         })
 
-        await access.save()
+        await creatorAccess.save()
+        await spectatorAccess.save()
         await tournament.save()
+
+        emitTournamentState(token, tournament)
       }
     })
   })

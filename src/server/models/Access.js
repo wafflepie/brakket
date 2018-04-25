@@ -47,7 +47,13 @@ AccessSchema.static("findAccessesByToken", async function(token) {
 AccessSchema.static("findEligibleAccessesByToken", async function(token) {
   const access = await this.findByToken(token)
 
-  if (!access) return []
+  if (!access) {
+    return {
+      creator: null,
+      organizers: [],
+      spectator: null,
+    }
+  }
 
   // SPECTATOR
   if (access.permissions === PERMISSIONS.SPECTATOR) {

@@ -1,8 +1,8 @@
 <template>
   <modal
-    name="share"
-    @before-open="beforeOpen">
+    name="share">
     Share the tournament with anyone!
+    spectator: {{ spectatorAccess ? spectatorAccess.token : "None" }}
   </modal>
 </template>
 
@@ -11,7 +11,9 @@ import { Component, Vue } from "vue-property-decorator"
 
 @Component
 export default class ShareModal extends Vue {
-  beforeOpen() {}
+  get spectatorAccess(){
+    return this.$store.state.tournament.accesses.spectator
+  }
 }
 </script>
 

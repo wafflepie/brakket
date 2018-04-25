@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint",
     "mongo": "mongod --dbpath database",
     "serve": "vue-cli-service serve",
-    "start": "concurrently \"yarn serve --open\" \"nodemon --config .nodemonrc.json ./src/server\"",
+    "start": "concurrently \"yarn serve --open\" \"nodemon --harmony --config .nodemonrc.json ./src/server\"",
     "test": "vue-cli-service test"
   },
   "dependencies": {
