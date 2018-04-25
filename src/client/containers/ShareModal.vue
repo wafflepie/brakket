@@ -2,7 +2,7 @@
   <modal
     name="share">
     Share the tournament with anyone!
-    spectator: {{ spectatorAccess ? spectatorAccess.token : "None" }}
+    spectator: {{ spectatorAccessUrl }}
   </modal>
 </template>
 
@@ -11,6 +11,11 @@ import { Component, Vue } from "vue-property-decorator"
 
 @Component
 export default class ShareModal extends Vue {
+  get spectatorAccessUrl(){
+    return this.spectatorAccess
+      ? window.location.href.split('/').slice(0, -1).join('/') + `/${this.spectatorAccess.token}`
+      : ""
+  }
   get spectatorAccess(){
     return this.$store.state.tournament.accesses.spectator
   }
