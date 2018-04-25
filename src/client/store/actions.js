@@ -134,11 +134,13 @@ export const actions = {
     commit(mutationTypes.SET_TOURNAMENT_SCORE, payload)
     dispatch(actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY)
   },
-  [actionTypes.SOCKET_TOURNAMENT_STATE]({ commit, state }, payload) {
+  [actionTypes.SOCKET_TOURNAMENT_STATE]({ commit, dispatch, state }, payload) {
     commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, {
       ...state.tournament,
       ...payload,
     })
+
+    dispatch(actionTypes.STORE_TOURNAMENT_STATE_LOCALLY)
   },
   async [actionTypes.STORE_TOURNAMENT_STATE_LOCALLY]({ state }) {
     const token = selectToken(state)
