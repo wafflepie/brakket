@@ -52,11 +52,20 @@ export default class MatchSide extends Vue {
   width: 100%;
 
   input {
-    border: none;
+    border: 1px solid transparent;
     font-size: 100%;
     padding: 0;
     text-align: right;
     width: $score-input-width;
+
+    &:not(:disabled) {
+      background-color: $background-color;
+      border-color: $bracket-branch-color;
+    }
+
+    &:focus {
+      border-color: $border-color-inactive;
+    }
   }
 }
 
