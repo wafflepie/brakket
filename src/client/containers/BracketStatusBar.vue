@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { Component, Vue } from "vue-property-decorator"
+import { Component, Vue, Watch } from "vue-property-decorator"
 import * as R from "ramda"
 
 import { selectMatchesWithScores } from "../selectors"
@@ -49,6 +49,11 @@ export default class BracketStatusBar extends Vue {
 
   showShareModal() {
     this.$modal.show("share")
+  }
+
+  @Watch("$route")
+  hideShareModal() {
+    this.$modal.hide("share")
   }
 
   shuffle() {
