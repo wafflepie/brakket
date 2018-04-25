@@ -18,32 +18,6 @@ AccessSchema.static("findByToken", async function(token) {
   return await this.findOne({ token })
 })
 
-AccessSchema.static("findTournamentIdByToken", async function(token) {
-  const access = await this.findOne({ token })
-  return access ? access.tournament : null
-})
-
-AccessSchema.static("isTokenCreator", async function(token) {
-  const access = await this.findByToken(token)
-  return access ? access.permissions === PERMISSIONS.CREATOR : false
-})
-
-AccessSchema.static("findTournamentByToken", async function(token) {
-  const tournamentId = await this.findTournamentIdByToken(token)
-
-  return tournamentId
-    ? await this.model("Tournament").findById(tournamentId)
-    : null
-})
-
-AccessSchema.static("findAccessesByToken", async function(token) {
-  const access = await this.findByToken(token)
-
-  if (!access) return []
-
-  return await this.find({ tournament: access.tournament })
-})
-
 AccessSchema.static("findEligibleAccessesByToken", async function(token) {
   const access = await this.findByToken(token)
 
@@ -89,6 +63,18 @@ AccessSchema.static("findEligibleAccessesByToken", async function(token) {
       spectator: spectatorAccess,
     }
   }
+})
+
+AccessSchema.method("isCreator", function() {
+  return this.permissions === PERMISSIONS.CREATOR
+})
+
+AccessSchema.method("isOrganizer", function() {
+  return this.permissions === PERMISSIONS.ORGANIZER
+})
+
+AccessSchema.method("isSpectator", function() {
+  return this.permissions === PERMISSIONS.SPECTATOR
 })
 
 module.exports = mongoose.model("Access", AccessSchema)

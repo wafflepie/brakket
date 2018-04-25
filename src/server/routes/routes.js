@@ -7,31 +7,24 @@ const { Tournament, Access } = require("../models")
 module.exports = io => {
   io.on("connection", socket => {
     // UTILITY
-    const getCurrentTournamentId = () =>
-      Object.keys(socket.rooms).filter(room => room !== socket.id)[0]
+    const getCurrentRooms = () =>
+      Object.keys(socket.rooms).filter(room => room !== socket.id)
 
-    const getRoomClientCountByTournamentId = id =>
-      (io.sockets.adapter.rooms[id] || []).length
+    const getRoomClientCountByTournamentId = tournamentId =>
+      (io.sockets.adapter.rooms[tournamentId] || []).length
 
     const emitClientCountByTournamentId = id =>
       io.to(id).emit("clientCount", getRoomClientCountByTournamentId(id))
 
-    const joinRoom = tournamentId => {
-      const currentTournamentId = getCurrentTournamentId()
-      socket.leave(currentTournamentId)
-
-      if (tournamentId) {
-        socket.join(tournamentId)
-        emitClientCountByTournamentId(tournamentId)
-      }
+    const joinRoom = access => {
+      leaveAllRooms()
+      const tournamentId = access.tournament
+      socket.join(tournamentId)
+      emitClientCountByTournamentId(tournamentId)
     }
 
-    const leaveRoom = tournamentId => {
-      if (tournamentId) {
-        socket.leave(tournamentId)
-        emitClientCountByTournamentId(tournamentId)
-      }
-    }
+    const leaveAllRooms = () =>
+      getCurrentRooms().forEach(room => socket.leave(room))
 
     const emitTournamentState = async (token, tournament) =>
       socket.emit("tournamentState", {
@@ -41,80 +34,80 @@ module.exports = io => {
       })
 
     // HANDLERS
-    socket.on("disconnecting", () => {
-      leaveRoom(getCurrentTournamentId(socket))
-    })
+    socket.on("disconnecting", leaveAllRooms)
 
     socket.on("requestTournamentState", async token => {
-      const tournament = await Access.findTournamentByToken(token)
+      const access = await Access.findByToken(token)
 
-      if (tournament) {
-        joinRoom(tournament._id)
-        await emitTournamentState(token, tournament)
-      } else {
-        socket.emit("tournamentDoesNotExist")
+      if (!access) {
+        return socket.emit("tournamentDoesNotExist")
       }
+
+      joinRoom(access)
+
+      const tournament = await Tournament.findByAccess(access)
+      await emitTournamentState(token, tournament)
     })
 
-    socket.on("tournamentClosed", async token => {
-      const tournamentId = await Access.findTournamentIdByToken(token)
-      tournamentId && leaveRoom(tournamentId)
+    socket.on("tournamentClosed", async () => {
+      leaveAllRooms()
     })
 
     socket.on("tournamentOpened", async (token, lastModified) => {
-      const tournamentId = await Access.findTournamentIdByToken(token)
+      const access = await Access.findByToken(token)
 
-      if (tournamentId) {
-        joinRoom(tournamentId)
-        const tournament = await Access.findTournamentByToken(token)
+      if (!access) {
+        return socket.emit("tournamentDoesNotExist")
+      }
 
-        // lastModified may be undefined if it was never opened client-side
-        if (!tournament || lastModified > tournament.meta.lastModified) {
-          socket.emit("requestTournamentState")
-        } else {
-          await emitTournamentState(token, tournament)
-        }
+      joinRoom(access)
+      const tournament = await Tournament.findByAccess(access)
+
+      if (access.isSpectator()) {
+        return await emitTournamentState(token, tournament)
+      }
+
+      const localIsNewer =
+        !tournament || lastModified > tournament.meta.lastModified
+
+      if (localIsNewer) {
+        socket.emit("requestTournamentState")
       } else {
-        socket.emit("tournamentDoesNotExist")
+        await emitTournamentState(token, tournament)
       }
     })
 
     socket.on("tournamentScore", async (token, payload) => {
       const { roundIndex, matchIndex, side, score } = payload
 
-      if (await Access.isTokenCreator(token)) {
-        const tournament = await Access.findTournamentByToken(token)
+      const access = await Access.findByToken(token)
 
-        if (tournament) {
-          tournament.domain.results[roundIndex][matchIndex][side].score = score
-          tournament.markModified("domain")
-
-          await tournament.save()
-
-          io.to(tournament._id).emit("tournamentScore", {
-            ...payload,
-            lastModified: tournament.meta.lastModified,
-          })
-        } else {
-          socket.emit("tournamentDoesNotExist")
-        }
+      if (!access) {
+        return socket.emit("tournamentDoesNotExist")
       }
+
+      if (access.isSpectator()) {
+        return
+      }
+
+      const tournament = await Tournament.findByAccess(access)
+
+      tournament.domain.results[roundIndex][matchIndex][side].score = score
+      tournament.markModified("domain")
+
+      await tournament.save()
+
+      io.to(tournament._id).emit("tournamentScore", {
+        ...payload,
+        lastModified: tournament.meta.lastModified,
+      })
     })
 
     socket.on("tournamentState", async (token, state) => {
-      if (await Access.isTokenCreator(token)) {
-        const tournament = await Access.findTournamentByToken(token)
+      const access = await Access.findByToken(token)
 
-        if (tournament) {
-          tournament.domain = state.domain
-          tournament.markModified("domain")
-
-          await tournament.save()
-        }
-      } else {
+      if (!access) {
         const tournamentId = new mongoose.Types.ObjectId()
-
-        joinRoom(tournamentId)
 
         const creatorAccess = new Access({
           permissions: PERMISSIONS.CREATOR,
@@ -137,8 +130,22 @@ module.exports = io => {
         await spectatorAccess.save()
         await tournament.save()
 
-        emitTournamentState(token, tournament)
+        joinRoom(creatorAccess)
+
+        return await emitTournamentState(token, tournament)
       }
+
+      // Tournament exists
+      if (access.isSpectator()) {
+        return
+      }
+
+      const tournament = await Tournament.findByAccess(access)
+
+      tournament.domain = state.domain
+      tournament.markModified("domain")
+
+      await tournament.save()
     })
   })
 }

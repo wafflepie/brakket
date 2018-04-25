@@ -30,7 +30,7 @@ export const actionTypes = {
 
 export const actions = {
   [actionTypes.CLOSE_CURRENT_TOURNAMENT]({ commit, state }) {
-    state.$socket.emit("tournamentClosed", selectToken(state))
+    state.$socket.emit("tournamentClosed")
     commit(mutationTypes.RESET_TOURNAMENT_STATE)
   },
   [actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY](context) {

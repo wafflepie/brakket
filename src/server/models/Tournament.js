@@ -48,4 +48,8 @@ TournamentSchema.pre("save", function(next) {
   next()
 })
 
+TournamentSchema.static("findByAccess", async function(access) {
+  return access ? await this.findById(access.tournament) : null
+})
+
 module.exports = mongoose.model("Tournament", TournamentSchema)
