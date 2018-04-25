@@ -3,7 +3,7 @@ import VueSocket from "vue-socket.io"
 import VModal from "vue-js-modal"
 import "vue-awesome/icons"
 import Icon from "vue-awesome/components/Icon"
-
+import VueClipboard from "vue-clipboard2"
 import * as OfflinePluginRuntime from "offline-plugin/runtime"
 
 import App from "./App.vue"
@@ -16,6 +16,7 @@ Vue.component("icon", Icon)
 
 Vue.use(VueSocket, "http://localhost:3001", store)
 Vue.use(VModal)
+Vue.use(VueClipboard)
 
 new Vue({
   beforeCreate() {

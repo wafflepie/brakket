@@ -94,6 +94,16 @@ label {
   margin-bottom: 0.25rem;
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity $transition-duration;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
 // =================
 // END GLOBAL STYLES
 // =================
