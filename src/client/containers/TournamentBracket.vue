@@ -1,15 +1,16 @@
 <template>
   <article class="bracket">
     <BracketBranches :results="results" />
-    <article 
-      v-for="(round, roundIndex) of results" 
-      :key="roundIndex" 
+    <article
+      v-for="(round, roundIndex) of results"
+      :key="roundIndex"
       class="round">
-      <article 
-        v-for="(match, matchIndex) of round" 
-        :key="matchIndex" 
+      <article
+        v-for="(match, matchIndex) of round"
+        :key="matchIndex"
         class="match">
         <MatchSide
+          :disabled="isSpectator"
           :match="match"
           :round-index="roundIndex"
           :match-index="matchIndex"
@@ -17,6 +18,7 @@
           @score-change="handleScoreChange"
           @score-blur="handleScoreBlur" />
         <MatchSide
+          :disabled="isSpectator"
           :match="match"
           :round-index="roundIndex"
           :match-index="matchIndex"
@@ -31,8 +33,9 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
+import {PERMISSIONS} from "../../common"
 import { actionTypes } from "../store"
-import { selectResults } from "../selectors"
+import { selectResults, selectAccess } from "../selectors"
 import MatchSide from "../components/MatchSide.vue"
 import BracketBranches from "../components/BracketBranches.vue"
 
@@ -40,6 +43,10 @@ import BracketBranches from "../components/BracketBranches.vue"
 export default class BracketView extends Vue {
   get results() {
     return selectResults(this.$store.state)
+  }
+
+  get isSpectator(){
+    return selectAccess(this.$store.state).permissions === PERMISSIONS.SPECTATOR
   }
 
   handleScoreChange(roundIndex, matchIndex, side, score) {

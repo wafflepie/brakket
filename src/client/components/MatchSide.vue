@@ -5,7 +5,7 @@
       class="side-name placeholder">
       Placeholder
     </div>
-    <div 
+    <div
       v-else-if="isSideToBeDecided(match, side)"
       class="side-name to-be-decided">
       TBD
@@ -16,7 +16,7 @@
       {{ match[side].name }}
     </div>
     <input      
-      :disabled="isSideDisabled(match, side)"
+      :disabled="disabled || isSideDisabled(match, side)"
       :value="isSideDisabled(match, side) ? '' : match[side].score"
       type="number"
       @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
@@ -31,6 +31,7 @@ import { isSideDisabled, isSidePlaceholder, isSideToBeDecided } from "../domain"
 
 @Component
 export default class MatchSide extends Vue {
+  @Prop(Boolean) disabled
   @Prop(Object) match
   @Prop(String) side
   @Prop(Number) roundIndex

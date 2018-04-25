@@ -56,18 +56,31 @@ export const selectWinnerSideOfFinalMatch = state => {
 }
 
 /**
+ * Selects the best access for the passed tournament state.
+ *
+ * @param {Object} tournamentState
+ */
+export const selectAccessFromTournamentState = tournamentState => {
+  const { accesses } = tournamentState
+  return accesses.creator || accesses.organizers[0] || accesses.spectator
+}
+
+/**
  * Selects the best token for the passed tournament state.
  *
  * @param {Object} tournamentState
  */
-export const selectTokenFromTournamentState = tournamentState => {
-  const { accesses } = tournamentState
-
-  return R.prop(
-    "token",
-    accesses.creator || accesses.organizers[0] || accesses.spectator
+export const selectTokenFromTournamentState = tournamentState => R.prop("token",
+    selectAccessFromTournamentState(tournamentState)
   )
-}
+
+  /**
+   * Selects the best access for the current tournament state.
+   *
+   * @param {Object} state state of the application
+   */
+export const selectAccess = state => selectAccessFromTournamentState(state.tournament)
+
 
 /**
  * Selects the best token for the current tournament.
