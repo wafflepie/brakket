@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const shortid = require("shortid")
+const R = require("ramda")
 
 const { PERMISSIONS } = require("../../common")
 const { Tournament, Access } = require("../models")
@@ -7,27 +8,31 @@ const { Tournament, Access } = require("../models")
 module.exports = io => {
   io.on("connection", socket => {
     // UTILITY
-    const getCurrentRooms = () =>
-      Object.keys(socket.rooms).filter(room => room !== socket.id)
-
-    const getRoomClientCountByTournamentId = tournamentId =>
-      (io.sockets.adapter.rooms[tournamentId] || []).length
+    const getSocketsByTournamentId = tournamentId =>
+      R.compose(
+        R.map(socketId => io.sockets.connected[socketId]),
+        R.keys,
+        R.path(["sockets", "adapter", "rooms", tournamentId, "sockets"])
+      )(io)
 
     const emitClientCountByTournamentId = id =>
-      io.to(id).emit("clientCount", getRoomClientCountByTournamentId(id))
+      io.to(id).emit("clientCount", getSocketsByTournamentId(id).length)
 
     const joinRoom = access => {
       leaveAllRooms()
       const tournamentId = access.tournament
       socket.join(tournamentId)
+      socket.token = access.token
       emitClientCountByTournamentId(tournamentId)
     }
 
     const leaveAllRooms = () =>
-      getCurrentRooms().forEach(room => socket.leave(room))
+      Object.keys(socket.rooms)
+        .filter(room => room !== socket.id)
+        .forEach(room => socket.leave(room))
 
-    const emitTournamentState = async (token, tournament) =>
-      socket.emit("tournamentState", {
+    const emitTournamentState = async (token, tournament, emitter = socket) =>
+      emitter.emit("tournamentState", {
         accesses: await Access.findEligibleAccessesByToken(token),
         domain: tournament.domain,
         meta: tournament.meta,
@@ -146,6 +151,11 @@ module.exports = io => {
       tournament.markModified("domain")
 
       await tournament.save()
+
+      // this informs all sockets (viewing the tournament) of the changed state
+      getSocketsByTournamentId(tournament._id).forEach(socket =>
+        emitTournamentState(socket.token, tournament, socket)
+      )
     })
   })
 }
