@@ -5,6 +5,7 @@ import "vue-awesome/icons"
 import Icon from "vue-awesome/components/Icon"
 import VueClipboard from "vue-clipboard2"
 import * as OfflinePluginRuntime from "offline-plugin/runtime"
+import VTooltip from "v-tooltip"
 
 import App from "./App.vue"
 import router from "./router"
@@ -16,6 +17,7 @@ Vue.component("icon", Icon)
 
 Vue.use(VueSocket, "http://localhost:3001", store)
 Vue.use(VModal)
+Vue.use(VTooltip)
 Vue.use(VueClipboard)
 
 new Vue({

@@ -1,5 +1,7 @@
 <template>
-  <article :class="[{ winner: match.winner === side }, 'side', side]">
+  <article
+    :class="[{ winner: match.winner === side }, 'side', side]"
+    :style="{ 'border-color': focusId ? getColorById(focusId) : 'transparent' }">
     <div
       v-if="isSidePlaceholder(match, side)"
       class="side-name placeholder">
@@ -19,9 +21,9 @@
       :disabled="disabled || isSideDisabled(match, side)"
       :value="isSideDisabled(match, side) ? '' : match[side].score"
       type="number"
-      @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
+      @change="$emit('score-change', match.roundIndex, match.matchIndex, side, $event.target.value)"
       @blur="$emit('score-blur')"
-      @focus="$emit('score-focus', roundIndex, matchIndex, side)">
+      @focus="$emit('score-focus', match.roundIndex, match.matchIndex, side)">
   </article>
 </template>
 
@@ -29,15 +31,16 @@
 import { Component, Prop, Vue } from "vue-property-decorator"
 
 import { isSideDisabled, isSidePlaceholder, isSideToBeDecided } from "../domain"
+import { getColorById } from "../utils"
 
 @Component
 export default class MatchSide extends Vue {
   @Prop(Boolean) disabled
+  @Prop(String) focusId
   @Prop(Object) match
   @Prop(String) side
-  @Prop(Number) roundIndex
-  @Prop(Number) matchIndex
 
+  getColorById = getColorById
   isSideDisabled = isSideDisabled
   isSidePlaceholder = isSidePlaceholder
   isSideToBeDecided = isSideToBeDecided
@@ -47,10 +50,28 @@ export default class MatchSide extends Vue {
 <style lang="scss" scoped>
 .side {
   background-color: $side-background-color;
+  border: 2px solid transparent;
   display: flex;
   flex-direction: row;
   padding: $side-padding;
   width: 100%;
+
+  &.home {
+    border-bottom-width: 0;
+  }
+
+  &.away {
+    border-top-width: 0;
+  }
+
+  &.winner {
+    background-color: $side-background-color * $winner-brightness;
+    color: $primary-color;
+
+    input {
+      color: $primary-color;
+    }
+  }
 
   input {
     border: 1px solid transparent;
@@ -70,27 +91,18 @@ export default class MatchSide extends Vue {
   }
 }
 
-.winner {
-  background-color: $side-background-color * $winner-brightness;
-  color: $primary-color;
-
-  input {
-    color: $primary-color;
-  }
-}
-
 .side-name {
   flex-grow: 1;
   max-width: calc(100% - #{$score-input-width});
   overflow: hidden;
   text-overflow: ellipsis;
-}
 
-.placeholder {
-  color: $side-placeholder-color;
-}
+  &.placeholder {
+    color: $side-placeholder-color;
+  }
 
-.to-be-decided {
-  color: $side-to-be-decided-color;
+  &.to-be-decided {
+    color: $side-to-be-decided-color;
+  }
 }
 </style>

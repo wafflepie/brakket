@@ -12,6 +12,7 @@
     "test": "vue-cli-service test"
   },
   "dependencies": {
+    "color-hash": "1.0.3",
     "date-fns": "^1.29.0",
     "koa": "^2.5.0",
     "localforage": "^1.6.0",
@@ -21,6 +22,7 @@
     "ramda": "^0.25.0",
     "shortid": "^2.2.8",
     "socket.io": "^2.1.0",
+    "v-tooltip": "2.0.0-rc.31",
     "vue": "^2.5.13",
     "vue-awesome": "^3.0.0",
     "vue-clipboard2": "^0.1.0",

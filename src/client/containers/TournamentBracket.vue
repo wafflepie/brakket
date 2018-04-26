@@ -11,18 +11,16 @@
         class="match">
         <MatchSide
           :disabled="isSpectator"
+          :focus-id="getFocusId(roundIndex, matchIndex)"
           :match="match"
-          :round-index="roundIndex"
-          :match-index="matchIndex"
           side="home"
           @score-change="handleScoreChange"
           @score-blur="handleScoreBlur"
           @score-focus="handleScoreFocus" />
         <MatchSide
           :disabled="isSpectator"
+          :focus-id="getFocusId(roundIndex, matchIndex)"
           :match="match"
-          :round-index="roundIndex"
-          :match-index="matchIndex"
           side="away"
           @score-change="handleScoreChange"
           @score-blur="handleScoreBlur"
@@ -49,6 +47,17 @@ export default class BracketView extends Vue {
 
   get isSpectator() {
     return selectAccess(this.$store.state).permissions === PERMISSIONS.SPECTATOR
+  }
+
+  getFocusId(roundIndex, matchIndex) {
+    const clients = this.$store.state.tournament.transient.clients.filter(
+      client =>
+        client.focus &&
+        client.focus.roundIndex === roundIndex &&
+        client.focus.matchIndex === matchIndex
+    )
+
+    return clients.length ? clients[0].id : null
   }
 
   handleScoreChange(roundIndex, matchIndex, side, score) {

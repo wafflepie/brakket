@@ -22,15 +22,16 @@ $title-font-size: 5rem;
 
 // Widths & Heights
 $bracket-branch-line-width: 1.5px;
-$bracket-status-bar-height: 3rem;
 $home-width: 40rem;
 $input-width: 20rem;
 $match-width: 8rem;
 $score-input-width: 3rem;
+$status-bar-height: 3rem;
 
 // Paddings & Margins
 $body-padding: 0.5rem;
 $button-padding: 1rem;
+$client-icon-margin: 0.5rem;
 $input-padding: 0.5rem;
 $list-item-margin: 0.5rem;
 $match-margin: 0.5rem;
@@ -38,6 +39,7 @@ $round-margin: 0.5rem;
 $section-margin: 2.5rem;
 $side-margin: 0.25rem;
 $side-padding: 0.25rem;
+$status-bar-button-margin: 0.5rem;
 
 // Breakpoints
 $mobile-breakpoint: 35em;

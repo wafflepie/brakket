@@ -76,7 +76,6 @@ export default class TournamentBracketView extends Vue {
 
 <style lang="scss" scoped>
 h3 {
-  line-height: 1.1rem;
   margin-bottom: 0;
 }
 </style>

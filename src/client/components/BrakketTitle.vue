@@ -19,7 +19,7 @@
     font-size: $title-font-size / 1.5;
     line-height: $title-font-size / 1.5;
     margin-bottom: $section-margin / 2;
-    margin-top: $section-margin / 2 + $bracket-status-bar-height;
+    margin-top: $section-margin / 2 + $status-bar-height;
   }
 
   a {
