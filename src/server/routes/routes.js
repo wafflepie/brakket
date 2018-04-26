@@ -7,6 +7,8 @@ const { Tournament, Access } = require("../models")
 
 module.exports = io => {
   io.on("connection", socket => {
+    socket.focus = null
+
     // UTILITY
     const getSocketsByTournamentId = tournamentId =>
       R.compose(
@@ -15,21 +17,22 @@ module.exports = io => {
         R.path(["sockets", "adapter", "rooms", tournamentId, "sockets"])
       )(io)
 
-    const emitClientCountByTournamentId = id =>
-      io.to(id).emit("clientCount", getSocketsByTournamentId(id).length)
-
     const joinRoom = access => {
       leaveAllRooms()
       const tournamentId = access.tournament
       socket.join(tournamentId)
       socket.token = access.token
-      emitClientCountByTournamentId(tournamentId)
+
+      emitFocusState()
     }
 
-    const leaveAllRooms = () =>
+    const leaveAllRooms = () => {
       Object.keys(socket.rooms)
         .filter(room => room !== socket.id)
         .forEach(room => socket.leave(room))
+
+      emitFocusState()
+    }
 
     const emitTournamentState = async (token, tournament, emitter = socket) =>
       emitter.emit("tournamentState", {
@@ -37,6 +40,25 @@ module.exports = io => {
         domain: tournament.domain,
         meta: tournament.meta,
       })
+
+    const emitFocusState = async () => {
+      const access = await Access.findByToken(socket.token)
+
+      if (!access) {
+        return
+      }
+
+      const tournamentId = access.tournament
+      const sockets = getSocketsByTournamentId(tournamentId)
+
+      sockets.filter(sock => sock.id !== socket.id).forEach(socket => {
+        const payload = sockets
+          .filter(sock => sock.id !== socket.id)
+          .map(socket => socket.focus)
+
+        socket.emit("focusState", payload)
+      })
+    }
 
     // HANDLERS
     socket.on("disconnecting", leaveAllRooms)
@@ -54,9 +76,17 @@ module.exports = io => {
       await emitTournamentState(token, tournament)
     })
 
-    socket.on("tournamentClosed", async () => {
-      leaveAllRooms()
+    socket.on("scoreBlur", () => {
+      socket.focus = null
+      emitFocusState()
     })
+
+    socket.on("scoreFocus", payload => {
+      socket.focus = payload
+      emitFocusState()
+    })
+
+    socket.on("tournamentClosed", leaveAllRooms)
 
     socket.on("tournamentOpened", async (token, lastModified) => {
       const access = await Access.findByToken(token)

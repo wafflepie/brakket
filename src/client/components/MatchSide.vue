@@ -20,7 +20,8 @@
       :value="isSideDisabled(match, side) ? '' : match[side].score"
       type="number"
       @change="$emit('score-change', roundIndex, matchIndex, side, $event.target.value)"
-      @blur="$emit('score-blur')">
+      @blur="$emit('score-blur')"
+      @focus="$emit('score-focus', roundIndex, matchIndex, side)">
   </article>
 </template>
 

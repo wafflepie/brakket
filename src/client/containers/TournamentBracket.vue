@@ -16,7 +16,8 @@
           :match-index="matchIndex"
           side="home"
           @score-change="handleScoreChange"
-          @score-blur="handleScoreBlur" />
+          @score-blur="handleScoreBlur"
+          @score-focus="handleScoreFocus" />
         <MatchSide
           :disabled="isSpectator"
           :match="match"
@@ -24,7 +25,8 @@
           :match-index="matchIndex"
           side="away"
           @score-change="handleScoreChange"
-          @score-blur="handleScoreBlur" />
+          @score-blur="handleScoreBlur"
+          @score-focus="handleScoreFocus" />
       </article>
     </article>
   </article>
@@ -60,6 +62,11 @@ export default class BracketView extends Vue {
 
   handleScoreBlur() {
     this.$store.dispatch(actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY)
+    this.$socket.emit("scoreBlur")
+  }
+
+  handleScoreFocus(roundIndex, matchIndex, side) {
+    this.$socket.emit("scoreFocus", { roundIndex, matchIndex, side })
   }
 }
 </script>

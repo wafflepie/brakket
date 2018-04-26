@@ -4,7 +4,7 @@
     <span
       v-show="online"
       class="connection-status online">
-      {{ clientCount - 1 }} other viewer{{ clientCount - 2 ? 's' : '' }}
+      {{ clientCount }} other viewer{{ clientCount - 1 ? 's' : '' }}
     </span>
     <span
       v-show="!online"
