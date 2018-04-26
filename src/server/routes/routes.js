@@ -7,6 +7,7 @@ const { Tournament, Access } = require("../models")
 
 module.exports = io => {
   io.on("connection", socket => {
+    socket.access = null
     socket.focus = null
 
     // UTILITY
@@ -21,9 +22,9 @@ module.exports = io => {
       leaveAllRooms()
       const tournamentId = access.tournament
       socket.join(tournamentId)
-      socket.token = access.token
+      socket.access = access
 
-      emitFocusState()
+      emitClients(true)
     }
 
     const leaveAllRooms = () => {
@@ -31,33 +32,48 @@ module.exports = io => {
         .filter(room => room !== socket.id)
         .forEach(room => socket.leave(room))
 
-      emitFocusState()
+      emitClients()
     }
 
-    const emitTournamentState = async (tournament, emitter = socket) =>
+    const emitTournamentState = async (tournament, emitter = socket) => {
+      const accesses = await Access.findEligibleAccessesByToken(
+        emitter.access.token
+      )
+
       emitter.emit("tournamentState", {
-        accesses: await Access.findEligibleAccessesByToken(emitter.token),
+        accesses,
         domain: tournament.domain,
         meta: tournament.meta,
       })
+    }
 
-    const emitFocusState = async () => {
-      const access = await Access.findByToken(socket.token)
-
-      if (!access) {
+    const emitClients = (includeSender = false) => {
+      if (!socket.access) {
         return
       }
 
-      const tournamentId = access.tournament
+      const tournamentId = socket.access.tournament
       const sockets = getSocketsByTournamentId(tournamentId)
 
-      sockets.filter(sock => sock.id !== socket.id).forEach(socket => {
-        const payload = sockets
-          .filter(sock => sock.id !== socket.id)
-          .map(socket => socket.focus)
+      // emit only to sockets which are not the source of focusing
+      // unless includeSender is true and we want to send him the initial data
+      sockets
+        .filter(other => includeSender || other.id !== socket.id)
+        .forEach(targetSocket => {
+          // remove the socket we are emitting to from the list
+          const payloadSockets = sockets.filter(
+            other => other.id !== targetSocket.id
+          )
 
-        socket.emit("focusState", payload)
-      })
+          const payload = payloadSockets.map(payloadSocket => ({
+            focus: payloadSocket.focus,
+            id: payloadSocket.id,
+            name: payloadSocket.access.name,
+            permissions: payloadSocket.access.permissions,
+          }))
+
+          targetSocket.emit("clients", payload)
+        })
     }
 
     // HANDLERS
@@ -78,12 +94,12 @@ module.exports = io => {
 
     socket.on("scoreBlur", () => {
       socket.focus = null
-      emitFocusState()
+      emitClients()
     })
 
     socket.on("scoreFocus", payload => {
       socket.focus = payload
-      emitFocusState()
+      emitClients()
     })
 
     socket.on("tournamentClosed", leaveAllRooms)
@@ -115,17 +131,15 @@ module.exports = io => {
     socket.on("tournamentScore", async payload => {
       const { roundIndex, matchIndex, side, score } = payload
 
-      const access = await Access.findByToken(socket.token)
-
-      if (!access) {
+      if (!socket.access) {
         return socket.emit("tournamentDoesNotExist")
       }
 
-      if (access.isSpectator()) {
+      if (socket.access.isSpectator()) {
         return
       }
 
-      const tournament = await Tournament.findByAccess(access)
+      const tournament = await Tournament.findByAccess(socket.access)
 
       tournament.domain.results[roundIndex][matchIndex][side].score = score
       tournament.markModified("domain")
@@ -145,12 +159,14 @@ module.exports = io => {
         const tournamentId = new mongoose.Types.ObjectId()
 
         const creatorAccess = new Access({
+          name: null,
           permissions: PERMISSIONS.CREATOR,
           token,
           tournament: tournamentId,
         })
 
         const spectatorAccess = new Access({
+          name: null,
           permissions: PERMISSIONS.SPECTATOR,
           token: shortid.generate(),
           tournament: tournamentId,

@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const { PERMISSIONS } = require("../../common")
 
 const AccessSchema = new mongoose.Schema({
+  name: String,
   permissions: {
     type: String,
     enum: Object.values(PERMISSIONS),

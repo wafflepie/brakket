@@ -40,7 +40,7 @@ export default class BracketStatusBar extends Vue {
   }
 
   get clientCount() {
-    return this.$store.state.tournament.transient.clientCount
+    return this.$store.state.tournament.transient.clients.length
   }
 
   get canShuffle() {
