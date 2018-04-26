@@ -34,9 +34,9 @@ module.exports = io => {
       emitFocusState()
     }
 
-    const emitTournamentState = async (token, tournament, emitter = socket) =>
+    const emitTournamentState = async (tournament, emitter = socket) =>
       emitter.emit("tournamentState", {
-        accesses: await Access.findEligibleAccessesByToken(token),
+        accesses: await Access.findEligibleAccessesByToken(emitter.token),
         domain: tournament.domain,
         meta: tournament.meta,
       })
@@ -73,7 +73,7 @@ module.exports = io => {
       joinRoom(access)
 
       const tournament = await Tournament.findByAccess(access)
-      await emitTournamentState(token, tournament)
+      await emitTournamentState(tournament)
     })
 
     socket.on("scoreBlur", () => {
@@ -99,7 +99,7 @@ module.exports = io => {
       const tournament = await Tournament.findByAccess(access)
 
       if (access.isSpectator()) {
-        return await emitTournamentState(token, tournament)
+        return await emitTournamentState(tournament)
       }
 
       const localIsNewer =
@@ -108,14 +108,14 @@ module.exports = io => {
       if (localIsNewer) {
         socket.emit("requestTournamentState")
       } else {
-        await emitTournamentState(token, tournament)
+        await emitTournamentState(tournament)
       }
     })
 
-    socket.on("tournamentScore", async (token, payload) => {
+    socket.on("tournamentScore", async payload => {
       const { roundIndex, matchIndex, side, score } = payload
 
-      const access = await Access.findByToken(token)
+      const access = await Access.findByToken(socket.token)
 
       if (!access) {
         return socket.emit("tournamentDoesNotExist")
@@ -167,7 +167,7 @@ module.exports = io => {
 
         joinRoom(creatorAccess)
 
-        return await emitTournamentState(token, tournament)
+        return await emitTournamentState(tournament)
       }
 
       // Tournament exists
@@ -184,7 +184,7 @@ module.exports = io => {
 
       // this informs all sockets (viewing the tournament) of the changed state
       getSocketsByTournamentId(tournament._id).forEach(socket =>
-        emitTournamentState(socket.token, tournament, socket)
+        emitTournamentState(tournament, socket)
       )
     })
   })

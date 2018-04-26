@@ -157,9 +157,7 @@ export const actions = {
     $socket.emit("tournamentState", token, R.omit(["transient"], tournament))
   },
   [actionTypes.UPDATE_TOURNAMENT_SCORE]({ commit, state }, payload) {
-    const token = selectToken(state)
-
-    state.$socket.emit("tournamentScore", token, payload)
+    state.$socket.emit("tournamentScore", payload)
     commit(mutationTypes.SET_TOURNAMENT_SCORE, payload)
     // we do not want to store the score here, because it might not be valid
     // we wait until the ENSURE_TOURNAMENT_STATE_VALIDITY action
