@@ -44,7 +44,7 @@ import { Component, Vue, Watch } from "vue-property-decorator"
 import * as R from "ramda"
 
 import { PERMISSIONS } from "../../common"
-import { selectMatchesWithScores } from "../selectors"
+import { selectMatchesWithScores, selectAccess } from "../selectors"
 import { actionTypes } from "../store"
 import { getColorById } from "../utils"
 import ShareModal from "./ShareModal.vue"
@@ -87,6 +87,12 @@ export default class BracketStatusBar extends Vue {
   }
 
   get canShuffle() {
+    const access = selectAccess(this.$store.state)
+
+    if (!access || access.permissions === PERMISSIONS.SPECTATOR) {
+      return false
+    }
+
     return R.isEmpty(selectMatchesWithScores(this.$store.state))
   }
 
