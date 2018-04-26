@@ -58,7 +58,6 @@ export default class BracketStatusBar extends Vue {
     "basketball-ball",
     "bowling-ball",
     "football-ball",
-    "futbol",
     "volleyball-ball",
   ]
 
