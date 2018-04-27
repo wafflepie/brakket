@@ -48,7 +48,7 @@ export const actions = {
     const seed = generateSeedFromIdentifiers(Object.keys(participants))
     const results = generateResultStructureFromSeed(seed)
 
-    const token = shortid.generate()
+    const token = R.times(shortid.generate, 8).join("")
 
     const tournament = {
       domain: {
