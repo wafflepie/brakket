@@ -1,6 +1,5 @@
 // Colors
 $background-color: #111;
-$bracket-status-bar-color: #181818;
 $border-color-inactive: #666;
 $border-color-active: white;
 $bracket-branch-color: #333;
@@ -13,6 +12,7 @@ $share-modal-overlay-color: rgba(0, 0, 0, 0.8);
 $side-background-color: #181818;
 $side-placeholder-color: #333;
 $side-to-be-decided-color: #666;
+$status-bar-color: #181818;
 
 // Font Size
 $font-size: 1.2rem;
@@ -46,5 +46,6 @@ $status-bar-button-margin: 0.5rem;
 $mobile-breakpoint: 35em;
 
 // Misc
+$title-size-modifier: 1.5;
 $transition-duration: 0.3s;
 $winner-brightness: 1.2;

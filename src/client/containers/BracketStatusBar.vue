@@ -26,12 +26,14 @@
     <div class="status-bar-buttons">
       <span
         class="status-bar-button"
+        title="Share the tournament"
         @click="showShareModal">
         <icon name="share" />
       </span>
       <span
         :class="['status-bar-button', { disabled: !canShuffle }]"
         :tabindex="canShuffle ? 0 : ''"
+        title="Shuffle the initial seed"
         @click="shuffle">
         <icon name="random" />
       </span>
@@ -121,7 +123,7 @@ export default class BracketStatusBar extends Vue {
 
 <style lang="scss">
 .status-bar {
-  background-color: $bracket-status-bar-color;
+  background-color: $status-bar-color;
   display: flex;
   flex-grow: 1;
   flex-wrap: nowrap;
@@ -201,8 +203,11 @@ export default class BracketStatusBar extends Vue {
 
   .tooltip-inner {
     display: inline-block;
+    background-color: $status-bar-color;
     pointer-events: none;
-    transform: translateY(-50%);
+    padding: 0 0.5em;
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
   }
 }
 </style>

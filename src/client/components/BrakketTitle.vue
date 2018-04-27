@@ -16,10 +16,10 @@
   transition: all $transition-duration ease-in-out;
 
   &.small {
-    font-size: $title-font-size / 1.5;
-    line-height: $title-font-size / 1.5;
-    margin-bottom: $section-margin / 2;
-    margin-top: $section-margin / 2 + $status-bar-height;
+    font-size: $title-font-size / $title-size-modifier;
+    line-height: $title-font-size / $title-size-modifier;
+    margin-bottom: $section-margin / $title-size-modifier;
+    margin-top: $section-margin / $title-size-modifier + $status-bar-height;
   }
 
   a {
