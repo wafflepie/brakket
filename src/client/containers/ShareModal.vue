@@ -1,27 +1,40 @@
 <template>
   <modal
     adaptive
+    height="auto"
     name="share">
-    Here is the spectator URL, non-destructive!
-    <input
-      :value="spectatorAccessUrl"
-      class="spectator-input"
-      readonly
-      @focus="copy(spectatorAccessUrl)">
-    <transition name="fade">
-      <span
-        v-show="showCopiedToClipboard"
-        class="copied-to-clipboard">Copied to clipboard!</span>
-    </transition>
+    <div id="spectator-container">
+      <label
+        id="spectator-label"
+        for="spectator-input">Click the URL below to get a view-only link!</label>
+      <transition name="fade">
+        <span
+          v-show="showCopied"
+          id="copied">Copied!</span>
+      </transition>
+      <input
+        id="spectator-input"
+        :value="spectatorAccessUrl"
+        readonly
+        @focus="copy(spectatorAccessUrl)">
+    </div>
+    <div
+      v-if="isCreator"
+      id="organizers-container">
+      TODO: ORGANIZERS CONTAINER
+    </div>
   </modal>
 </template>
 
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
+import { selectAccess } from "../selectors"
+import { PERMISSIONS } from "../../common"
+
 @Component
 export default class ShareModal extends Vue {
-  showCopiedToClipboard = false
+  showCopied = false
 
   get spectatorAccessUrl() {
     return this.spectatorAccess
@@ -36,12 +49,17 @@ export default class ShareModal extends Vue {
     return this.$store.state.tournament.accesses.spectator
   }
 
+  get isCreator() {
+    const access = selectAccess(this.$store.state)
+    return access && access.permissions === PERMISSIONS.CREATOR
+  }
+
   copy(url) {
     this.$copyText(url).then(() => {
-      this.showCopiedToClipboard = true
+      this.showCopied = true
 
       setTimeout(() => {
-        this.showCopiedToClipboard = false
+        this.showCopied = false
       }, 3000)
     })
   }
@@ -52,15 +70,25 @@ export default class ShareModal extends Vue {
 <style lang="scss">
 .v--modal {
   background-color: $background-color;
+  border: 1px solid $border-active-color;
   border-radius: 0;
-  padding: 0.5rem;
+  padding: 1rem;
 }
 
 .v--modal-overlay {
   background-color: $share-modal-overlay-color;
 }
 
-.spectator-input {
+#spectator-input {
   max-width: 100%;
+}
+
+#spectator-label {
+  display: inline-block;
+}
+
+#copied {
+  float: right;
+  font-size: $label-font-size;
 }
 </style>

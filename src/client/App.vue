@@ -62,8 +62,8 @@ ul {
 input {
   background: none;
   border: none;
-  border-bottom: 1px solid $border-color-inactive;
-  border-right: 1px solid $border-color-inactive;
+  border-bottom: 1px solid $border-inactive-color;
+  border-right: 1px solid $border-inactive-color;
   color: $font-color;
   display: block;
   font-size: $form-element-font-size;
@@ -80,7 +80,7 @@ input {
   }
 
   &:not(:placeholder-shown) {
-    border-color: $border-color-active;
+    border-color: $border-active-color;
   }
 
   &:focus {
@@ -90,8 +90,9 @@ input {
 
 label {
   display: block;
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
+  font-size: $label-font-size;
+  line-height: $label-font-size;
+  margin-bottom: $label-bottom-margin;
 }
 
 .fade-enter-active,

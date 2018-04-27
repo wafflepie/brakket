@@ -17,7 +17,7 @@ export default class GhostButton extends Vue {
 <style lang="scss" scoped>
 .ghost-button {
   background: none;
-  border: 1px solid $border-color-active;
+  border: 1px solid $border-active-color;
   color: inherit;
   cursor: pointer;
   display: inline-block;

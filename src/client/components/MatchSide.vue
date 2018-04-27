@@ -86,7 +86,7 @@ export default class MatchSide extends Vue {
     }
 
     &:focus {
-      border-color: $border-color-inactive;
+      border-color: $border-inactive-color;
     }
   }
 }
