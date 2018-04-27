@@ -69,15 +69,10 @@ export default class BracketStatusBar extends Vue {
 
   get clients() {
     const clients = this.$store.state.tournament.transient.clients
-    const orderedPermissions = [
-      PERMISSIONS.CREATOR,
-      PERMISSIONS.ORGANIZER,
-      PERMISSIONS.SPECTATOR,
-    ]
 
     // orders the clients by permissions
     return [
-      ...orderedPermissions.reduce(
+      ...Object.values(PERMISSIONS).reduce(
         (array, permission) => [
           ...array,
           ...clients.filter(client => client.permissions === permission),

@@ -21,7 +21,7 @@ import * as R from "ramda"
 import {
   MINIMUM_PARTICIPANTS_COUNT,
   MAXIMUM_PARTICIPANTS_COUNT,
-} from "../constants"
+} from "../../common"
 import GhostSubmitButton from "../components/GhostSubmitButton"
 import ResetNameMixin from "../mixins/ResetNameMixin"
 import { actionTypes } from "../store"

@@ -22,7 +22,7 @@ import * as R from "ramda"
 import {
   MINIMUM_PARTICIPANTS_COUNT,
   MAXIMUM_PARTICIPANTS_COUNT,
-} from "../constants"
+} from "../../common"
 import GhostButton from "../components/GhostButton.vue"
 import RemoveItemButton from "../components/RemoveItemButton.vue"
 import GhostSubmitButton from "../components/GhostSubmitButton.vue"

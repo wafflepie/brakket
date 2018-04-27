@@ -1,6 +1,6 @@
 import * as R from "ramda"
 
-import { SIDES } from "../constants"
+import { SIDES } from "../../common"
 import { getNameOfSide, getOtherSide, isSidePlaceholder } from "./compute"
 
 /**

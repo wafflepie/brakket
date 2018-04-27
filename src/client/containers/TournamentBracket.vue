@@ -57,6 +57,8 @@ export default class BracketView extends Vue {
         client.focus.matchIndex === matchIndex
     )
 
+    // NOTE: although multiple clients might be focusing the same input,
+    // we return just the first one
     return clients.length ? clients[0].id : null
   }
 

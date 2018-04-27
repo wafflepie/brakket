@@ -10,6 +10,7 @@
           <router-link :to="{ name: 'tournament-bracket', params: { token: getToken(tournament) } }">
             {{ tournament.domain.name || 'Unnamed tournament' }}
           </router-link>
+          {{ getCapitalizedPermissions(tournament) }}
           <span class="tournament-description">
             {{ getNumberOfParticipants(tournament) }},
             last modified {{ distanceInWordsToNow(tournament.meta.lastModified) }} ago
@@ -33,8 +34,11 @@ import localforage from "localforage"
 import { distanceInWordsToNow } from "date-fns"
 import * as R from "ramda"
 
-import { selectTokenFromTournamentState } from "../selectors"
-import { DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT } from "../constants"
+import {
+  selectAccessFromTournamentState,
+  selectTokenFromTournamentState,
+} from "../selectors"
+import { DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT, PERMISSIONS } from "../../common"
 import GhostButton from "../components/GhostButton.vue"
 import RemoveItemButton from "../components/RemoveItemButton.vue"
 
@@ -45,28 +49,13 @@ import RemoveItemButton from "../components/RemoveItemButton.vue"
   components: { GhostButton, RemoveItemButton },
 })
 export default class StoredTournamentList extends Vue {
-  tournaments = []
   distanceInWordsToNow = distanceInWordsToNow
   limit = DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT
+  tournaments = []
 
-  async loadTournamentList() {
-    const keys = await localforage.keys()
-    const values = await Promise.all(keys.map(key => localforage.getItem(key)))
-    const tournaments = values.map(JSON.parse)
-
-    const comparator = R.comparator(
-      (a, b) => a.meta.lastModified > b.meta.lastModified
-    )
-
-    this.tournaments = R.sort(comparator, tournaments)
-  }
-
-  showMore() {
-    this.limit += DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT
-  }
-
-  getToken(tournament) {
-    return selectTokenFromTournamentState(tournament)
+  getCapitalizedPermissions(tournament) {
+    const string = selectAccessFromTournamentState(tournament).permissions
+    return `(${string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()})`
   }
 
   getNumberOfParticipants(tournament) {
@@ -75,9 +64,46 @@ export default class StoredTournamentList extends Vue {
     }`
   }
 
+  getPermissionIndex(access) {
+    return Object.values(PERMISSIONS).indexOf(access.permissions)
+  }
+
+  getToken(tournament) {
+    return selectTokenFromTournamentState(tournament)
+  }
+
+  async loadTournamentList() {
+    const keys = await localforage.keys()
+    const values = await Promise.all(keys.map(key => localforage.getItem(key)))
+    const tournaments = values.map(JSON.parse)
+
+    const permissionsComparator = R.ascend(
+      R.o(this.getPermissionIndex.bind(this), selectAccessFromTournamentState)
+    )
+
+    const lastModifiedComparator = R.descend(R.path(["meta", "lastModified"]))
+
+    // we sort the tournaments by permissions as well because unique preserves the first one
+    const sortedTournaments = R.sortWith(
+      [lastModifiedComparator, permissionsComparator],
+      tournaments
+    )
+
+    const uniqueTournaments = R.uniqWith(
+      R.eqBy(state => selectAccessFromTournamentState(state).tournament),
+      sortedTournaments
+    )
+
+    this.tournaments = uniqueTournaments
+  }
+
   async removeTournament(token) {
     await localforage.removeItem(token)
     await this.loadTournamentList()
+  }
+
+  showMore() {
+    this.limit += DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT
   }
 }
 </script>
@@ -99,8 +125,11 @@ li {
   margin-bottom: $list-item-margin * 2;
 
   a {
-    display: block;
     font-size: $form-element-font-size;
+  }
+
+  .tournament-description {
+    display: block;
   }
 }
 

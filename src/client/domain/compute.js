@@ -1,6 +1,6 @@
 import * as R from "ramda"
 
-import { SIDES } from "../constants"
+import { SIDES } from "../../common"
 
 /**
  * Returns the other side of the match.
