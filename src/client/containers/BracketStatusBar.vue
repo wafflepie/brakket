@@ -114,18 +114,12 @@ export default class BracketStatusBar extends Vue {
   }
 
   getTooltipContent(client) {
-    if (client.name) {
-      return client.name
-    }
-
-    return client.permissions === PERMISSIONS.CREATOR
-      ? "Tournament creator"
-      : "Anonymous"
+    return client.name || `Anonymous ${client.permissions.toLowerCase()}`
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .status-bar {
   background-color: $bracket-status-bar-color;
   display: flex;
@@ -138,7 +132,7 @@ export default class BracketStatusBar extends Vue {
   position: fixed;
   right: 0;
   top: 0;
-  z-index: 2;
+  z-index: 1;
 
   .clients {
     display: flex;
@@ -198,6 +192,17 @@ export default class BracketStatusBar extends Vue {
 @media screen and (min-width: $mobile-breakpoint) {
   .status-bar .connection-status {
     padding: 0 $status-bar-height;
+  }
+}
+
+.tooltip {
+  font-size: $client-tooltip-font-size;
+  z-index: 2;
+
+  .tooltip-inner {
+    display: inline-block;
+    pointer-events: none;
+    transform: translateY(-50%);
   }
 }
 </style>
