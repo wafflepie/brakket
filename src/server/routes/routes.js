@@ -103,17 +103,26 @@ module.exports = io => {
 
     socket.on("disconnecting", leaveAllRooms)
 
-    socket.on("organizerName", async ({token, value}) => {
+    socket.on("accessName", async ({token, value}) => {
       const access = await Access.findByToken(token)
-      
+      const tournamentId = access.tournament
+
       access.name = value
       await access.save()
 
-      const tournament = await Tournament.findById(access.tournament)
+      const sockets = getSocketsByTournamentId(tournamentId)
+      const changedSocket = sockets.find(other => other.access.token === token)
+
+      if (changedSocket) {
+        changedSocket.access.name = value
+      }
+
+      const tournament = await Tournament.findById(tournamentId)
 
       // TODO: don't emit entire tournament state
       // this informs all sockets (viewing the tournament) of the changed state
       emitTournamentStateToAllClients(tournament)
+      emitClients(true)
     })
 
     socket.on("removeOrganizer", async token => {

@@ -25,7 +25,7 @@ export const actionTypes = {
   SOCKET_TOURNAMENT_STATE: "socket_tournamentState",
   STORE_TOURNAMENT_STATE_LOCALLY: "STORE_TOURNAMENT_STATE_LOCALLY",
   STORE_TOURNAMENT_STATE_REMOTELY: "STORE_TOURNAMENT_STATE_REMOTELY",
-  UPDATE_ORGANIZER_NAME: "UPDATE_ORGANIZER_NAME",
+  UPDATE_ACCESS_NAME: "UPDATE_ACCESS_NAME",
   UPDATE_TOURNAMENT_SCORE: "UPDATE_TOURNAMENT_SCORE",
 }
 
@@ -157,9 +157,9 @@ export const actions = {
 
     $socket.emit("tournamentState", token, R.omit(["transient"], tournament))
   },
-  [actionTypes.UPDATE_ORGANIZER_NAME]({ commit, state }, payload) {
-    state.$socket.emit("organizerName", { token: payload.access.token, value: payload.value })
-    commit(mutationTypes.SET_ORGANIZER_NAME, payload)
+  [actionTypes.UPDATE_ACCESS_NAME]({ commit, state }, payload) {
+    state.$socket.emit("accessName", { token: payload.access.token, value: payload.value })
+    commit(mutationTypes.SET_ACCESS_NAME, payload)
   },
   [actionTypes.UPDATE_TOURNAMENT_SCORE]({ commit, state }, payload) {
     state.$socket.emit("tournamentScore", payload)

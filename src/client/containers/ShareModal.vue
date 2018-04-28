@@ -21,6 +21,9 @@
     <div
       v-if="isCreator"
       id="organizers-container">
+      <input
+        :value="creatorAccess.name"
+        @change="handleNameChange(creatorAccess, $event.target.value)">
       <div
         v-for="organizerAccess of organizerAccesses"
         :key="organizerAccess.token">
@@ -52,17 +55,21 @@ import { PERMISSIONS } from "../../common"
 export default class ShareModal extends Vue {
   showCopied = false
 
-  get spectatorAccess() {
-    return this.$store.state.tournament.accesses.spectator
-  }
-
   get isCreator() {
     const access = selectAccess(this.$store.state)
     return access && access.permissions === PERMISSIONS.CREATOR
   }
 
+  get creatorAccess() {
+    return this.$store.state.tournament.accesses.creator
+  }
+
   get organizerAccesses() {
     return this.$store.state.tournament.accesses.organizers
+  }
+
+  get spectatorAccess() {
+    return this.$store.state.tournament.accesses.spectator
   }
 
   addOrganizer(){
@@ -93,7 +100,7 @@ export default class ShareModal extends Vue {
   }
 
   handleNameChange(access, value){
-    this.$store.dispatch(actionTypes.UPDATE_ORGANIZER_NAME, {
+    this.$store.dispatch(actionTypes.UPDATE_ACCESS_NAME, {
       access,
       value
     })
