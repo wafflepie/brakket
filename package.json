@@ -27,6 +27,7 @@
     "localforage": "^1.6.0",
     "lodash.shuffle": "^4.2.0",
     "mongoose": "^5.0.15",
+    "nodemon": "^1.17.3",
     "offline-plugin": "^4.9.0",
     "ramda": "^0.25.0",
     "shortid": "^2.2.8",
@@ -57,7 +58,6 @@
     "concurrently": "^3.5.1",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.7.2",
-    "nodemon": "^1.17.3",
     "sass-loader": "^6.0.6",
     "sass-resources-loader": "^1.3.3",
     "vue-template-compiler": "^2.5.13"
