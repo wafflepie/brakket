@@ -91,11 +91,9 @@ export const actions = {
       commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, tournamentState)
 
       state.$socket.emit("tournamentOpened", token, lastModified)
-    } else if (state.online) {
+    } else {
       state.$socket.emit("requestTournamentState", token)
       commit(mutationTypes.SET_TOURNAMENT_LOADING, true)
-    } else {
-      commit(mutationTypes.RESET_TOURNAMENT_STATE)
     }
   },
   [actionTypes.SHUFFLE]({ commit, dispatch, state }) {
@@ -111,12 +109,15 @@ export const actions = {
     dispatch(actionTypes.STORE_TOURNAMENT_STATE_LOCALLY)
     dispatch(actionTypes.STORE_TOURNAMENT_STATE_REMOTELY)
   },
-  [actionTypes.SOCKET_RECONNECT]({ state }) {
+  [actionTypes.SOCKET_RECONNECT]({ commit, state }) {
     const { $socket, tournament } = state
     const lastModified = tournament.meta.lastModified
 
     if (selectTournamentIsLoaded(state)) {
       $socket.emit("tournamentOpened", selectToken(state), lastModified)
+    } else {
+      state.$socket.emit("requestTournamentState", selectToken(state))
+      commit(mutationTypes.SET_TOURNAMENT_LOADING, true)
     }
   },
   [actionTypes.SOCKET_REQUEST_TOURNAMENT_STATE]({ dispatch }) {
@@ -158,7 +159,11 @@ export const actions = {
     $socket.emit("tournamentState", token, R.omit(["transient"], tournament))
   },
   [actionTypes.UPDATE_ACCESS_NAME]({ commit, state }, payload) {
-    state.$socket.emit("accessName", { token: payload.access.token, value: payload.value })
+    state.$socket.emit("accessName", {
+      token: payload.access.token,
+      value: payload.value,
+    })
+
     commit(mutationTypes.SET_ACCESS_NAME, payload)
   },
   [actionTypes.UPDATE_TOURNAMENT_SCORE]({ commit, state }, payload) {

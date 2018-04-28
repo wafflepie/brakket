@@ -27,6 +27,7 @@
           for="creator-name-input">CREATOR NAME</label>
         <input
           id="creator-name-input"
+          :disabled="!online"
           :value="creatorAccess.name"
           placeholder="Enter your name here!"
           @change="handleNameChange(creatorAccess, $event.target.value)">
@@ -38,6 +39,7 @@
         <label :for="`organizer-name-input-${organizerAccess.token}`">NAME</label>
         <input 
           :id="`organizer-name-input-${organizerAccess.token}`"
+          :disabled="!online"
           :value="organizerAccess.name"
           class="organizer-name-input"
           placeholder="Organizer"
@@ -45,14 +47,18 @@
         <label :for="`organizer-url-input-${organizerAccess.token}`">TOKEN</label>
         <input
           :id="`organizer-url-input-${organizerAccess.token}`"
+          :disabled="!online"
           :value="organizerAccess.token"
           class="organizer-url-input"
           readonly
           title="Unique access token, click to copy the entire URL!"
           @focus="copy(createUrlFromToken(organizerAccess.token))">
-        <RemoveItemButton :on-click="() => removeOrganizer(organizerAccess.token)" />
+        <RemoveItemButton
+          :disabled="!online"
+          :on-click="() => removeOrganizer(organizerAccess.token)" />
       </div>
       <GhostButton
+        v-show="online"
         id="add-organizer-button"
         :on-click="addOrganizer">+ ADD ORGANIZER</GhostButton>
     </div>
@@ -71,6 +77,10 @@ import { PERMISSIONS } from "../../common"
 @Component({ components: { GhostButton, RemoveItemButton } })
 export default class ShareModal extends Vue {
   showCopied = false
+
+  get online() {
+    return this.$store.state.online
+  }
 
   get isCreator() {
     const access = selectAccess(this.$store.state)
