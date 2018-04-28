@@ -88,7 +88,7 @@ module.exports = io => {
       const organizerAccess = new Access({
         name: null,
         permissions: PERMISSIONS.ORGANIZER,
-        token: shortid.generate(),
+        token: R.times(shortid.generate, 2).join(""),
         tournament: tournamentId,
       })
 
@@ -103,7 +103,7 @@ module.exports = io => {
 
     socket.on("disconnecting", leaveAllRooms)
 
-    socket.on("accessName", async ({token, value}) => {
+    socket.on("accessName", async ({ token, value }) => {
       const access = await Access.findByToken(token)
       const tournamentId = access.tournament
 
