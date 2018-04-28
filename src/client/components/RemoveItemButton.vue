@@ -30,5 +30,10 @@ export default class RemoveItemButton extends Vue {
   &:focus {
     color: $primary-color;
   }
+
+  &:disabled {
+    color: $disabled-color;
+    cursor: not-allowed;
+  }
 }
 </style>

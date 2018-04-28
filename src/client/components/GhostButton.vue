@@ -28,8 +28,14 @@ export default class GhostButton extends Vue {
 
   &:focus,
   &:hover {
-    border: 1px solid $primary-color;
+    border-color: $primary-color;
     color: $primary-color;
+  }
+
+  &:disabled {
+    border-color: $disabled-color;
+    color: $disabled-color;
+    cursor: not-allowed;
   }
 }
 </style>

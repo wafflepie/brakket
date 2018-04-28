@@ -42,6 +42,8 @@ export const actions = {
       R.evolve({ domain: ensureTournamentDomainValidity }, state.tournament)
     )
 
+    // we only store the state locally, because this action is dispatched
+    // whenever we are notified of a score change (local or remote)
     dispatch(actionTypes.STORE_TOURNAMENT_STATE_LOCALLY)
   },
   async [actionTypes.GENERATE_NEW_TOURNAMENT](store, participants) {
@@ -93,7 +95,6 @@ export const actions = {
       state.$socket.emit("tournamentOpened", token, lastModified)
     } else {
       state.$socket.emit("requestTournamentState", token)
-      commit(mutationTypes.SET_TOURNAMENT_LOADING, true)
     }
   },
   [actionTypes.SHUFFLE]({ commit, dispatch, state }) {
@@ -123,11 +124,9 @@ export const actions = {
   [actionTypes.SOCKET_REQUEST_TOURNAMENT_STATE]({ dispatch }) {
     dispatch(actionTypes.STORE_TOURNAMENT_STATE_REMOTELY)
   },
-  [actionTypes.SOCKET_TOURNAMENT_DOES_NOT_EXIST]({ commit, state }) {
-    const { $socket, tournament } = state
-
+  [actionTypes.SOCKET_TOURNAMENT_DOES_NOT_EXIST]({ commit, dispatch, state }) {
     if (selectTournamentIsLoaded(state)) {
-      $socket.emit("tournamentState", selectToken(state), tournament)
+      dispatch(actionTypes.STORE_TOURNAMENT_STATE_REMOTELY)
     } else {
       commit(mutationTypes.SET_TOURNAMENT_LOADING, false)
     }
@@ -142,7 +141,7 @@ export const actions = {
       ...payload,
     })
 
-    dispatch(actionTypes.STORE_TOURNAMENT_STATE_LOCALLY)
+    dispatch(actionTypes.ENSURE_TOURNAMENT_STATE_VALIDITY)
   },
   async [actionTypes.STORE_TOURNAMENT_STATE_LOCALLY]({ state }) {
     const token = selectToken(state)
@@ -153,10 +152,12 @@ export const actions = {
     )
   },
   [actionTypes.STORE_TOURNAMENT_STATE_REMOTELY]({ state }) {
-    const { $socket, tournament } = state
-    const token = selectToken(state)
+    if (selectTournamentIsLoaded(state)) {
+      const { $socket, tournament } = state
+      const token = selectToken(state)
 
-    $socket.emit("tournamentState", token, R.omit(["transient"], tournament))
+      $socket.emit("tournamentState", token, R.omit(["transient"], tournament))
+    }
   },
   [actionTypes.UPDATE_ACCESS_NAME]({ commit, state }, payload) {
     state.$socket.emit("accessName", {
@@ -169,7 +170,5 @@ export const actions = {
   [actionTypes.UPDATE_TOURNAMENT_SCORE]({ commit, state }, payload) {
     state.$socket.emit("tournamentScore", payload)
     commit(mutationTypes.SET_TOURNAMENT_SCORE, payload)
-    // we do not want to store the score here, because it might not be valid
-    // we wait until the ENSURE_TOURNAMENT_STATE_VALIDITY action
   },
 }

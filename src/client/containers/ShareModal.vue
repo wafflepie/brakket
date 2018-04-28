@@ -47,7 +47,6 @@
         <label :for="`organizer-url-input-${organizerAccess.token}`">TOKEN</label>
         <input
           :id="`organizer-url-input-${organizerAccess.token}`"
-          :disabled="!online"
           :value="organizerAccess.token"
           class="organizer-url-input"
           readonly
@@ -152,6 +151,7 @@ input {
 }
 
 #spectator-input {
+  cursor: pointer;
   max-width: 100%;
 }
 
@@ -194,6 +194,7 @@ input {
   }
 
   .organizer-url-input {
+    cursor: pointer;
     flex-grow: 1;
   }
 }

@@ -26,6 +26,7 @@ export const mutations = {
   [mutationTypes.SET_ACCESS_NAME](state, payload) {
     const { access, value } = payload
     access.name = value
+    state.tournament.meta.lastModified = +new Date()
   },
   [mutationTypes.SET_SOCKET](state, payload) {
     state.$socket = payload

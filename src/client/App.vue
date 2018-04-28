@@ -86,6 +86,11 @@ input {
   &:focus {
     border-color: $primary-color;
   }
+
+  &:disabled {
+    border-color: $border-inactive-color;
+    cursor: not-allowed;
+  }
 }
 
 label {
