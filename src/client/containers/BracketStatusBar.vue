@@ -126,7 +126,6 @@ export default class BracketStatusBar extends Vue {
   left: 0;
   line-height: $status-bar-height;
   max-height: $status-bar-height;
-  overflow: scroll;
   position: fixed;
   right: 0;
   top: 0;

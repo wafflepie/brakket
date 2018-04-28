@@ -47,6 +47,11 @@ module.exports = io => {
       })
     }
 
+    const emitTournamentStateToAllClients = tournament =>
+      getSocketsByTournamentId(tournament._id).forEach(socket =>
+        emitTournamentState(tournament, socket)
+      )
+
     const emitClients = (includeSender = false) => {
       if (!socket.access) {
         return
@@ -77,7 +82,47 @@ module.exports = io => {
     }
 
     // HANDLERS
+    socket.on("addOrganizer", async () => {
+      const tournamentId = socket.access.tournament
+
+      const organizerAccess = new Access({
+        name: null,
+        permissions: PERMISSIONS.ORGANIZER,
+        token: shortid.generate(),
+        tournament: tournamentId,
+      })
+
+      await organizerAccess.save()
+
+      const tournament = await Tournament.findById(tournamentId)
+
+      // TODO: don't emit entire tournament state
+      // this informs all sockets (viewing the tournament) of the changed state
+      emitTournamentStateToAllClients(tournament)
+    })
+
     socket.on("disconnecting", leaveAllRooms)
+
+    socket.on("organizerName", async ({accessId, value}) => {
+      const access = await Access.findById(accessId)
+      
+      access.name = value
+      await access.save()
+
+      const tournament = await Tournament.findById(access.tournament)
+
+      // TODO: don't emit entire tournament state
+      // this informs all sockets (viewing the tournament) of the changed state
+      emitTournamentStateToAllClients(tournament)
+    })
+
+    socket.on("removeOrganizer", async accessId => {
+      const access = await Access.findByIdAndRemove(accessId)
+      const tournament = await Tournament.findById(access.tournament)
+      // TODO: don't emit entire tournament state
+      // this informs all sockets (viewing the tournament) of the changed state
+      emitTournamentStateToAllClients(tournament)
+    })
 
     socket.on("requestTournamentState", async token => {
       const access = await Access.findByToken(token)
@@ -199,9 +244,7 @@ module.exports = io => {
       await tournament.save()
 
       // this informs all sockets (viewing the tournament) of the changed state
-      getSocketsByTournamentId(tournament._id).forEach(socket =>
-        emitTournamentState(tournament, socket)
-      )
+      emitTournamentStateToAllClients(tournament)
     })
   })
 }

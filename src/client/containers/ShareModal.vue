@@ -14,14 +14,28 @@
       </transition>
       <input
         id="spectator-input"
-        :value="spectatorAccessUrl"
+        :value="createUrlFromToken(spectatorAccess && spectatorAccess.token)"
         readonly
-        @focus="copy(spectatorAccessUrl)">
+        @focus="copy(createUrlFromToken(spectatorAccess && spectatorAccess.token))">
     </div>
     <div
       v-if="isCreator"
       id="organizers-container">
-      TODO: ORGANIZERS CONTAINER
+      <div
+        v-for="organizerAccess of organizerAccesses"
+        :key="organizerAccess.token">
+        <input 
+          :value="organizerAccess.name"
+          @change="handleNameChange(organizerAccess, $event.target.value)">
+        <input
+          :value="createUrlFromToken(organizerAccess.token)"
+          class="organizer-input"
+          readonly
+          @focus="copy(createUrlFromToken(organizerAccess.token))">
+        <RemoveItemButton :on-click="() => removeOrganizer(organizerAccess._id)" />
+      </div>
+      <button @click="addOrganizer">Add new organizer</button>
+
     </div>
   </modal>
 </template>
@@ -29,21 +43,14 @@
 <script>
 import { Component, Vue } from "vue-property-decorator"
 
+import RemoveItemButton from "../components/RemoveItemButton.vue"
+import { actionTypes } from "../store"
 import { selectAccess } from "../selectors"
 import { PERMISSIONS } from "../../common"
 
-@Component
+@Component({ components: { RemoveItemButton }})
 export default class ShareModal extends Vue {
   showCopied = false
-
-  get spectatorAccessUrl() {
-    return this.spectatorAccess
-      ? window.location.href
-          .split("/")
-          .slice(0, -1)
-          .join("/") + `/${this.spectatorAccess.token}`
-      : ""
-  }
 
   get spectatorAccess() {
     return this.$store.state.tournament.accesses.spectator
@@ -54,6 +61,27 @@ export default class ShareModal extends Vue {
     return access && access.permissions === PERMISSIONS.CREATOR
   }
 
+  get organizerAccesses() {
+    return this.$store.state.tournament.accesses.organizers
+  }
+
+  addOrganizer(){
+    this.$socket.emit("addOrganizer")
+  }
+
+  removeOrganizer(id){
+    this.$socket.emit("removeOrganizer", id)
+  }
+
+  createUrlFromToken(token) {
+    return token
+      ? window.location.href
+          .split("/")
+          .slice(0, -1)
+          .join("/") + `/${token}`
+      : ""
+  }
+
   copy(url) {
     this.$copyText(url).then(() => {
       this.showCopied = true
@@ -61,6 +89,13 @@ export default class ShareModal extends Vue {
       setTimeout(() => {
         this.showCopied = false
       }, 3000)
+    })
+  }
+
+  handleNameChange(access, value){
+    this.$store.dispatch(actionTypes.UPDATE_ORGANIZER_NAME, {
+      access,
+      value
     })
   }
 }
