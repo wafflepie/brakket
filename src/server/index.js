@@ -20,9 +20,10 @@ app.context.io = io
 
 app.use(serve(DIST_PATH))
 
-app.use(async ctx => {
+app.use(async (ctx, next) => {
   ctx.type = "html"
   ctx.body = createReadStream(path.join(DIST_PATH, "index.html"))
+  await next()
 })
 
 attachRoutes(io)
