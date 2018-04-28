@@ -15,8 +15,13 @@ Vue.config.productionTip = false
 
 Vue.component("icon", Icon)
 
-// eslint-disable-next-line no-undef
-Vue.use(VueSocket, `http://localhost:${process.env.PORT || 3001}`, store)
+const wsHost =
+  // eslint-disable-next-line no-undef
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3001"
+    : `${location.origin.replace(/^http/, "ws")}`
+
+Vue.use(VueSocket, wsHost, store)
 Vue.use(VModal)
 Vue.use(VTooltip)
 Vue.use(VueClipboard)
