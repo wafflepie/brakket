@@ -15,7 +15,8 @@ Vue.config.productionTip = false
 
 Vue.component("icon", Icon)
 
-Vue.use(VueSocket, "http://localhost:3001", store)
+// eslint-disable-next-line no-undef
+Vue.use(VueSocket, `http://localhost:${process.env.PORT || 3001}`, store)
 Vue.use(VModal)
 Vue.use(VTooltip)
 Vue.use(VueClipboard)
