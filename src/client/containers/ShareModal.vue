@@ -1,5 +1,6 @@
 <template>
   <modal
+    :scrollable="true"
     adaptive
     height="auto"
     name="share">
@@ -22,9 +23,12 @@
       v-if="isCreator"
       id="creator-only-container">
       <div class="access-container">
+        <label
+          id="creator-name-label"
+          for="creator-name-input">CREATOR NAME</label>
         <input
+          id="creator-name-input"
           :value="creatorAccess.name"
-          class="creator-name-input"
           placeholder="Enter your name here!"
           @change="handleNameChange(creatorAccess, $event.target.value)">
       </div>
@@ -32,15 +36,20 @@
         v-for="organizerAccess of organizerAccesses"
         :key="organizerAccess.token"
         class="access-container">
+        <label :for="`organizer-name-input-${organizerAccess.token}`">NAME</label>
         <input 
+          :id="`organizer-name-input-${organizerAccess.token}`"
           :value="organizerAccess.name"
           class="organizer-name-input"
-          placeholder="Organizer name"
+          placeholder="Organizer"
           @change="handleNameChange(organizerAccess, $event.target.value)">
+        <label :for="`organizer-url-input-${organizerAccess.token}`">TOKEN</label>
         <input
+          :id="`organizer-url-input-${organizerAccess.token}`"
           :value="organizerAccess.token"
           class="organizer-url-input"
           readonly
+          title="Unique access token, click to copy the entire URL!"
           @focus="copy(createUrlFromToken(organizerAccess.token))">
         <RemoveItemButton :on-click="() => removeOrganizer(organizerAccess.token)" />
       </div>
@@ -123,30 +132,24 @@ export default class ShareModal extends Vue {
   background-color: $background-color;
   border: 1px solid $border-inactive-color;
   border-radius: 0;
-  padding: 1rem;
+  padding: $modal-padding;
 }
 
 .v--modal-overlay {
   background-color: $share-modal-overlay-color;
 }
 
-.hidden {
-  visibility: hidden;
-}
-
-label {
-  font-size: $font-size;
-}
-
 input {
-  border-right: transparent;
+  border-right: none;
 }
 
 #spectator-label {
   display: inline-block;
+  font-size: $font-size;
 }
 
 #copied {
+  color: $primary-color;
   float: right;
 }
 
@@ -158,12 +161,21 @@ input {
   margin-top: $section-margin;
 }
 
+#creator-name-label {
+  white-space: nowrap;
+}
+
+#creator-name-input {
+  flex-grow: 1;
+  max-width: none;
+}
+
 .access-container {
   display: flex;
 
   & > * {
     flex-basis: 0;
-    margin: 0.5rem 0.5rem;
+    margin: $organizer-margin $organizer-margin / 2;
 
     &:first-child {
       margin-left: 0;
@@ -172,6 +184,11 @@ input {
     &:last-child {
       margin-right: 0;
     }
+  }
+
+  label {
+    align-self: center;
+    margin: 0 $organizer-margin;
   }
 
   .organizer-name-input {
@@ -185,11 +202,6 @@ input {
 
 #add-organizer-button {
   float: right;
-  margin-top: 1rem;
-}
-
-.creator-name-input {
-  flex-grow: 1;
-  max-width: none;
+  margin-top: $modal-padding;
 }
 </style>

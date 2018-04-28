@@ -22,7 +22,7 @@ export default class RemoveItemButton extends Vue {
   cursor: pointer;
   display: inline-block;
   font-size: $form-element-font-size;
-  padding: $input-padding $button-padding;
+  padding: $input-padding $input-padding;
   position: relative;
   outline: none;
 
