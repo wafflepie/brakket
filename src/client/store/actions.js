@@ -158,7 +158,7 @@ export const actions = {
     $socket.emit("tournamentState", token, R.omit(["transient"], tournament))
   },
   [actionTypes.UPDATE_ORGANIZER_NAME]({ commit, state }, payload) {
-    state.$socket.emit("organizerName", { accessId: payload.access._id, value: payload.value })
+    state.$socket.emit("organizerName", { token: payload.access.token, value: payload.value })
     commit(mutationTypes.SET_ORGANIZER_NAME, payload)
   },
   [actionTypes.UPDATE_TOURNAMENT_SCORE]({ commit, state }, payload) {

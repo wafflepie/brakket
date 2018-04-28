@@ -103,8 +103,8 @@ module.exports = io => {
 
     socket.on("disconnecting", leaveAllRooms)
 
-    socket.on("organizerName", async ({accessId, value}) => {
-      const access = await Access.findById(accessId)
+    socket.on("organizerName", async ({token, value}) => {
+      const access = await Access.findByToken(token)
       
       access.name = value
       await access.save()
@@ -116,8 +116,9 @@ module.exports = io => {
       emitTournamentStateToAllClients(tournament)
     })
 
-    socket.on("removeOrganizer", async accessId => {
-      const access = await Access.findByIdAndRemove(accessId)
+    socket.on("removeOrganizer", async token => {
+      const access = await Access.findByToken(token)
+      await access.remove()
       const tournament = await Tournament.findById(access.tournament)
       // TODO: don't emit entire tournament state
       // this informs all sockets (viewing the tournament) of the changed state

@@ -32,7 +32,7 @@
           class="organizer-input"
           readonly
           @focus="copy(createUrlFromToken(organizerAccess.token))">
-        <RemoveItemButton :on-click="() => removeOrganizer(organizerAccess._id)" />
+        <RemoveItemButton :on-click="() => removeOrganizer(organizerAccess.token)" />
       </div>
       <button @click="addOrganizer">Add new organizer</button>
 
@@ -69,8 +69,8 @@ export default class ShareModal extends Vue {
     this.$socket.emit("addOrganizer")
   }
 
-  removeOrganizer(id){
-    this.$socket.emit("removeOrganizer", id)
+  removeOrganizer(token){
+    this.$socket.emit("removeOrganizer", token)
   }
 
   createUrlFromToken(token) {
