@@ -105,6 +105,19 @@ label {
   opacity: 0;
 }
 
+// Wrapped in body so it has priority over default styles
+body {
+  .v--modal {
+    background-color: $background-color;
+    border: 1px solid $border-inactive-color;
+    border-radius: 0;
+    padding: $modal-padding;
+  }
+
+  .v--modal-overlay {
+    background-color: $share-modal-overlay-color;
+  }
+}
 // =================
 // END GLOBAL STYLES
 // =================

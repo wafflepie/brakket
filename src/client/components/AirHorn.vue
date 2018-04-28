@@ -37,7 +37,7 @@ export default class AirHorn extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .horn {
   cursor: pointer;
   display: inline-block;

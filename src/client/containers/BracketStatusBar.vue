@@ -116,7 +116,7 @@ export default class BracketStatusBar extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .status-bar {
   background-color: $status-bar-color;
   display: flex;
@@ -191,7 +191,9 @@ export default class BracketStatusBar extends Vue {
     padding: 0 $status-bar-height;
   }
 }
+</style>
 
+<style lang="scss">
 .tooltip {
   font-size: $client-tooltip-font-size;
   z-index: 2;

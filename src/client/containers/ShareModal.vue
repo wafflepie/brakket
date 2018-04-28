@@ -1,6 +1,5 @@
 <template>
   <modal
-    :scrollable="true"
     adaptive
     height="auto"
     name="share">
@@ -127,18 +126,7 @@ export default class ShareModal extends Vue {
 </script>
 
 
-<style lang="scss">
-.v--modal {
-  background-color: $background-color;
-  border: 1px solid $border-inactive-color;
-  border-radius: 0;
-  padding: $modal-padding;
-}
-
-.v--modal-overlay {
-  background-color: $share-modal-overlay-color;
-}
-
+<style lang="scss" scoped>
 input {
   border-right: none;
 }
