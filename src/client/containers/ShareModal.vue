@@ -23,22 +23,24 @@
       id="organizers-container">
       <input
         :value="creatorAccess.name"
+        class="creator-name-input"
         @change="handleNameChange(creatorAccess, $event.target.value)">
       <div
         v-for="organizerAccess of organizerAccesses"
-        :key="organizerAccess.token">
+        :key="organizerAccess.token"
+        class="organizer-container">
         <input 
           :value="organizerAccess.name"
+          class="organizer-name-input"
           @change="handleNameChange(organizerAccess, $event.target.value)">
         <input
           :value="createUrlFromToken(organizerAccess.token)"
-          class="organizer-input"
+          class="organizer-url-input"
           readonly
           @focus="copy(createUrlFromToken(organizerAccess.token))">
         <RemoveItemButton :on-click="() => removeOrganizer(organizerAccess.token)" />
       </div>
       <button @click="addOrganizer">Add new organizer</button>
-
     </div>
   </modal>
 </template>
