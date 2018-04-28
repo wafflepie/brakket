@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
+    "heroku-postbuild": "yarn build",
     "lint": "vue-cli-service lint",
     "mongo": "mongod --dbpath database",
     "serve": "vue-cli-service serve",
@@ -13,10 +14,16 @@
     "start": "concurrently --kill-others \"yarn start:client\" \"yarn start:server\"",
     "test": "vue-cli-service test"
   },
+  "engines": {
+    "npm": "*",
+    "node": ">=8.9.4",
+    "yarn": "*"
+  },
   "dependencies": {
-    "color-hash": "1.0.3",
+    "color-hash": "^1.0.3",
     "date-fns": "^1.29.0",
     "koa": "^2.5.0",
+    "koa-static": "^4.0.2",
     "localforage": "^1.6.0",
     "lodash.shuffle": "^4.2.0",
     "mongoose": "^5.0.15",
@@ -24,7 +31,7 @@
     "ramda": "^0.25.0",
     "shortid": "^2.2.8",
     "socket.io": "^2.1.0",
-    "v-tooltip": "2.0.0-rc.31",
+    "v-tooltip": "^2.0.0-rc.31",
     "vue": "^2.5.13",
     "vue-awesome": "^3.0.0",
     "vue-clipboard2": "^0.1.0",
@@ -47,10 +54,10 @@
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^22.0.4",
-    "concurrently": "3.5.1",
+    "concurrently": "^3.5.1",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.7.2",
-    "nodemon": "1.17.3",
+    "nodemon": "^1.17.3",
     "sass-loader": "^6.0.6",
     "sass-resources-loader": "^1.3.3",
     "vue-template-compiler": "^2.5.13"
