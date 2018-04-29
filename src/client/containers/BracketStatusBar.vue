@@ -1,44 +1,46 @@
 <template>
-  <nav class="status-bar">
-    <ShareModal />
-    <div class="clients">
+  <div class="status-bar-container">
+    <nav class="status-bar">
+      <ShareModal />
+      <div class="clients">
+        <span
+          v-tooltip="{ content: getTooltipContent(client), trigger: 'hover' }"
+          v-for="client of clients"
+          :key="client.id"
+          :style="{ color: getColorById(client.id) }"
+          class="client-icon">
+          <icon
+            :name="getIconById(client.id)"
+            scale="2" />
+        </span>
+      </div>
       <span
-        v-tooltip="{ content: getTooltipContent(client), trigger: 'hover' }"
-        v-for="client of clients"
-        :key="client.id"
-        :style="{ color: getColorById(client.id) }"
-        class="client-icon">
-        <icon
-          :name="getIconById(client.id)"
-          scale="2" />
-      </span>
-    </div>
-    <span
-      v-show="online"
-      class="connection-status online">
-      Online
-    </span>
-    <span
-      v-show="!online"
-      class="connection-status offline">
-      Offline
-    </span>
-    <div class="status-bar-buttons">
-      <span
-        :class="['status-bar-button', { disabled: !canShare }]"
-        title="Share the tournament"
-        @click="showShareModal">
-        <icon name="share" />
+        v-show="online"
+        class="connection-status online">
+        Online
       </span>
       <span
-        :class="['status-bar-button', { disabled: !canShuffle }]"
-        :tabindex="canShuffle ? 0 : ''"
-        title="Shuffle the initial seed"
-        @click="shuffle">
-        <icon name="random" />
+        v-show="!online"
+        class="connection-status offline">
+        Offline
       </span>
-    </div>
-  </nav>
+      <div class="status-bar-buttons">
+        <span
+          :class="['status-bar-button', { disabled: !canShare }]"
+          title="Share the tournament"
+          @click="showShareModal">
+          <icon name="share" />
+        </span>
+        <span
+          :class="['status-bar-button', { disabled: !canShuffle }]"
+          :tabindex="canShuffle ? 0 : ''"
+          title="Shuffle the initial seed"
+          @click="shuffle">
+          <icon name="random" />
+        </span>
+      </div>
+    </nav>
+  </div>
 </template>
 
 <script>
@@ -121,19 +123,23 @@ export default class BracketStatusBar extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.status-bar {
+.status-bar-container {
   background-color: $status-bar-color;
-  display: flex;
-  flex-grow: 1;
-  flex-wrap: nowrap;
   height: $status-bar-height;
   left: 0;
   line-height: $status-bar-height;
   max-height: $status-bar-height;
   position: fixed;
+  right: 0;
   top: 0;
-  width: 100vw;
   z-index: 1;
+}
+
+.status-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  max-width: 100vw;
+  width: 100vw;
 
   .clients {
     display: flex;

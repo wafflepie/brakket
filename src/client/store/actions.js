@@ -146,10 +146,12 @@ export const actions = {
   async [actionTypes.STORE_TOURNAMENT_STATE_LOCALLY]({ state }) {
     const token = selectToken(state)
 
-    await localforage.setItem(
-      token,
-      JSON.stringify(R.omit(["transient"], state.tournament))
-    )
+    if (token) {
+      await localforage.setItem(
+        token,
+        JSON.stringify(R.omit(["transient"], state.tournament))
+      )
+    }
   },
   [actionTypes.STORE_TOURNAMENT_STATE_REMOTELY]({ state }) {
     if (selectTournamentIsLoaded(state)) {
