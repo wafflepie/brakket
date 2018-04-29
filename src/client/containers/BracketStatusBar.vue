@@ -25,7 +25,7 @@
     </span>
     <div class="status-bar-buttons">
       <span
-        class="status-bar-button"
+        :class="['status-bar-button', { disabled: !canShare }]"
         title="Share the tournament"
         @click="showShareModal">
         <icon name="share" />
@@ -92,8 +92,12 @@ export default class BracketStatusBar extends Vue {
     return R.isEmpty(selectMatchesWithScores(this.$store.state))
   }
 
+  get canShare() {
+    return !!this.$store.state.tournament.accesses.spectator
+  }
+
   showShareModal() {
-    this.$modal.show("share")
+    this.canShare && this.$modal.show("share")
   }
 
   @Watch("$route")
