@@ -1,6 +1,12 @@
 # brakket
 
-Vue.js offline-first application for creating and managing tournament brackets. Brakket uses Socket.IO for client-server communication and MongoDB for persistence.
+Offline-first web application for creating and managing tournament brackets.
+
+* Socket.IO is used for client-server communication.
+* Vue.js is used to present the data in the browser.
+* Mongoose is used to persist the data to a MongoDB database.
+
+The application is configured and ready to be deployed to Heroku alongside an mLab database.
 
 ## Installation guide
 
@@ -28,13 +34,13 @@ Open a new terminal instance in the root directory of this application (which co
 
 ### Starting the application
 
-You need to have a database running to start the application. You can start the database by using the `yarn mongo` command.
+You need to have a database running to start the application. You can start the database using the `yarn mongo` command.
 
-You now need to run `yarn start` alongside the database. This can be achieved by opening a second terminal instance and running the command in it. If you've done everything correctly, a browser tab pointing to `localhost:8080` will open shortly.
+Now you need to run `yarn start` alongside the database. This can be achieved by opening a second terminal instance and running the command in it. If you've done everything correctly, a browser tab pointing to `localhost:8080` will open shortly.
 
 ### Building the application for deployment
 
-The client-side code can be built for deployment by using the `yarn build` command. The server-side code is meant to be deployed as-is and will handle the built assets without any further interaction.
+The client-side code can be built for deployment using the `yarn build` command. The server-side code is meant to be deployed as-is and will handle the built assets without any further interaction.
 
 ## Domain type reference
 
