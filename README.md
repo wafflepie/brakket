@@ -30,7 +30,7 @@ If all of these commands print the version, you're all set! If not, you may have
 
 ### Installing application dependencies
 
-Open a new terminal instance in the root directory of this application (which contains the `package.json`) file and run the `yarn` command.
+Open a new terminal instance in the root directory of this application (which contains the `package.json` file) and run the `yarn` command.
 
 ### Starting the application
 
