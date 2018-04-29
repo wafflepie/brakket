@@ -39,6 +39,7 @@ export default class AirHorn extends Vue {
 
 <style lang="scss" scoped>
 .horn {
+  align-self: center;
   cursor: pointer;
   display: inline-block;
   min-width: $horn-width;
