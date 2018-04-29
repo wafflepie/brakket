@@ -83,7 +83,7 @@ export default class BracketView extends Vue {
 
 @media screen and (min-width: $mobile-breakpoint) {
   .round {
-    margin: 0 (4 * $round-margin);
+    margin: 0 (2 * $round-margin);
   }
 
   .match {

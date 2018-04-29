@@ -3,7 +3,7 @@
     <ul>
       <li
         v-for="(input, index) of inputs" 
-        :key="index">
+        :key="input.key">
         <input
           v-model="input.value"
           :placeholder="`Team ${index + 1}`">
@@ -37,7 +37,7 @@ export default class NamedParticipantsForm extends Vue {
   inputs = R.times(this.createEmptyInput, 4)
 
   createEmptyInput() {
-    return { value: "" }
+    return { value: "", key: Math.random() }
   }
 
   addInput() {
@@ -74,7 +74,7 @@ input {
 
 li {
   display: flex;
-  margin-bottom: 2 * $list-item-margin;
+  margin-bottom: $list-item-margin;
 }
 
 ul + button::before {

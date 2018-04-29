@@ -37,10 +37,12 @@ export default class AirHorn extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .horn {
   cursor: pointer;
   display: inline-block;
+  // on some devices the emoji is larger than the line height, so we make it smaller
+  font-size: 0.9em;
   min-width: 2rem;
   user-select: none;
 }

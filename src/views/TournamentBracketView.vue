@@ -8,7 +8,9 @@
       <h2>{{ tournamentName || 'Unnamed tournament' }}</h2>
       <h3 v-if="!winner">Enter the results by editing the scores below</h3>
       <h3 v-if="winner">
-        <AirHorn />{{ winner.name }} is the winner of this tournament!<AirHorn />
+        <AirHorn />
+        <div>{{ winner.name }} is the winner of this tournament!</div>
+        <AirHorn />
       </h3>
       <TournamentBracket />
       <div :class="{ invisible: !isShuffleShown }">
@@ -84,7 +86,8 @@ export default class TournamentBracketView extends Vue {
 
 <style lang="scss" scoped>
 h3 {
-  line-height: 1.1rem;
+  display: flex;
+  justify-content: center;
   margin-bottom: 0;
 }
 
