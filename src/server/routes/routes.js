@@ -4,84 +4,13 @@ const R = require("ramda")
 
 const { PERMISSIONS } = require("../../common")
 const { Tournament, Access } = require("../models")
+const utils = require("./utils")
 
 module.exports = io => {
   io.on("connection", socket => {
     socket.access = null
     socket.focus = null
 
-    // UTILITY
-    const getSocketsByTournamentId = tournamentId =>
-      R.compose(
-        R.map(socketId => io.sockets.connected[socketId]),
-        R.keys,
-        R.path(["sockets", "adapter", "rooms", tournamentId, "sockets"])
-      )(io)
-
-    const joinRoom = access => {
-      leaveAllRooms()
-      const tournamentId = access.tournament
-      socket.join(tournamentId)
-      socket.access = access
-
-      emitClientsToAllSockets(true)
-    }
-
-    const leaveAllRooms = () => {
-      Object.keys(socket.rooms)
-        .filter(room => room !== socket.id)
-        .forEach(room => socket.leave(room))
-
-      emitClientsToAllSockets()
-    }
-
-    const emitTournamentState = async (tournament, emitter = socket) => {
-      const accesses = await Access.findEligibleAccessesByToken(
-        emitter.access.token
-      )
-
-      emitter.emit("tournamentState", {
-        accesses,
-        domain: tournament.domain,
-        meta: tournament.meta,
-      })
-    }
-
-    const emitTournamentStateToAllSockets = tournament =>
-      getSocketsByTournamentId(tournament._id).forEach(targetSocket =>
-        emitTournamentState(tournament, targetSocket)
-      )
-
-    const emitClientsToAllSockets = (includeSender = false) => {
-      if (!socket.access) {
-        return
-      }
-
-      const tournamentId = socket.access.tournament
-      const sockets = getSocketsByTournamentId(tournamentId)
-
-      // emit only to sockets which are not the source of focusing
-      // unless includeSender is true and we want to send him the initial data
-      sockets
-        .filter(other => includeSender || other.id !== socket.id)
-        .forEach(targetSocket => {
-          // remove the socket we are emitting to from the list
-          const payloadSockets = sockets.filter(
-            other => other.id !== targetSocket.id
-          )
-
-          const payload = payloadSockets.map(payloadSocket => ({
-            focus: payloadSocket.focus,
-            id: payloadSocket.id,
-            name: payloadSocket.access.name,
-            permissions: payloadSocket.access.permissions,
-          }))
-
-          targetSocket.emit("clients", payload)
-        })
-    }
-
-    // HANDLERS
     socket.on("accessName", async ({ token, value }) => {
       if (!socket.access || !socket.access.isCreator()) {
         return
@@ -98,7 +27,7 @@ module.exports = io => {
       access.name = value
       await access.save()
 
-      const sockets = getSocketsByTournamentId(tournamentId)
+      const sockets = utils.getSocketsByTournamentId(io, tournamentId)
 
       sockets
         .filter(other => other.access.token === token)
@@ -108,8 +37,8 @@ module.exports = io => {
 
       const tournament = await Tournament.findById(tournamentId)
 
-      emitTournamentStateToAllSockets(tournament)
-      emitClientsToAllSockets(true)
+      utils.emitTournamentStateToAllSockets(io, tournament)
+      utils.emitClientsToAllSockets(io, tournamentId)
     })
 
     socket.on("addOrganizer", async () => {
@@ -130,10 +59,10 @@ module.exports = io => {
 
       const tournament = await Tournament.findById(tournamentId)
 
-      emitTournamentStateToAllSockets(tournament)
+      utils.emitTournamentStateToAllSockets(io, tournament)
     })
 
-    socket.on("disconnecting", leaveAllRooms)
+    socket.on("disconnecting", () => utils.leaveAllRooms(io, socket))
 
     socket.on("removeOrganizer", async token => {
       if (!socket.access || !socket.access.isCreator()) {
@@ -149,7 +78,7 @@ module.exports = io => {
       await access.remove()
       const tournament = await Tournament.findById(access.tournament)
 
-      emitTournamentStateToAllSockets(tournament)
+      utils.emitTournamentStateToAllSockets(io, tournament)
     })
 
     socket.on("requestTournamentState", async token => {
@@ -159,23 +88,31 @@ module.exports = io => {
         return socket.emit("tournamentDoesNotExist")
       }
 
-      joinRoom(access)
+      utils.joinRoom(io, socket, access)
 
       const tournament = await Tournament.findByAccess(access)
-      await emitTournamentState(tournament)
+      await utils.emitTournamentState(socket, tournament)
     })
 
     socket.on("scoreBlur", () => {
+      if (!socket.access) {
+        return
+      }
+
       socket.focus = null
-      emitClientsToAllSockets()
+      utils.emitClientsToAllSockets(io, socket.access.tournament)
     })
 
     socket.on("scoreFocus", payload => {
+      if (!socket.access) {
+        return
+      }
+
       socket.focus = payload
-      emitClientsToAllSockets()
+      utils.emitClientsToAllSockets(io, socket.access.tournament)
     })
 
-    socket.on("tournamentClosed", leaveAllRooms)
+    socket.on("tournamentClosed", () => utils.leaveAllRooms(io, socket))
 
     socket.on("tournamentOpened", async (token, lastModified) => {
       const access = await Access.findByToken(token)
@@ -184,11 +121,11 @@ module.exports = io => {
         return socket.emit("tournamentDoesNotExist")
       }
 
-      joinRoom(access)
+      utils.joinRoom(io, socket, access)
       const tournament = await Tournament.findByAccess(access)
 
       if (access.isSpectator()) {
-        return await emitTournamentState(tournament)
+        return await utils.emitTournamentState(socket, tournament)
       }
 
       const localIsNewer =
@@ -197,7 +134,7 @@ module.exports = io => {
       if (localIsNewer) {
         socket.emit("requestTournamentState")
       } else {
-        await emitTournamentState(tournament)
+        await utils.emitTournamentState(socket, tournament)
       }
     })
 
@@ -254,9 +191,9 @@ module.exports = io => {
         await spectatorAccess.save()
         await tournament.save()
 
-        joinRoom(creatorAccess)
+        utils.joinRoom(io, socket, creatorAccess)
 
-        return await emitTournamentState(tournament)
+        return await utils.emitTournamentState(socket, tournament)
       }
 
       // Tournament exists
@@ -271,8 +208,7 @@ module.exports = io => {
 
       await tournament.save()
 
-      // this informs all sockets (viewing the tournament) of the changed state
-      emitTournamentStateToAllSockets(tournament)
+      utils.emitTournamentStateToAllSockets(io, tournament)
     })
   })
 }
