@@ -54,8 +54,8 @@ export default class StoredTournamentList extends Vue {
   tournaments = []
 
   getCapitalizedPermissions(tournament) {
-    const string = selectAccessFromTournamentState(tournament).permissions
-    return `(${string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()})`
+    const access = selectAccessFromTournamentState(tournament)
+    return `with ${access.permissions.toLowerCase()} permissions`
   }
 
   getNumberOfParticipants(tournament) {

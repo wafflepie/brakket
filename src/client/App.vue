@@ -116,6 +116,7 @@ body {
     background-color: $background-color;
     border: 1px solid $border-inactive-color;
     border-radius: 0;
+    box-shadow: none;
     padding: $modal-padding;
   }
 
