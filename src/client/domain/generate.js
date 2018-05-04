@@ -47,10 +47,12 @@ const getMatchCountByRoundIndex = (roundCount, roundIndex) =>
  * @param {number} identifierCount number of identifiers
  * @param {number} identifierIndex index of identifier to get the side of
  */
-const getSideByIndex = (identifierCount, identifierIndex) =>
-  identifierIndex < 2 ** Math.floor(Math.log2(identifierCount))
-    ? "home"
-    : "away"
+const getSideByIndex = (identifierCount, identifierIndex) => {
+  const power = Math.log2(identifierCount)
+  const roundedPower = Number.isInteger(power) ? power - 1 : Math.floor(power)
+
+  return identifierIndex < 2 ** roundedPower ? "home" : "away"
+}
 
 /**
  * Generates a seed from identifiers. The seed is an array of objects, specifying the home and
