@@ -88,11 +88,7 @@
 <script>
 import { Component, Prop, Vue } from "vue-property-decorator"
 
-import {
-  isSidePlaceholder,
-  isSideToBeDecided,
-  getPreviousMatchBySide,
-} from "../domain"
+import { isSidePlaceholder, isSideToBeDecided, getPreviousMatchBySide } from "../domain"
 
 @Component
 export default class BracketBranches extends Vue {
@@ -105,9 +101,7 @@ export default class BracketBranches extends Vue {
 
   isInwardLineShown(match, side) {
     return (
-      !isSidePlaceholder(match, side) &&
-      !isSideToBeDecided(match, side) &&
-      match.roundIndex !== 0
+      !isSidePlaceholder(match, side) && !isSideToBeDecided(match, side) && match.roundIndex !== 0
     )
   }
 

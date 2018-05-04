@@ -34,10 +34,7 @@ import localforage from "localforage"
 import { distanceInWordsToNow } from "date-fns"
 import * as R from "ramda"
 
-import {
-  selectAccessFromTournamentState,
-  selectTokenFromTournamentState,
-} from "../selectors"
+import { selectAccessFromTournamentState, selectTokenFromTournamentState } from "../selectors"
 import { DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT, PERMISSIONS } from "../../common"
 import GhostButton from "../components/GhostButton.vue"
 import RemoveItemButton from "../components/RemoveItemButton.vue"
