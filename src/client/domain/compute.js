@@ -68,12 +68,9 @@ export const getWinnerOfMatch = match => {
  * @param {string} side side to find the previous match for
  */
 export const getPreviousMatchBySide = (results, match, side) =>
-  R.defaultTo(
-    null,
-    R.path(
-      [match.roundIndex - 1, match.matchIndex * 2 + Number(side === "away")],
-      results
-    )
+  R.path(
+    [match.roundIndex - 1, match.matchIndex * 2 + Number(side === "away")],
+    results
   )
 
 /**
@@ -111,13 +108,8 @@ export const getNameOfSide = (participants, seed, results, match, side) => {
 
   if (!firstMatch || !firstMatchSide) return null
 
-  const firstMatchIndex = R.findIndex(
-    R.whereEq({ matchIndex: firstMatch.matchIndex }),
-    results[0]
-  )
-
-  const participantId = R.path([firstMatchIndex, firstMatchSide], seed)
-  const participant = R.prop(participantId, participants)
+  const participantIndex = R.path([firstMatch.matchIndex, firstMatchSide], seed)
+  const participant = R.prop(participantIndex, participants)
 
   return participant || null
 }
