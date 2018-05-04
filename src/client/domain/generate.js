@@ -1,26 +1,36 @@
 import * as R from "ramda"
 import shuffle from "lodash.shuffle"
 
+import { SIDES } from "../../common"
+
 /**
- * Returns the number of rounds by passed seed.
- *
- * @param {Array} seed an array of matches in the first tournament round
+ * Indexed version of R.filter.
  */
-const getRoundCountBySeed = R.compose(
-  R.add(1),
-  Math.ceil,
-  Math.log2,
-  R.prop("length")
-)
+const groupByIndexed = R.addIndex(R.groupBy)
+
+/**
+ * Complement of R.isNil.
+ */
+const isNotNil = R.complement(R.isNil)
 
 /**
  * Returns the number of participants by seed.
  *
  * @param {Array} seed an array of matches in the first tournament round
  */
-const getSideCountBySeed = seed =>
-  seed.length &&
-  seed.length * 2 - Number(seed[seed.length - 1].away === undefined)
+const getSideCountBySeed = R.compose(
+  R.prop("length"),
+  R.filter(isNotNil),
+  R.flatten,
+  R.map(R.props(SIDES))
+)
+
+/**
+ * Returns the number of rounds by passed seed.
+ *
+ * @param {Array} seed an array of matches in the first tournament round
+ */
+const getRoundCountBySeed = R.compose(Math.ceil, Math.log2, getSideCountBySeed)
 
 /**
  * Returns the number of matches in a specified round.
@@ -29,7 +39,18 @@ const getSideCountBySeed = seed =>
  * @param {number} roundIndex index of the round, starting with 0
  */
 const getMatchCountByRoundIndex = (roundCount, roundIndex) =>
-  Math.pow(2, roundCount - roundIndex - 1)
+  2 ** (roundCount - roundIndex - 1)
+
+/**
+ * Returns the stringified side by identifier index.
+ *
+ * @param {number} identifierCount number of identifiers
+ * @param {number} identifierIndex index of identifier to get the side of
+ */
+const getSideByIndex = (identifierCount, identifierIndex) =>
+  identifierIndex < 2 ** Math.floor(Math.log2(identifierCount))
+    ? "home"
+    : "away"
 
 /**
  * Generates a seed from identifiers. The seed is an array of objects, specifying the home and
@@ -37,11 +58,22 @@ const getMatchCountByRoundIndex = (roundCount, roundIndex) =>
  *
  * @param {Array} identifiers identifiers of participants
  */
-export const generateSeedFromIdentifiers = R.compose(
-  R.map(([home, away]) => ({ home, away })),
-  R.splitEvery(2),
-  shuffle
-)
+export const generateSeedFromIdentifiers = identifiers => {
+  const groupedIdentifiers = groupByIndexed(
+    (identifier, index) => getSideByIndex(identifiers.length, index),
+    shuffle(identifiers)
+  )
+
+  const partialSeeds = R.mapObjIndexed(
+    (identifiers, side) =>
+      R.map(identifier => ({ [side]: identifier }), identifiers),
+    groupedIdentifiers
+  )
+
+  return partialSeeds.home.map((match, index) =>
+    R.merge(match, partialSeeds.away[index])
+  )
+}
 
 /**
  * Generates the initial result structure based on the seed.
@@ -62,17 +94,24 @@ export const generateResultStructureFromSeed = seed => {
   for (let roundIndex = 0; roundIndex < roundCount; roundIndex++) {
     results[roundIndex] = []
     const matchCount = getMatchCountByRoundIndex(roundCount, roundIndex)
+    const roundSideCount = Math.ceil(sideCount / 2 ** roundIndex)
+    const homeSideCount = matchCount
+    const awaySideCount = roundSideCount - homeSideCount
 
     for (let matchIndex = 0; matchIndex < matchCount; matchIndex++) {
-      const homeExists =
-        Math.ceil(sideCount / Math.pow(2, roundIndex + 1)) > matchIndex
+      const awayHasScore = matchIndex < awaySideCount || roundIndex > 0
 
-      const awayExists =
-        Math.ceil(sideCount / Math.pow(2, roundIndex + 1) - 0.5) > matchIndex
+      const home = {
+        score: 0,
+      }
+
+      const away = {
+        score: awayHasScore ? 0 : null,
+      }
 
       results[roundIndex][matchIndex] = {
-        home: { score: homeExists ? 0 : null },
-        away: { score: awayExists ? 0 : null },
+        home,
+        away,
         roundIndex,
         matchIndex,
       }
