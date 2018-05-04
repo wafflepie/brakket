@@ -24,10 +24,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator"
 
 import { actionTypes } from "../store"
-import {
-  selectWinnerSideOfFinalMatch,
-  selectTournamentIsLoaded,
-} from "../selectors"
+import { selectWinnerSideOfFinalMatch, selectTournamentIsLoaded } from "../selectors"
 import AirHorn from "../components/AirHorn.vue"
 import BracketStatusBar from "../containers/BracketStatusBar.vue"
 import GhostButton from "../components/GhostButton.vue"
@@ -66,10 +63,7 @@ export default class TournamentBracketView extends Vue {
   }
 
   loadTournament() {
-    this.$store.dispatch(
-      actionTypes.LOAD_TOURNAMENT_BY_TOKEN,
-      this.$route.params.token
-    )
+    this.$store.dispatch(actionTypes.LOAD_TOURNAMENT_BY_TOKEN, this.$route.params.token)
   }
 
   closeTournament() {
@@ -81,7 +75,8 @@ export default class TournamentBracketView extends Vue {
 <style lang="scss" scoped>
 h3 {
   display: flex;
-  margin-bottom: 0;
+  line-height: $winner-title-line-height;
   justify-content: center;
+  margin-bottom: 0;
 }
 </style>
