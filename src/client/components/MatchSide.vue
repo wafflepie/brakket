@@ -1,6 +1,6 @@
 <template>
   <article
-    :class="[{ winner: match.winner === side }, 'side', side]"
+    :class="[{ winner: sideIsWinner }, 'side', side]"
     :style="{ 'border-color': focusId ? getColorById(focusId) : 'transparent' }">
     <div
       v-if="isSidePlaceholder(match, side)"
@@ -44,6 +44,11 @@ export default class MatchSide extends Vue {
   isSideDisabled = isSideDisabled
   isSidePlaceholder = isSidePlaceholder
   isSideToBeDecided = isSideToBeDecided
+
+  get sideIsWinner() {
+    const { match, side } = this
+    return match.winner === side && !isSideDisabled(match, side)
+  }
 }
 </script>
 
