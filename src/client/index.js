@@ -1,7 +1,16 @@
+import "babel-polyfill"
+
+import "vue-awesome/icons/share"
+import "vue-awesome/icons/random"
+import "vue-awesome/icons/baseball-ball"
+import "vue-awesome/icons/basketball-ball"
+import "vue-awesome/icons/bowling-ball"
+import "vue-awesome/icons/football-ball"
+import "vue-awesome/icons/volleyball-ball"
+
 import Vue from "vue"
 import VueSocket from "vue-socket.io"
 import VModal from "vue-js-modal"
-import "vue-awesome/icons"
 import Icon from "vue-awesome/components/Icon"
 import VueClipboard from "vue-clipboard2"
 import * as OfflinePluginRuntime from "offline-plugin/runtime"
@@ -37,5 +46,8 @@ new Vue({
 
 // eslint-disable-next-line no-undef
 if (process.env.NODE_ENV === "production") {
-  OfflinePluginRuntime.install()
+  OfflinePluginRuntime.install({
+    onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
+    onUpdated: () => window.location.reload(),
+  })
 }
