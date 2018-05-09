@@ -4,21 +4,20 @@
     <nav>
       <ul>
         <li>
-          <router-link :to="{ name: 'named-participants-form' }">
-            I want to enter the names of participants
-          </router-link>
+          <router-link
+            :to="{ name: 'named-participants-form' }"
+          >I want to enter the names of participants</router-link>
         </li>
         <li>
           <router-link
             :to="{ name: 'numbered-participants-form' }"
-            class="shifting with-arrow">
-            I don't need to enter the names, just keep them numbered
-          </router-link>
+            class="shifting with-arrow"
+          >I don't need to enter the names, just keep them numbered</router-link>
         </li>
         <li>
-          <router-link :to="{ name: 'local-tournaments' }">
-            Show me the brackets that I've visited previously
-          </router-link>
+          <router-link
+            :to="{ name: 'local-tournaments' }"
+          >Show me the brackets that I've visited previously</router-link>
         </li>
       </ul>
     </nav>
@@ -38,7 +37,7 @@ ul {
 li {
   font-size: $navigation-item-font-size;
   margin: $list-item-margin 0;
-  padding-left: 1rem;
+  padding-left: $home-navigation-list-margin;
 
   a {
     display: inline-block;
@@ -51,8 +50,9 @@ li {
 
     &::before {
       content: "> ";
-      margin-left: -1rem;
-      width: 1rem;
+      display: inline-block;
+      margin-left: -1 * $home-navigation-list-margin;
+      width: $home-navigation-list-margin;
     }
   }
 }
