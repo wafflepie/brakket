@@ -57,13 +57,7 @@ import ShareModal from "./ShareModal.vue"
 export default class BracketStatusBar extends Vue {
   getColorById = getColorById
 
-  icons = [
-    "baseball-ball",
-    "basketball-ball",
-    "bowling-ball",
-    "football-ball",
-    "volleyball-ball",
-  ]
+  icons = ["baseball-ball", "basketball-ball", "bowling-ball", "football-ball", "volleyball-ball"]
 
   get online() {
     return this.$store.state.online
@@ -138,6 +132,7 @@ export default class BracketStatusBar extends Vue {
 .status-bar {
   display: flex;
   flex-wrap: nowrap;
+  height: 100%;
   max-width: 100vw;
   width: 100vw;
 
@@ -147,6 +142,7 @@ export default class BracketStatusBar extends Vue {
     flex-grow: 1;
     height: 100%;
     justify-content: flex-end;
+    max-width: calc(100vw / 3); // TODO: handle showing icons on small devices
 
     .client-icon {
       padding: 0 $client-icon-margin;
@@ -199,22 +195,6 @@ export default class BracketStatusBar extends Vue {
 @media screen and (min-width: $mobile-breakpoint) {
   .status-bar .connection-status {
     padding: 0 $status-bar-height;
-  }
-}
-</style>
-
-<style lang="scss">
-.tooltip {
-  font-size: $client-tooltip-font-size;
-  z-index: 2;
-
-  .tooltip-inner {
-    display: inline-block;
-    background-color: $status-bar-color;
-    pointer-events: none;
-    padding: 0 0.5em;
-    border-bottom-left-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
   }
 }
 </style>

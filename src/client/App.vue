@@ -123,6 +123,20 @@ body {
   .v--modal-overlay {
     background-color: $share-modal-overlay-color;
   }
+
+  .tooltip {
+    font-size: $client-tooltip-font-size;
+    z-index: 2;
+
+    .tooltip-inner {
+      display: inline-block;
+      background-color: $status-bar-color;
+      pointer-events: none;
+      padding: 0 0.5em;
+      border-bottom-left-radius: 0.5em;
+      border-bottom-right-radius: 0.5em;
+    }
+  }
 }
 // =================
 // END GLOBAL STYLES
