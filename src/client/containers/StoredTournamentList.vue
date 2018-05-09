@@ -88,9 +88,12 @@ export default class StoredTournamentList extends Vue {
 
   async removeTournament(token) {
     const tournaments = await loadLocalTournaments()
+    const tournament = tournaments[token]
 
-    // TODO: if tournament has an ID, remove all tournaments with the ID
-    const filteredTournaments = R.omit([token], tournaments)
+    const filteredTournaments = R.o(
+      tournament.id ? R.reject(R.propEq("id", tournament.id)) : R.identity,
+      R.omit([token])
+    )(tournaments)
 
     await localforage.setItem("tournaments", filteredTournaments)
     await this.loadTournamentList()

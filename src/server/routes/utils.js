@@ -17,6 +17,7 @@ const utils = {
     socket.emit("tournamentState", {
       accesses,
       domain: tournament.domain,
+      id: tournament._id,
       meta: tournament.meta,
     })
   },
