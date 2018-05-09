@@ -90,10 +90,8 @@ export default class StoredTournamentList extends Vue {
     const tournaments = await loadLocalTournaments()
     const tournament = tournaments[token]
 
-    const filteredTournaments = R.o(
-      tournament.id ? R.reject(R.propEq("id", tournament.id)) : R.identity,
-      R.omit([token])
-    )(tournaments)
+    const filter = tournament.id ? R.reject(R.propEq("id", tournament.id)) : R.omit([token])
+    const filteredTournaments = filter(tournaments)
 
     await localforage.setItem("tournaments", filteredTournaments)
     await this.loadTournamentList()
