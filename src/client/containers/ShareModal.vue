@@ -3,63 +3,90 @@
     adaptive
     height="auto"
     name="share">
-    <div id="spectator-container">
-      <label
-        id="spectator-label"
-        for="spectator-input">Click to get a view-only link!</label>
-      <transition name="fade">
-        <span
-          v-show="showCopied"
-          id="copied">Copied!</span>
-      </transition>
-      <input
-        id="spectator-input"
-        :value="createUrlFromToken(spectatorAccess && spectatorAccess.token)"
-        readonly
-        @focus="copy(createUrlFromToken(spectatorAccess && spectatorAccess.token))">
-    </div>
-    <div
+    <nav
       v-if="isCreator"
-      id="creator-only-container">
-      <div class="access-container">
+      id="tab-container">
+      <ul>
+        <li
+          :class="{ active: selectedTab === PERMISSIONS.SPECTATOR }"
+          @click="handleTabSelect(PERMISSIONS.SPECTATOR)">SPECTATORS</li>
+        <li
+          :class="{ active: selectedTab === PERMISSIONS.ORGANIZER }"
+          @click="handleTabSelect(PERMISSIONS.ORGANIZER)">ORGANIZERS</li>
+        <li
+          :class="{ active: selectedTab === PERMISSIONS.CREATOR }"
+          @click="handleTabSelect(PERMISSIONS.CREATOR)">YOU</li>
+      </ul>
+    </nav>
+    <div id="modal-content-container">
+      <div
+        v-show="selectedTab === PERMISSIONS.SPECTATOR"
+        id="spectator-container">
         <label
-          id="creator-name-label"
-          for="creator-name-input">CREATOR NAME</label>
+          id="spectator-label"
+          for="spectator-input">Click to get a view-only link!</label>
+        <transition name="fade">
+          <span
+            v-show="showCopied"
+            id="copied">Copied!</span>
+        </transition>
         <input
-          id="creator-name-input"
-          :disabled="!online"
-          :value="creatorAccess.name"
-          placeholder="Enter your name here!"
-          @change="handleNameChange(creatorAccess, $event.target.value)">
+          id="spectator-input"
+          :value="createUrlFromToken(spectatorAccess && spectatorAccess.token)"
+          readonly
+          @focus="copy(createUrlFromToken(spectatorAccess && spectatorAccess.token))">
       </div>
       <div
-        v-for="organizerAccess of organizerAccesses"
-        :key="organizerAccess.token"
-        class="access-container">
-        <label :for="`organizer-name-input-${organizerAccess.token}`">NAME</label>
-        <input 
-          :id="`organizer-name-input-${organizerAccess.token}`"
-          :disabled="!online"
-          :value="organizerAccess.name"
-          class="organizer-name-input"
-          placeholder="Organizer"
-          @change="handleNameChange(organizerAccess, $event.target.value)">
-        <label :for="`organizer-url-input-${organizerAccess.token}`">TOKEN</label>
-        <input
-          :id="`organizer-url-input-${organizerAccess.token}`"
-          :value="organizerAccess.token"
-          class="organizer-url-input"
-          readonly
-          title="Unique access token, click to copy the entire URL!"
-          @focus="copy(createUrlFromToken(organizerAccess.token))">
-        <RemoveItemButton
-          :disabled="!online"
-          :on-click="() => removeOrganizer(organizerAccess.token)" />
+        v-if="isCreator"
+        v-show="selectedTab === PERMISSIONS.ORGANIZER"
+        id="organizers-container">
+        <div
+          v-for="organizerAccess of organizerAccesses"
+          :key="organizerAccess.token"
+          class="access-container">
+          <label :for="`organizer-name-input-${organizerAccess.token}`">NAME</label>
+          <input 
+            :id="`organizer-name-input-${organizerAccess.token}`"
+            :disabled="!online"
+            :value="organizerAccess.name"
+            class="organizer-name-input"
+            placeholder="Organizer"
+            @change="handleNameChange(organizerAccess, $event.target.value)">
+          <label :for="`organizer-url-input-${organizerAccess.token}`">TOKEN</label>
+          <input
+            :id="`organizer-url-input-${organizerAccess.token}`"
+            :value="organizerAccess.token"
+            class="organizer-url-input"
+            readonly
+            title="Unique access token, click to copy the entire URL!"
+            @focus="copy(createUrlFromToken(organizerAccess.token))">
+          <RemoveItemButton
+            :disabled="!online"
+            :on-click="() => removeOrganizer(organizerAccess.token)" />
+        </div>
+        <div id="add-organizer-button-container">
+          <GhostButton
+            v-show="online"
+            id="add-organizer-button"
+            :on-click="addOrganizer">+ ADD ORGANIZER</GhostButton>
+        </div>
       </div>
-      <GhostButton
-        v-show="online"
-        id="add-organizer-button"
-        :on-click="addOrganizer">+ ADD ORGANIZER</GhostButton>
+      <div
+        v-if="isCreator"
+        v-show="selectedTab === PERMISSIONS.CREATOR"
+        id="creator-container">
+        <div class="access-container">
+          <label
+            id="creator-name-label"
+            for="creator-name-input">CREATOR NAME</label>
+          <input
+            id="creator-name-input"
+            :disabled="!online"
+            :value="creatorAccess.name"
+            placeholder="Enter your name here!"
+            @change="handleNameChange(creatorAccess, $event.target.value)">
+        </div>
+      </div>
     </div>
   </modal>
 </template>
@@ -76,7 +103,10 @@ import { PERMISSIONS } from "../../common"
 // TODO: improve design (use tabs for spectator and organizers)
 @Component({ components: { GhostButton, RemoveItemButton } })
 export default class ShareModal extends Vue {
+  PERMISSIONS = PERMISSIONS
+
   showCopied = false
+  selectedTab = PERMISSIONS.SPECTATOR
 
   get online() {
     return this.$store.state.online
@@ -126,6 +156,10 @@ export default class ShareModal extends Vue {
     })
   }
 
+  handleTabSelect(tab) {
+    this.selectedTab = tab
+  }
+
   handleNameChange(access, value) {
     this.$store.dispatch(actionTypes.UPDATE_ACCESS_NAME, {
       access,
@@ -154,10 +188,6 @@ input {
 #spectator-input {
   cursor: pointer;
   max-width: 100%;
-}
-
-#creator-only-container {
-  margin-top: $section-margin;
 }
 
 #creator-name-label {
@@ -201,7 +231,31 @@ input {
 }
 
 #add-organizer-button {
-  float: right;
   margin-top: $modal-padding;
+}
+
+#tab-container {
+  ul {
+    display: flex;
+
+    li {
+      flex-grow: 1;
+      flex-basis: 0;
+      cursor: pointer;
+      text-align: center;
+
+      &.active {
+        background-color: $active-tab-color;
+      }
+    }
+  }
+}
+
+#modal-content-container {
+  padding: $modal-padding;
+}
+
+#add-organizer-button-container {
+  text-align: right;
 }
 </style>
