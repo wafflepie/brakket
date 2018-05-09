@@ -10,6 +10,7 @@ import {
   ensureTournamentDomainValidity,
 } from "../domain"
 import { selectToken, selectTournamentIsLoaded } from "../selectors"
+import { loadLocalTournaments } from "../utils"
 import { PERMISSIONS } from "../../common"
 
 export const actionTypes = {
@@ -85,12 +86,12 @@ export const actions = {
   },
   async [actionTypes.LOAD_TOURNAMENT_BY_TOKEN]({ commit, state }, token) {
     commit(mutationTypes.SET_TOURNAMENT_LOADING, true)
-    const value = await localforage.getItem(token)
+    const tournaments = await loadLocalTournaments()
+    const tournament = tournaments[token]
 
-    if (value) {
-      const tournamentState = JSON.parse(value)
-      const lastModified = tournamentState.meta.lastModified
-      commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, tournamentState)
+    if (tournament) {
+      const lastModified = tournament.meta.lastModified
+      commit(mutationTypes.INITIALIZE_TOURNAMENT_STATE, tournament)
 
       state.$socket.emit("tournamentOpened", token, lastModified)
     } else {
@@ -146,12 +147,16 @@ export const actions = {
   async [actionTypes.STORE_TOURNAMENT_STATE_LOCALLY]({ state }) {
     const token = selectToken(state)
 
-    if (token) {
-      await localforage.setItem(
-        token,
-        JSON.stringify(R.omit(["transient"], state.tournament))
-      )
+    if (!token) {
+      return
     }
+
+    const tournaments = await loadLocalTournaments()
+
+    await localforage.setItem("tournaments", {
+      ...tournaments,
+      [token]: R.omit(["transient"], state.tournament),
+    })
   },
   [actionTypes.STORE_TOURNAMENT_STATE_REMOTELY]({ state }) {
     if (selectTournamentIsLoaded(state)) {

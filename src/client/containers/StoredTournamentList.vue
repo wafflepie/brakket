@@ -36,6 +36,7 @@ import * as R from "ramda"
 
 import { selectAccessFromTournamentState, selectTokenFromTournamentState } from "../selectors"
 import { DEFAULT_TOURNAMENT_LIST_SIZE_LIMIT, PERMISSIONS } from "../../common"
+import { loadLocalTournaments } from "../utils"
 import GhostButton from "../components/GhostButton.vue"
 import RemoveItemButton from "../components/RemoveItemButton.vue"
 
@@ -70,32 +71,28 @@ export default class StoredTournamentList extends Vue {
   }
 
   async loadTournamentList() {
-    const keys = await localforage.keys()
-    const values = await Promise.all(keys.map(key => localforage.getItem(key)))
-    const tournaments = values.map(JSON.parse)
+    const tournaments = await loadLocalTournaments()
 
-    const permissionsComparator = R.ascend(
-      R.o(this.getPermissionIndex.bind(this), selectAccessFromTournamentState)
-    )
+    const comparators = [
+      R.descend(R.path(["meta", "lastModified"])),
+      // we sort the tournaments by permissions as well because unique preserves the first one
+      R.ascend(R.o(this.getPermissionIndex, selectAccessFromTournamentState)),
+    ]
 
-    const lastModifiedComparator = R.descend(R.path(["meta", "lastModified"]))
-
-    // we sort the tournaments by permissions as well because unique preserves the first one
-    const sortedTournaments = R.sortWith(
-      [lastModifiedComparator, permissionsComparator],
-      tournaments
-    )
-
-    const uniqueTournaments = R.uniqWith(
-      R.eqBy(state => selectAccessFromTournamentState(state).tournament),
-      sortedTournaments
-    )
-
-    this.tournaments = uniqueTournaments
+    this.tournaments = R.compose(
+      R.uniqWith(R.eqBy(state => selectAccessFromTournamentState(state).tournament)),
+      R.sortWith(comparators),
+      R.values
+    )(tournaments)
   }
 
   async removeTournament(token) {
-    await localforage.removeItem(token)
+    const tournaments = await loadLocalTournaments()
+
+    // TODO: if tournament has an ID, remove all tournaments with the ID
+    const filteredTournaments = R.omit([token], tournaments)
+
+    await localforage.setItem("tournaments", filteredTournaments)
     await this.loadTournamentList()
   }
 

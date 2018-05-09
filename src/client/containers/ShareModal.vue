@@ -73,6 +73,7 @@ import { actionTypes } from "../store"
 import { selectAccess } from "../selectors"
 import { PERMISSIONS } from "../../common"
 
+// TODO: improve design (use tabs for spectator and organizers)
 @Component({ components: { GhostButton, RemoveItemButton } })
 export default class ShareModal extends Vue {
   showCopied = false
