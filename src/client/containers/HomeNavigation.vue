@@ -38,6 +38,7 @@ ul {
 li {
   font-size: $navigation-item-font-size;
   margin: $list-item-margin 0;
+  padding-left: 1rem;
 
   a {
     display: inline-block;
@@ -50,6 +51,8 @@ li {
 
     &::before {
       content: "> ";
+      margin-left: -1rem;
+      width: 1rem;
     }
   }
 }

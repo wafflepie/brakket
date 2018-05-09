@@ -142,7 +142,7 @@ export default class BracketStatusBar extends Vue {
     flex-grow: 1;
     height: 100%;
     justify-content: flex-end;
-    max-width: calc(100vw / 3); // TODO: handle showing icons on small devices
+    max-width: 50vw; // TODO: handle showing icons on small devices
 
     .client-icon {
       padding: 0 $client-icon-margin;
