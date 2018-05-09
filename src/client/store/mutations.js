@@ -24,8 +24,8 @@ export const mutations = {
     state.tournament = R.clone(initialState.tournament)
   },
   [mutationTypes.SET_ACCESS_NAME](state, payload) {
-    const { access, value } = payload
-    access.name = value
+    const { access, name } = payload
+    access.name = name
     state.tournament.meta.lastModified = +new Date()
   },
   [mutationTypes.SET_SOCKET](state, payload) {

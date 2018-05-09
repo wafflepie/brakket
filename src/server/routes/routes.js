@@ -11,7 +11,7 @@ module.exports = io => {
     socket.access = null
     socket.focus = null
 
-    socket.on("accessName", async ({ token, value }) => {
+    socket.on("accessName", async ({ name, token }) => {
       if (!socket.access || !socket.access.isCreator()) {
         return
       }
@@ -24,7 +24,7 @@ module.exports = io => {
 
       const tournamentId = access.tournament
 
-      access.name = value
+      access.name = name
       await access.save()
 
       const sockets = utils.getSocketsByTournamentId(io, tournamentId)
@@ -32,7 +32,7 @@ module.exports = io => {
       sockets
         .filter(other => other.access.token === token)
         .forEach(socketToFix => {
-          socketToFix.access.name = value
+          socketToFix.access.name = name
         })
 
       const tournament = await Tournament.findById(tournamentId)

@@ -129,7 +129,7 @@ export default class ShareModal extends Vue {
   handleNameChange(access, value) {
     this.$store.dispatch(actionTypes.UPDATE_ACCESS_NAME, {
       access,
-      value,
+      name: value,
     })
   }
 }

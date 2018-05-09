@@ -168,8 +168,8 @@ export const actions = {
   },
   [actionTypes.UPDATE_ACCESS_NAME]({ commit, state }, payload) {
     state.$socket.emit("accessName", {
+      name: payload.name,
       token: payload.access.token,
-      value: payload.value,
     })
 
     commit(mutationTypes.SET_ACCESS_NAME, payload)
