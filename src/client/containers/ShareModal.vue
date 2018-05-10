@@ -28,7 +28,7 @@
         <transition name="fade">
           <span
             v-show="showCopied"
-            id="copied">Copied!</span>
+            id="spectator-copied">Copied!</span>
         </transition>
         <input
           id="spectator-input"
@@ -43,7 +43,7 @@
         <div
           v-for="organizerAccess of organizerAccesses"
           :key="organizerAccess.token"
-          class="access-container">
+          class="organizer-container">
           <label :for="`organizer-name-input-${organizerAccess.token}`">NAME</label>
           <input 
             :id="`organizer-name-input-${organizerAccess.token}`"
@@ -64,6 +64,11 @@
             :disabled="!online"
             :on-click="() => removeOrganizer(organizerAccess.token)" />
         </div>
+        <transition name="fade">
+          <span
+            v-show="showCopied"
+            id="organizer-copied">Copied!</span>
+        </transition>
         <div id="add-organizer-button-container">
           <GhostButton
             v-show="online"
@@ -75,17 +80,15 @@
         v-if="isCreator"
         v-show="selectedTab === PERMISSIONS.CREATOR"
         id="creator-container">
-        <div class="access-container">
-          <label
-            id="creator-name-label"
-            for="creator-name-input">CREATOR NAME</label>
-          <input
-            id="creator-name-input"
-            :disabled="!online"
-            :value="creatorAccess.name"
-            placeholder="Enter your name here!"
-            @change="handleNameChange(creatorAccess, $event.target.value)">
-        </div>
+        <label
+          id="creator-name-label"
+          for="creator-name-input">Enter your name here!</label>
+        <input
+          id="creator-name-input"
+          :disabled="!online"
+          :value="creatorAccess.name"
+          placeholder="Wenceslaus I, Duke of Bohemia"
+          @change="handleNameChange(creatorAccess, $event.target.value)">
       </div>
     </div>
   </modal>
@@ -158,6 +161,7 @@ export default class ShareModal extends Vue {
 
   handleTabSelect(tab) {
     this.selectedTab = tab
+    this.showCopied = false
   }
 
   handleNameChange(access, value) {
@@ -175,51 +179,54 @@ input {
   border-right: none;
 }
 
-#spectator-label {
-  display: inline-block;
-  font-size: $font-size;
+#tab-container {
+  ul {
+    display: flex;
+
+    li {
+      flex-grow: 1;
+      cursor: pointer;
+      text-align: center;
+
+      &.active {
+        background-color: $tab-active-color;
+      }
+
+      &:hover:not(.active) {
+        background-color: $tab-active-color * 0.5;
+      }
+    }
+  }
 }
 
-#copied {
-  color: $primary-color;
-  float: right;
-}
-
-#spectator-input {
-  cursor: pointer;
-  max-width: 100%;
-}
-
-#creator-name-label {
-  white-space: nowrap;
-}
-
-#creator-name-input {
-  flex-grow: 1;
-  max-width: none;
-}
-
-.access-container {
+#modal-content-container {
   display: flex;
+  padding: $modal-padding;
 
   & > * {
-    flex-basis: 0;
-    margin: $organizer-margin $organizer-margin / 2;
-
-    &:first-child {
-      margin-left: 0;
-    }
-
-    &:last-child {
-      margin-right: 0;
-    }
-  }
-
-  label {
     align-self: center;
-    margin: 0 $organizer-margin;
+    width: 100%;
+  }
+}
+
+#spectator-container {
+  #spectator-label {
+    display: inline-block;
+    font-size: $font-size;
   }
 
+  #spectator-copied {
+    color: $primary-color;
+    float: right;
+  }
+
+  #spectator-input {
+    cursor: pointer;
+    max-width: 100%;
+  }
+}
+
+#organizers-container {
   .organizer-name-input {
     flex-grow: 1;
   }
@@ -227,35 +234,64 @@ input {
   .organizer-url-input {
     cursor: pointer;
     flex-grow: 1;
+    text-overflow: ellipsis;
   }
-}
 
-#add-organizer-button {
-  margin-top: $modal-padding;
-}
+  #organizer-copied {
+    bottom: 0;
+    color: $primary-color;
+    left: $modal-padding;
+    position: absolute;
+  }
 
-#tab-container {
-  ul {
+  #add-organizer-button-container {
+    text-align: right;
+
+    #add-organizer-button {
+      width: 100%;
+    }
+  }
+
+  .organizer-container {
     display: flex;
 
-    li {
-      flex-grow: 1;
+    & > * {
       flex-basis: 0;
-      cursor: pointer;
-      text-align: center;
+      margin: $organizer-margin $organizer-margin / 2;
 
-      &.active {
-        background-color: $active-tab-color;
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    label {
+      align-self: center;
+      margin: 0 $organizer-margin;
+    }
+
+    & ~ #add-organizer-button-container {
+      margin-top: $modal-padding;
+
+      #add-organizer-button {
+        width: auto;
       }
     }
   }
 }
 
-#modal-content-container {
-  padding: $modal-padding;
-}
+#creator-container {
+  #creator-name-label {
+    display: inline-block;
+    font-size: $font-size;
+  }
 
-#add-organizer-button-container {
-  text-align: right;
+  #creator-name-input {
+    flex-grow: 1;
+    max-width: none;
+  }
 }
 </style>

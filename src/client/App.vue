@@ -114,7 +114,7 @@ label {
 body {
   .v--modal {
     background-color: $background-color;
-    border: 1px solid $active-tab-color;
+    border: 1px solid $tab-active-color;
     border-radius: 0;
     box-shadow: none;
     padding: 0;
