@@ -24,8 +24,14 @@
         id="spectator-container">
         <label
           id="spectator-label"
-          for="spectator-input">This is a view-only link that you can send to the spectators.</label>
+          for="spectator-input">Click to copy a view-only link that you can send to the spectators</label>
         <input
+          v-tooltip.bottom-end="{
+            classes: 'copied-tooltip',
+            content: 'Link copied!',
+            show: isAccessCopied(spectatorAccess),
+            trigger: 'manual',
+          }"
           id="spectator-input"
           :value="createUrlFromToken(spectatorAccess && spectatorAccess.token)"
           readonly
@@ -38,8 +44,8 @@
         <table v-if="organizerAccesses.length">
           <thead>
             <tr>
-              <th>Name of the organizer</th>
-              <th>URL token</th>
+              <th>NAME</th>
+              <th>TOKEN</th>
             </tr>
           </thead>
           <tbody>
@@ -57,12 +63,17 @@
               </td>
               <td>
                 <input
+                  v-if="!isAccessCopied(organizerAccess)"
                   :id="`organizer-url-input-${organizerAccess.token}`"
                   :value="organizerAccess.token"
                   class="organizer-url-input"
                   readonly
-                  title="Unique access token, click to copy the entire URL!"
                   @focus="copy(createUrlFromToken(organizerAccess.token))">
+                <div
+                  v-else
+                  class="copied">
+                  Link copied!
+                </div>
               </td>
               <td>
                 <RemoveItemButton
@@ -111,6 +122,9 @@ import { PERMISSIONS } from "../../common"
 export default class ShareModal extends Vue {
   PERMISSIONS = PERMISSIONS
 
+  copiedUrl = null
+  copiedTimeout = null
+
   selectedTab = PERMISSIONS.SPECTATOR
 
   get online() {
@@ -151,12 +165,27 @@ export default class ShareModal extends Vue {
       : ""
   }
 
+  isAccessCopied(access) {
+    return this.copiedUrl && this.copiedUrl.includes(access && access.token)
+  }
+
   copy(url) {
-    this.$copyText(url)
+    clearTimeout(this.copiedTimeout)
+
+    this.$copyText(url).then(() => {
+      this.copiedUrl = url
+
+      this.copiedTimeout = setTimeout(() => {
+        this.copiedUrl = null
+      }, 1500)
+    })
   }
 
   handleTabSelect(tab) {
     this.selectedTab = tab
+    this.copiedUrl = null
+
+    clearTimeout(this.copiedTimeout)
   }
 
   handleNameChange(access, value) {
@@ -196,6 +225,7 @@ input {
 
 #modal-content-container {
   display: flex;
+  line-height: initial;
   padding: $modal-padding;
 
   & > * {
@@ -222,6 +252,11 @@ input {
     #add-organizer-button {
       width: 100%;
     }
+  }
+
+  .copied {
+    color: $primary-color;
+    cursor: default;
   }
 
   table {

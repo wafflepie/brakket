@@ -96,9 +96,7 @@ input {
     border-color: transparent;
     cursor: pointer;
     font-weight: 500;
-    position: relative;
     text-overflow: ellipsis;
-    top: $input-padding;
   }
 }
 
@@ -134,16 +132,27 @@ body {
   }
 
   .tooltip {
-    font-size: $client-tooltip-font-size;
+    font-size: $tooltip-font-size;
     z-index: 2;
 
-    .tooltip-inner {
-      display: inline-block;
-      background-color: $status-bar-color;
-      pointer-events: none;
-      padding: 0 0.5em;
-      border-bottom-left-radius: 0.5em;
-      border-bottom-right-radius: 0.5em;
+    &.client-tooltip {
+      .tooltip-inner {
+        background-color: $status-bar-color;
+        border-bottom-left-radius: $tooltip-border-radius;
+        border-bottom-right-radius: $tooltip-border-radius;
+        pointer-events: none;
+        padding: 0 $tooltip-padding;
+      }
+    }
+
+    &.copied-tooltip {
+      .tooltip-inner {
+        background-color: $background-color;
+        border: 1px solid $tab-active-color;
+        color: $primary-color;
+        padding: 0 $tooltip-padding;
+        pointer-events: none;
+      }
     }
   }
 }

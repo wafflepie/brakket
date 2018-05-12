@@ -4,7 +4,11 @@
       <ShareModal />
       <div class="clients">
         <span
-          v-tooltip="{ content: getTooltipContent(client), trigger: 'hover' }"
+          v-tooltip="{
+            classes: 'client-tooltip',
+            content: getTooltipContent(client),
+            trigger: 'hover',
+          }"
           v-for="client of clients"
           :key="client.id"
           :style="{ color: getColorById(client.id) }"
