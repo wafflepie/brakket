@@ -64,13 +64,10 @@
               <td>
                 <input
                   :id="`organizer-url-input-${organizerAccess.token}`"
-                  :value="organizerAccess.token"
-                  :class="['organizer-url-input', { invisible: isAccessCopied(organizerAccess) }]"
+                  :value="isAccessCopied(organizerAccess) ? 'Link copied!' : organizerAccess.token"
+                  :class="['organizer-url-input', { copied: isAccessCopied(organizerAccess) }]"
                   readonly
                   @focus="copy(createUrlFromToken(organizerAccess.token))">
-                <div :class="['copied', { invisible: !isAccessCopied(organizerAccess) }]">
-                  Link copied!
-                </div>
               </td>
               <td>
                 <RemoveItemButton
@@ -251,11 +248,9 @@ input {
   }
 
   .copied {
-    bottom: 0;
     color: $primary-color;
-    cursor: default;
-    padding: $input-padding 0;
-    position: absolute;
+    font-weight: normal;
+    pointer-events: none;
   }
 
   table {
