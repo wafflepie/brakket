@@ -63,15 +63,12 @@
               </td>
               <td>
                 <input
-                  v-if="!isAccessCopied(organizerAccess)"
                   :id="`organizer-url-input-${organizerAccess.token}`"
                   :value="organizerAccess.token"
-                  class="organizer-url-input"
+                  :class="['organizer-url-input', { invisible: isAccessCopied(organizerAccess) }]"
                   readonly
                   @focus="copy(createUrlFromToken(organizerAccess.token))">
-                <div
-                  v-else
-                  class="copied">
+                <div :class="['copied', { invisible: !isAccessCopied(organizerAccess) }]">
                   Link copied!
                 </div>
               </td>
@@ -256,6 +253,8 @@ input {
   .copied {
     color: $primary-color;
     cursor: default;
+    position: absolute;
+    bottom: $input-padding;
   }
 
   table {
@@ -273,6 +272,7 @@ input {
 
     td {
       padding-right: $table-cell-padding;
+      position: relative;
 
       &:last-child {
         padding-right: 0;

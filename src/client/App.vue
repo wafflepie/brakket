@@ -107,6 +107,10 @@ label {
   margin-bottom: $label-bottom-margin;
 }
 
+.invisible {
+  visibility: hidden;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity $transition-duration;
@@ -132,7 +136,6 @@ body {
   }
 
   .tooltip {
-    font-size: $tooltip-font-size;
     z-index: 2;
 
     &.client-tooltip {
@@ -140,6 +143,7 @@ body {
         background-color: $status-bar-color;
         border-bottom-left-radius: $tooltip-border-radius;
         border-bottom-right-radius: $tooltip-border-radius;
+        font-size: $tooltip-font-size;
         pointer-events: none;
         padding: 0 $tooltip-padding;
       }

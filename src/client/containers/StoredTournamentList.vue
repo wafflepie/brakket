@@ -127,8 +127,4 @@ li {
     display: block;
   }
 }
-
-.invisible {
-  visibility: hidden;
-}
 </style>
