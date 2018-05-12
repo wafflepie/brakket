@@ -37,8 +37,8 @@ const utils = {
       const payload = payloadSockets.map(payloadSocket => ({
         focus: payloadSocket.focus,
         id: payloadSocket.id,
-        name: payloadSocket.access.name,
-        permissions: payloadSocket.access.permissions,
+        name: payloadSocket.access && payloadSocket.access.name,
+        permissions: payloadSocket.access && payloadSocket.access.permissions,
       }))
 
       socket.emit("clients", payload)
