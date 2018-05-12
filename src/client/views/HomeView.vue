@@ -1,5 +1,5 @@
 <template>
-  <div class="home-container">
+  <div id="home-container">
     <router-view v-if="!isRouteParticipantsForm || isTournamentNameSet" />
     <TournamentNameForm v-else />
   </div>
@@ -24,9 +24,10 @@ export default class HomeView extends Vue {
 
 
 <style lang="scss" scoped>
-.home-container {
+#home-container {
   margin: 0 auto;
   max-width: $home-width;
+  padding-bottom: $section-margin;
   text-align: center;
 }
 </style>

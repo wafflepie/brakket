@@ -15,7 +15,9 @@
         </div>
         <AirHorn />
       </h3>
-      <TournamentBracket />
+      <div id="tournament-bracket-container">
+        <TournamentBracket />
+      </div>
     </section>
   </div>
 </template>
@@ -78,5 +80,14 @@ h3 {
   line-height: $winner-title-line-height;
   justify-content: center;
   margin-bottom: 0;
+}
+
+#tournament-bracket-container {
+  left: -$body-padding;
+  margin-right: -2 * $body-padding;
+  max-width: 100vw;
+  overflow: auto;
+  padding: 0 $body-padding;
+  position: relative;
 }
 </style>
