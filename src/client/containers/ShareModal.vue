@@ -173,7 +173,7 @@ export default class ShareModal extends Vue {
 
       this.copiedTimeout = setTimeout(() => {
         this.copiedUrl = null
-      }, 1500)
+      }, 1000)
     })
   }
 
