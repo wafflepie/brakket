@@ -91,12 +91,21 @@ input {
     border-color: $border-inactive-color;
     cursor: not-allowed;
   }
+
+  &:read-only {
+    border-color: transparent;
+    cursor: pointer;
+    font-weight: 500;
+    position: relative;
+    text-overflow: ellipsis;
+    top: $input-padding;
+  }
 }
 
 label {
   display: block;
   font-size: $label-font-size;
-  line-height: $label-font-size;
+  line-height: $label-line-height;
   margin-bottom: $label-bottom-margin;
 }
 

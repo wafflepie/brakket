@@ -24,12 +24,7 @@
         id="spectator-container">
         <label
           id="spectator-label"
-          for="spectator-input">Click to get a view-only link!</label>
-        <transition name="fade">
-          <span
-            v-show="showCopied"
-            id="spectator-copied">Copied!</span>
-        </transition>
+          for="spectator-input">This is a view-only link that you can send to the spectators.</label>
         <input
           id="spectator-input"
           :value="createUrlFromToken(spectatorAccess && spectatorAccess.token)"
@@ -40,35 +35,43 @@
         v-if="isCreator"
         v-show="selectedTab === PERMISSIONS.ORGANIZER"
         id="organizers-container">
-        <div
-          v-for="organizerAccess of organizerAccesses"
-          :key="organizerAccess.token"
-          class="organizer-container">
-          <label :for="`organizer-name-input-${organizerAccess.token}`">NAME</label>
-          <input 
-            :id="`organizer-name-input-${organizerAccess.token}`"
-            :disabled="!online"
-            :value="organizerAccess.name"
-            class="organizer-name-input"
-            placeholder="Organizer"
-            @change="handleNameChange(organizerAccess, $event.target.value)">
-          <label :for="`organizer-url-input-${organizerAccess.token}`">TOKEN</label>
-          <input
-            :id="`organizer-url-input-${organizerAccess.token}`"
-            :value="organizerAccess.token"
-            class="organizer-url-input"
-            readonly
-            title="Unique access token, click to copy the entire URL!"
-            @focus="copy(createUrlFromToken(organizerAccess.token))">
-          <RemoveItemButton
-            :disabled="!online"
-            :on-click="() => removeOrganizer(organizerAccess.token)" />
-        </div>
-        <transition name="fade">
-          <span
-            v-show="showCopied"
-            id="organizer-copied">Copied!</span>
-        </transition>
+        <table v-if="organizerAccesses.length">
+          <thead>
+            <tr>
+              <th>Name of the organizer</th>
+              <th>URL token</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="organizerAccess of organizerAccesses"
+              :key="organizerAccess.token">
+              <td>
+                <input 
+                  :id="`organizer-name-input-${organizerAccess.token}`"
+                  :disabled="!online"
+                  :value="organizerAccess.name"
+                  class="organizer-name-input"
+                  placeholder="Organizer"
+                  @change="handleNameChange(organizerAccess, $event.target.value)">
+              </td>
+              <td>
+                <input
+                  :id="`organizer-url-input-${organizerAccess.token}`"
+                  :value="organizerAccess.token"
+                  class="organizer-url-input"
+                  readonly
+                  title="Unique access token, click to copy the entire URL!"
+                  @focus="copy(createUrlFromToken(organizerAccess.token))">
+              </td>
+              <td>
+                <RemoveItemButton
+                  :disabled="!online"
+                  :on-click="() => removeOrganizer(organizerAccess.token)" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <div id="add-organizer-button-container">
           <GhostButton
             v-show="online"
@@ -108,7 +111,6 @@ import { PERMISSIONS } from "../../common"
 export default class ShareModal extends Vue {
   PERMISSIONS = PERMISSIONS
 
-  showCopied = false
   selectedTab = PERMISSIONS.SPECTATOR
 
   get online() {
@@ -150,18 +152,11 @@ export default class ShareModal extends Vue {
   }
 
   copy(url) {
-    this.$copyText(url).then(() => {
-      this.showCopied = true
-
-      setTimeout(() => {
-        this.showCopied = false
-      }, 3000)
-    })
+    this.$copyText(url)
   }
 
   handleTabSelect(tab) {
     this.selectedTab = tab
-    this.showCopied = false
   }
 
   handleNameChange(access, value) {
@@ -215,35 +210,12 @@ input {
     font-size: $font-size;
   }
 
-  #spectator-copied {
-    color: $primary-color;
-    float: right;
-  }
-
   #spectator-input {
-    cursor: pointer;
     max-width: 100%;
   }
 }
 
 #organizers-container {
-  .organizer-name-input {
-    flex-grow: 1;
-  }
-
-  .organizer-url-input {
-    cursor: pointer;
-    flex-grow: 1;
-    text-overflow: ellipsis;
-  }
-
-  #organizer-copied {
-    bottom: 0;
-    color: $primary-color;
-    left: $modal-padding;
-    position: absolute;
-  }
-
   #add-organizer-button-container {
     text-align: right;
 
@@ -252,25 +224,25 @@ input {
     }
   }
 
-  .organizer-container {
-    display: flex;
+  table {
+    width: 100%;
 
-    & > * {
-      flex-basis: 0;
-      margin: $organizer-margin $organizer-margin / 2;
+    thead tr {
+      border-bottom: 1px solid gray;
+      line-height: $label-line-height;
 
-      &:first-child {
-        margin-left: 0;
-      }
-
-      &:last-child {
-        margin-right: 0;
+      th {
+        cursor: default;
+        font-weight: 400;
       }
     }
 
-    label {
-      align-self: center;
-      margin: 0 $organizer-margin;
+    td {
+      padding-right: $table-cell-padding;
+
+      &:last-child {
+        padding-right: 0;
+      }
     }
 
     & ~ #add-organizer-button-container {
