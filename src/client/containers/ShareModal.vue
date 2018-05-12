@@ -251,10 +251,11 @@ input {
   }
 
   .copied {
+    bottom: 0;
     color: $primary-color;
     cursor: default;
+    padding: $input-padding 0;
     position: absolute;
-    bottom: $input-padding;
   }
 
   table {

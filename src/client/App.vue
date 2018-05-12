@@ -133,6 +133,20 @@ body {
 
   .v--modal-overlay {
     background-color: $share-modal-overlay-color;
+
+    // HACK: vue-js-modal is weird on mobile
+    position: fixed;
+
+    top: -99999px;
+    right: -99999px;
+    left: -99999px;
+    bottom: -99999px;
+
+    padding-top: 99999px;
+    height: auto;
+
+    padding-left: 99999px;
+    width: auto;
   }
 
   .tooltip {
