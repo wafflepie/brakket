@@ -35,7 +35,7 @@
           id="spectator-input"
           :value="createUrlFromToken(spectatorAccess && spectatorAccess.token)"
           readonly
-          @focus="copy(createUrlFromToken(spectatorAccess && spectatorAccess.token))">
+          @focus="copy(spectatorAccess)">
       </div>
       <div
         v-if="isCreator"
@@ -54,6 +54,7 @@
               :key="organizerAccess.token">
               <td>
                 <input 
+                  :ref="organizerAccess.token"
                   :id="`organizer-name-input-${organizerAccess.token}`"
                   :disabled="!online"
                   :value="organizerAccess.name"
@@ -67,7 +68,7 @@
                   :value="isAccessCopied(organizerAccess) ? 'Link copied!' : organizerAccess.token"
                   :class="['organizer-url-input', { copied: isAccessCopied(organizerAccess) }]"
                   readonly
-                  @focus="copy(createUrlFromToken(organizerAccess.token))">
+                  @focus="copy(organizerAccess)">
               </td>
               <td>
                 <RemoveItemButton
@@ -115,7 +116,7 @@ import { PERMISSIONS } from "../../common"
 export default class ShareModal extends Vue {
   PERMISSIONS = PERMISSIONS
 
-  copiedUrl = null
+  copiedAccess = null
   copiedTimeout = null
 
   selectedTab = PERMISSIONS.SPECTATOR
@@ -159,24 +160,27 @@ export default class ShareModal extends Vue {
   }
 
   isAccessCopied(access) {
-    return this.copiedUrl && this.copiedUrl.includes(access && access.token)
+    return this.copiedAccess === access
   }
 
-  copy(url) {
+  copy(access) {
     clearTimeout(this.copiedTimeout)
+    const url = this.createUrlFromToken(access.token)
 
     this.$copyText(url).then(() => {
-      this.copiedUrl = url
+      this.copiedAccess = access
 
       this.copiedTimeout = setTimeout(() => {
-        this.copiedUrl = null
+        // HACK: otherwise the input would get overwritten with the previous value
+        this.handleNameChange(access, this.$refs[access.token][0].value)
+        this.copiedAccess = null
       }, 1000)
     })
   }
 
   handleTabSelect(tab) {
     this.selectedTab = tab
-    this.copiedUrl = null
+    this.copiedAccess = null
 
     clearTimeout(this.copiedTimeout)
   }
