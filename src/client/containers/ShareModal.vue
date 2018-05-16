@@ -160,7 +160,7 @@ export default class ShareModal extends Vue {
   }
 
   isAccessCopied(access) {
-    return this.copiedAccess === access
+    return access && this.copiedAccess && this.copiedAccess.token === access.token
   }
 
   copy(access) {
