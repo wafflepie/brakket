@@ -21,7 +21,15 @@ module.exports = {
         return options
       })
 
-    config.plugin("offline").use(OfflinePlugin)
+    config.plugin("offline").use(OfflinePlugin, [
+      {
+        autoUpdate: true,
+        responseStrategy: "network-first",
+        ServiceWorker: {
+          events: true,
+        },
+      },
+    ])
     config
       .entry("app")
       .clear()
